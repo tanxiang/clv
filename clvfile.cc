@@ -12,6 +12,6 @@ int main(int argc,char* argv[])
 	if(argc!=2)
 		return 0;
 	ifstream ifs_in{argv[1]};
-	file_text text{istream_iterator<line>{ifs_in},istream_iterator<line>{}};
-	copy(text.begin(),text.end(),ostream_iterator<line>{cout,"\n"});
+	FileText text{istream_iterator<Line>{ifs_in},istream_iterator<Line>{}};
+	copy(text.begin(),text.end(),ostream_iterator<Line>{cout,"\n"});
 }

@@ -2,12 +2,12 @@
 #include <vector>
 #include <list>
 
-class line : public std::string {};
-static inline std::istream &operator>>(std::istream &is, line &l)
+class Line : public std::string {};
+static inline std::istream &operator>>(std::istream &is, Line &l)
 {
     std::getline(is,l);
     return is;
 }
 
-typedef std::vector<line> file_text;
-typedef std::list<file_text> files_text;
+typedef std::vector<Line> FileText;
+typedef std::list<FileText> FilesText;

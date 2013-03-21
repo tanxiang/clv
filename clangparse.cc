@@ -14,8 +14,6 @@ int main(int argc,const char** argv){
 	//CommonOptionsParser OptionsParser(argc, argv);
 	//ClangTool Tool(OptionsParser.GetCompilations(),OptionsParser.GetSourcePathList());
 	//return Tool.run(newFrontendActionFactory<clang::SyntaxOnlyAction>());
-	//runToolOnCode( );
 	
-	//vs_args.push_back("-std=c++11");
-	runToolOnCodeWithArgs(new clang::SyntaxOnlyAction,"class X {};",std::vector<std::string> {1,"-std=c++11"});
+	runToolOnCodeWithArgs(new clang::SyntaxOnlyAction," class X {public:\n int in;};X x1{};\nint main(){ x1.in=0;}",std::vector<std::string> {1,"-std=c++11"});
 }
