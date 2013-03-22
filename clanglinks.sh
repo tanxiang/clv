@@ -2,7 +2,6 @@
 clang++ --std=c++11 clangparse.cc -L/usr/lib/llvm \
 -lclangTooling -lclangFrontend -lclangDriver -lclangParse \
 -lclangSema -lclangAST -lclangSerialization -lclangLex -lclangBasic \
--lclangEdit -lclangRewriteCore -lclangRewriteFrontend \
--lclang -lclangStaticAnalyzerCheckers -lclangAnalysis \
+-lclangEdit -lclang -lclangAnalysis \
 `llvm-config --libs` -ldl -lpthread
 
