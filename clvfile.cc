@@ -13,8 +13,13 @@ public:
 	FileTex(Iterator first,Iterator last){
 		while(first!=last){
 			LHSKind=StdStringKind;
-			LHS.stdString
-			if(++first!=last);			RHSKind=EmptyKind;
+			LHS.stdString=*first;
+			if(++first==last)
+				RHSKind=EmptyKind;
+			else{
+				RHSKind=TwineKind;
+				LHS.twine=new FileTex(first,last);
+			}
 		}
 	}
 };
