@@ -6,7 +6,7 @@
 #include "clangparse.h"
 
 using namespace std;
-
+/*
 class FileTex:public llvm::Twine{
 public:
 	template<typename Iterator>
@@ -23,7 +23,7 @@ public:
 		}
 	}
 };
-
+*/
 
 int main(int argc,char* argv[])
 {
@@ -31,7 +31,7 @@ int main(int argc,char* argv[])
 	if(argc!=2)
 		return 0;
 	ifstream ifs_in{argv[1]};
-	FileTex text{istream_iterator<Line>{ifs_in},istream_iterator<Line>{}};
+	FileText text{istream_iterator<Line>{ifs_in},istream_iterator<Line>{}};
 	//runToolOnCodeWithArgs(new ClpAction,static_cast<vector<string> >(text),
 	//std::vector<std::string> {"-std=c++11"});
 	//copy(text.begin(),text.end(),ostream_iterator<Line>{cout,"\n"});

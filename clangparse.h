@@ -21,3 +21,7 @@ protected:
 public:
 	virtual bool hasCodeCompletionSupport() const { return true; }
 };
+
+class ClpInvocation{
+
+};
