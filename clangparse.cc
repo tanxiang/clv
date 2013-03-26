@@ -19,6 +19,7 @@ bool ClpInvocation::RunInvocation(CompilerInvocation &Invocation){
 	if (!Compiler.hasDiagnostics())
 		return false;
 	return Compiler.ExecuteAction(*Action);
+	Compiler.resetAndLeakFileManager();
 }
 
 bool ClpInvocation::RunCode(vector<string> Code){
@@ -28,10 +29,13 @@ bool ClpInvocation::RunCode(vector<string> Code){
 	Commands.insert(Commands.end(),CommandLine.begin(),CommandLine.end());
 	Commands.push_back("input.cc");
 
-DiagnosticsEngine Diagnostics{};
-driver::Driver Driver{Diagnostics,"a.out"};
-driver::Compilation Compilation{};
-CompilerInvocation Invocation{};
+	DiagnosticsEngine Diagnostics{
+		IntrusiveRefCntPtr<clang::DiagnosticIDs>{new DiagnosticIDs{}},
+		new DiagnosticOptions()};
+
+	driver::Driver Driver{"a.out",llvm::sys::getDefaultTargetTriple(),Diagnostics};
+	driver::Compilation Compilation{};
+	CompilerInvocation Invocation{&Diagnostics};
 
 	return runInvocation();
 }
