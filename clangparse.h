@@ -8,6 +8,7 @@
 #include <clang/AST/RecursiveASTVisitor.h>
 #include <clang/Tooling/CommonOptionsParser.h>
 #include <clang/Tooling/Tooling.h>
+#include <memory>
 using namespace clang::tooling;
 using namespace clang;
 
@@ -23,5 +24,13 @@ public:
 };
 
 class ClpInvocation{
+	std::vector<std::string> CommandLine;
+	std::unique_ptr<FrontendAction> ClpAction;
+protected:
 
+public:
+	ClpInvocation(std::vector<std::string> CommandLine,FrontendAction *ClpAction)
+	:CommandLine{CommandLine},ClpAction{ClpAction}{
+	}
+	bool RunCode(std::vector<std::string> Code);
 };
