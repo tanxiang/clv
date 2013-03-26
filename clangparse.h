@@ -25,12 +25,12 @@ public:
 
 class ClpInvocation{
 	std::vector<std::string> CommandLine;
-	std::unique_ptr<FrontendAction> ClpAction;
+	std::unique_ptr<FrontendAction> Action;
 protected:
-
+	bool RunInvocation(CompilerInvocation &Invocation);
 public:
-	ClpInvocation(std::vector<std::string> CommandLine,FrontendAction *ClpAction)
-	:CommandLine{CommandLine},ClpAction{ClpAction}{
+	ClpInvocation(std::vector<std::string> CommandLine,FrontendAction *Action)
+	:CommandLine{CommandLine},Action{Action}{
 	}
 	bool RunCode(std::vector<std::string> Code);
 };
