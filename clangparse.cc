@@ -31,14 +31,14 @@ bool ClpInvocation::RunCode(vector<string> Code){
 
 	driver::Driver Driver{"clang-tool",llvm::sys::getDefaultTargetTriple(),"a.out",false,Diagnostics};
 	driver::Compilation Compilation{Driver,};
-	CompilerInvocation Invocation{&Diagnostics};
+	CompilerInvocation Invocation{};
 
-	return RunInvocation();
+	return RunInvocation(Invocation);
 }
 
 bool ClpInvocation::RunInvocation(CompilerInvocation &Invocation){
 	CompilerInstance Compiler;
-	Compiler.setInvocation(Invocation);
+	Compiler.setInvocation(&Invocation);
 	Compiler.createDiagnostics();
 	if (!Compiler.hasDiagnostics())
 		return false;
