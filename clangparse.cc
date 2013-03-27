@@ -1,25 +1,21 @@
 #include "clangparse.h"
+#include <clang/Frontend/CompilerInstance.h>
+#include <clang/Tooling/CommonOptionsParser.h>
+#include <clang/Tooling/Tooling.h>
+#include <clang/Driver/Driver.h>
+#include <clang/Driver/Compilation.h>
+#include <llvm/Support/Host.h>
 #include <iostream>
 
 using namespace std;
+using namespace clang::tooling;
 
 //CommonOptionsParser OptionsParser(argc, argv);
-
 
 ASTConsumer* ClpAction::CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile){
 	//std::cout<<"cASTConsumer"<<std::endl;
 	return new ClpConsumer;
 	//return CreateASTViewer();
-}
-
-bool ClpInvocation::RunInvocation(CompilerInvocation &Invocation){
-	CompilerInstance Compiler;
-	Compiler.setInvocation(Invocation);
-	Compiler.createDiagnostics();
-	if (!Compiler.hasDiagnostics())
-		return false;
-	return Compiler.ExecuteAction(*Action);
-	Compiler.resetAndLeakFileManager();
 }
 
 bool ClpInvocation::RunCode(vector<string> Code){
@@ -33,11 +29,21 @@ bool ClpInvocation::RunCode(vector<string> Code){
 		IntrusiveRefCntPtr<clang::DiagnosticIDs>{new DiagnosticIDs{}},
 		new DiagnosticOptions()};
 
-	driver::Driver Driver{"a.out",llvm::sys::getDefaultTargetTriple(),Diagnostics};
-	driver::Compilation Compilation{};
+	driver::Driver Driver{"clang-tool",llvm::sys::getDefaultTargetTriple(),"a.out",false,Diagnostics};
+	driver::Compilation Compilation{Driver,};
 	CompilerInvocation Invocation{&Diagnostics};
 
-	return runInvocation();
+	return RunInvocation();
+}
+
+bool ClpInvocation::RunInvocation(CompilerInvocation &Invocation){
+	CompilerInstance Compiler;
+	Compiler.setInvocation(Invocation);
+	Compiler.createDiagnostics();
+	if (!Compiler.hasDiagnostics())
+		return false;
+	return Compiler.ExecuteAction(*Action);
+	Compiler.resetAndLeakFileManager();
 }
 
 int main(int argc,const char** argv){
