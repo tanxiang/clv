@@ -1,6 +1,9 @@
 #include "clangparse.h"
 #include <clang/Frontend/CompilerInstance.h>
+#include <clang/Frontend/FrontendDiagnostic.h>
+#include <clang/Frontend/TextDiagnosticPrinter.h>
 #include <clang/Tooling/CommonOptionsParser.h>
+
 #include <clang/Tooling/Tooling.h>
 #include <clang/Driver/Driver.h>
 #include <clang/Driver/Compilation.h>
@@ -20,26 +23,40 @@ ASTConsumer* ClpAction::CreateASTConsumer(CompilerInstance &CI, llvm::StringRef 
 
 bool ClpInvocation::RunCode(vector<string> Code){
 	vector<string> Commands;
+	vector<const char*> Argv;
 	Commands.push_back("clang-tool");
 	Commands.push_back("-fsyntax-only");
 	Commands.insert(Commands.end(),CommandLine.begin(),CommandLine.end());
 	Commands.push_back("input.cc");
+	for (int I = 0, E = Commands.size(); I != E; ++I)
+		Argv.push_back(Commands[I].c_str());
 
+	IntrusiveRefCntPtr<DiagnosticOptions> DiagOpts = new DiagnosticOptions();
+	TextDiagnosticPrinter DiagnosticPrinter(llvm::errs(), &*DiagOpts);
 	DiagnosticsEngine Diagnostics{
 		IntrusiveRefCntPtr<clang::DiagnosticIDs>{new DiagnosticIDs{}},
-		new DiagnosticOptions()};
+		&*DiagOpts,&DiagnosticPrinter,false};
 
 	driver::Driver Driver{"clang-tool",llvm::sys::getDefaultTargetTriple(),"a.out",false,Diagnostics};
-	driver::Compilation Compilation{Driver,};
-	CompilerInvocation Invocation{};
+	Driver.setCheckInputsExist(false);
+	driver::Compilation Compilation{*Driver.BuildCompilation(llvm::makeArrayRef(Argv))};
 
+	clang::driver::ArgStringList CC1Args = getCC1Arguments(&Diagnostics, Compilation.get());
+	/*if (CC1Args == NULL) {
+		return false;
+	}*/
+	CompilerInvocation Invocation{};
+	clang::CompilerInvocation::CreateFromArgs(
+		&Invocation, CC1Args.data() + 1, CC1Args.data() + CC1Args.size(),
+		&Diagnostics);
+	Invocation.getFrontendOpts().DisableFree = false;
 	return RunInvocation(Invocation);
 }
 
 bool ClpInvocation::RunInvocation(CompilerInvocation &Invocation){
 	CompilerInstance Compiler;
 	Compiler.setInvocation(&Invocation);
-	Compiler.createDiagnostics();
+	//Compiler.createDiagnostics();
 	if (!Compiler.hasDiagnostics())
 		return false;
 	return Compiler.ExecuteAction(*Action);
