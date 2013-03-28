@@ -15,6 +15,8 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	virtual void HandleTranslationUnit(ASTContext &Context){
 		TraverseDecl(Context.getTranslationUnitDecl());
 	}
+	//hand
+	bool VisitCXXRecordDecl(CXXRecordDecl *Declaration) {}
 };
 
 class ClpAction:public ASTFrontendAction{
