@@ -4,13 +4,17 @@
 #include <clang/Frontend/CompilerInvocation.h>
 //#include <clang/Frontend/ASTConsumers.h>
 #include <clang/AST/ASTConsumer.h>
+#include <clang/AST/ASTContext.h>
 #include <clang/AST/RecursiveASTVisitor.h>
 #include <memory>
 
 using namespace clang;
 
 class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
-
+	public:
+	virtual void HandleTranslationUnit(ASTContext &Context){
+		TraverseDecl(Context.getTranslationUnitDecl());
+	}
 };
 
 class ClpAction:public ASTFrontendAction{

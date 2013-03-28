@@ -41,14 +41,14 @@ bool ClpInvocation::RunCode(vector<string> Code){
 	Driver.setCheckInputsExist(false);
 	driver::Compilation Compilation{*Driver.BuildCompilation(llvm::makeArrayRef(Argv))};
 
-	clang::driver::ArgStringList CC1Args = getCC1Arguments(&Diagnostics, Compilation.get());
-	/*if (CC1Args == NULL) {
+	/*clang::driver::ArgStringList CC1Args = getCC1Arguments(&Diagnostics, Compilation.get());
+	if (CC1Args == NULL) {
 		return false;
 	}*/
 	CompilerInvocation Invocation{};
-	clang::CompilerInvocation::CreateFromArgs(
+	/*clang::CompilerInvocation::CreateFromArgs(
 		&Invocation, CC1Args.data() + 1, CC1Args.data() + CC1Args.size(),
-		&Diagnostics);
+		&Diagnostics);*/
 	Invocation.getFrontendOpts().DisableFree = false;
 	return RunInvocation(Invocation);
 }
