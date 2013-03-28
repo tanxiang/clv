@@ -16,7 +16,7 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 		TraverseDecl(Context.getTranslationUnitDecl());
 	}
 	//hand
-	bool VisitCXXRecordDecl(CXXRecordDecl *Declaration) {}
+	bool VisitCXXRecordDecl(CXXRecordDecl *Declaration) {return true;}
 };
 
 class ClpAction:public ASTFrontendAction{
