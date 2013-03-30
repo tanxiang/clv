@@ -3,9 +3,8 @@
 #include <clang/Frontend/FrontendDiagnostic.h>
 #include <clang/Frontend/TextDiagnosticPrinter.h>
 #include <clang/Tooling/CommonOptionsParser.h>
-
+//#include <clang/Frontend/ASTConsumers.h>
 #include <clang/Tooling/Tooling.h>
-#include <clang/Driver/Driver.h>
 #include <clang/Driver/Compilation.h>
 #include <llvm/Support/Host.h>
 #include <iostream>
@@ -41,29 +40,47 @@ bool ClpInvocation::RunCode(vector<string> Code){
 	Driver.setCheckInputsExist(false);
 	driver::Compilation Compilation{*Driver.BuildCompilation(llvm::makeArrayRef(Argv))};
 
+	const clang::driver::JobList &Jobs = Compilation.getJobs();
+	//need check job 
+	const clang::driver::Command *Cmd = cast<clang::driver::Command>(*Jobs.begin());
+	//need check cmd
+	clang::driver::ArgStringList CC1Args = Cmd->getArguments();
+	//need check cc1args
+
 	/*clang::driver::ArgStringList CC1Args = getCC1Arguments(&Diagnostics, Compilation.get());
 	if (CC1Args == NULL) {
 		return false;
 	}*/
 	CompilerInvocation Invocation{};
-	/*clang::CompilerInvocation::CreateFromArgs(
-		&Invocation, CC1Args.data() + 1, CC1Args.data() + CC1Args.size(),
-		&Diagnostics);*/
+	clang::CompilerInvocation::CreateFromArgs(
+		Invocation, CC1Args.data() + 1, CC1Args.data() + CC1Args.size(),
+		Diagnostics);
 	Invocation.getFrontendOpts().DisableFree = false;
-	return RunInvocation(Invocation);
+	Compilation.PrintJob(llvm::errs(), Compilation.getJobs(), "\n", true);
+	llvm::errs() << "\n";
+
+
+	return RunInvocation(Invocation,CC1Args);
 }
 
-bool ClpInvocation::RunInvocation(CompilerInvocation &Invocation){
-	CompilerInstance Compiler;
+bool ClpInvocation::RunInvocation(CompilerInvocation &Invocation,driver::ArgStringList &CC1Args){
+//////////////////////////////
+	clang::CompilerInstance Compiler;
 	Compiler.setInvocation(&Invocation);
-	//Compiler.createDiagnostics();
+	//  Compiler.setFileManager(Files);
+
+	Compiler.createDiagnostics(CC1Args.size(),
+                             const_cast<char**>(CC1Args.data()));
 	if (!Compiler.hasDiagnostics())
 		return false;
-	return Compiler.ExecuteAction(*Action);
+	//  Compiler.createSourceManager(*Files);
+	//addFileMappingsTo(Compiler.getSourceManager());
+	const bool Success = Compiler.ExecuteAction(*Action);
 	Compiler.resetAndLeakFileManager();
+	return Success;
 }
 
-int main(int argc,const char** argv){
+int rmain(int argc,const char** argv){
 	//CommonOptionsParser OptionsParser(argc, argv);
 	//ClangTool Tool(OptionsParser.GetCompilations(),OptionsParser.GetSourcePathList());
 	//return Tool.run(newFrontendActionFactory<clang::SyntaxOnlyAction>());
@@ -71,4 +88,6 @@ int main(int argc,const char** argv){
 	runToolOnCodeWithArgs(new ClpAction,
 	" class X {public:\n int in;};X x1{};\nint main(){ x1.in==0;}",
 	std::vector<std::string> {"-std=c++11"});
+	return 0;
 }
+
