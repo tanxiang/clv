@@ -20,7 +20,7 @@ ASTConsumer* ClpAction::CreateASTConsumer(CompilerInstance &CI, llvm::StringRef 
 	//return CreateASTViewer();
 }
 
-bool ClpInvocation::RunCode(vector<string> Code){
+bool ClpInvocation::RunCode(vector<string> &Code){
 	vector<string> Commands;
 	vector<const char*> Argv;
 	Commands.push_back("clang-tool");
@@ -60,10 +60,10 @@ bool ClpInvocation::RunCode(vector<string> Code){
 	llvm::errs() << "\n";
 
 
-	return RunInvocation(Invocation,CC1Args);
+	return RunInvocation(Code,Invocation,CC1Args);
 }
 
-bool ClpInvocation::RunInvocation(CompilerInvocation &Invocation,driver::ArgStringList &CC1Args){
+bool ClpInvocation::RunInvocation(vector<string> &Code,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args){
 //////////////////////////////
 	clang::CompilerInstance Compiler;
 	Compiler.setInvocation(&Invocation);
@@ -73,11 +73,19 @@ bool ClpInvocation::RunInvocation(CompilerInvocation &Invocation,driver::ArgStri
                              const_cast<char**>(CC1Args.data()));
 	if (!Compiler.hasDiagnostics())
 		return false;
-	//  Compiler.createSourceManager(*Files);
-	//addFileMappingsTo(Compiler.getSourceManager());
+	
+	Compiler.createFileManager();
+	Compiler.createSourceManager(Compiler.getFileManager());
+	CodeToCompilerInstance(Code,Compiler);
 	const bool Success = Compiler.ExecuteAction(*Action);
 	Compiler.resetAndLeakFileManager();
 	return Success;
+}
+
+void CodeToCompilerInstance(vector<string> &Code,CodeToCompilerInstance &Compiler){
+	const llvm::MemoryBuffer *Input = llvm::MemoryBuffer::getMemBuffer();
+	const FileEntry *FromFile = Compiler.getFileManager().getVirtualFile(It->getKey(), Input->getBufferSize(), 0);
+	Compiler.getSourceManager().overrideFileContents(FromFile,Input);
 }
 
 int rmain(int argc,const char** argv){
