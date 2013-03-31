@@ -39,4 +39,4 @@ public:
 	bool RunCode(std::vector<std::string> &Code);
 };
 
-void CodeToSourceManager(std::vector<std::string> &Code,SourceManager &Sources);
+void CodeToCompilerInstance(std::vector<std::string> &Code,CompilerInstance &Compiler);
