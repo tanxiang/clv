@@ -1,0 +1,13 @@
+cxxflags = -std=c++11
+linkflags = -L/usr/lib/llvm -lclangTooling -lclangFrontend -lclangDriver -lclangParse -lclangSema -lclangAST -lclangSerialization -lclangLex -lclangBasic -lclangEdit -lclang -lclangAnalysis `llvm-config --libs` -ldl -lpthread
+
+rule cxx
+    command = clang++ $cxxflags -c $in -o $out
+
+build clvfile.o: cxx clvfile.cc
+build clangparse.o: cxx clangparse.cc
+
+rule link
+    command = clang++ $in $cxxflags $linkflags -o $out
+
+build clv: link clvfile.o clangparse.o
