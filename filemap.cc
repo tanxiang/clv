@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include "filemap.h"
 
+#include <iostream>
+
 FileMap::FileMap(char* FilePath){
 	FD=open(FilePath,O_RDWR);
 	if(FD == -1){
@@ -22,6 +24,7 @@ FileMap::FileMap(char* FilePath){
 		close(FD);
 		throw;
 	}
+	std::cout<<P<<"########"<<std::endl;	
 }
 
 FileMap::~FileMap(){

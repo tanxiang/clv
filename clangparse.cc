@@ -83,8 +83,8 @@ bool ClpInvocation::RunInvocation(char* Code,int Length,CompilerInvocation &Invo
 }
 
 void CodeToCompilerInstance(char* Code,int Length,CompilerInstance &Compiler){
-	const llvm::MemoryBuffer *Input;// = llvm::MemoryBuffer::getMemBuffer();
-	const FileEntry *FromFile;// = Compiler.getFileManager().getVirtualFile(It->getKey(), Input->getBufferSize(), 0);
+	const llvm::MemoryBuffer *Input = llvm::MemoryBuffer::getMemBuffer(Code);
+	const FileEntry *FromFile = Compiler.getFileManager().getVirtualFile("input.cc",Length, 0);
 	Compiler.getSourceManager().overrideFileContents(FromFile,Input);
 }
 

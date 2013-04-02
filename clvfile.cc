@@ -19,8 +19,8 @@ int main(int argc,char* argv[])
 	//std::vector<std::string> {"-std=c++11"});
 	//copy(text.begin(),text.end(),ostream_iterator<Line>{cout,"\n"});
 	FileMap Map{argv[1]};
-	cout<<static_cast<char*>(Map.Get());
-	ClpInvocation Invocation{vector<string>{"-std=c++11","-v"},new ClpAction{}};
+	//cout<<static_cast<char*>(Map.Get());
+	ClpInvocation Invocation{vector<string>{"-std=c++11","-c"},new ClpAction{}};
 	Invocation.RunCode(static_cast<char*>(Map.Get()),Map.GetLength());
 	char c;
 	cin>>c;
