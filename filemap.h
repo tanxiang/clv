@@ -6,5 +6,8 @@ class FileMap{
 protected:
 public:
 	FileMap(char* FilePath);
-	~FileMap();	
+	~FileMap();
+	void* Get(){return P;}
+	int GetLength(){return Length;}
+	int Merge();
 };

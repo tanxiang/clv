@@ -12,12 +12,12 @@ FileMap::FileMap(char* FilePath){
 		throw;
 	}
 	struct stat sb;
-	if(fstat(FD, &sb) == -1){
+	if(fstat(FD,&sb) == -1){
 		close(FD);
 		throw;
 	}
 	Length=sb.st_size;
-	P = mmap(NULL, Length , PROT_READ|PROT_WRITE,MAP_SHARED , FD, 0);
+	P = mmap(NULL,Length,PROT_READ|PROT_WRITE,MAP_SHARED,FD,0);
 	if(P == MAP_FAILED){
 		close(FD);
 		throw;
@@ -29,4 +29,7 @@ FileMap::~FileMap(){
 	close(FD);
 }
 
+int FileMap::Merge(){
+	return msync(P,Length,MS_SYNC);
+}
 

@@ -11,3 +11,4 @@ static inline std::istream &operator>>(std::istream &is, Line &l)
 
 typedef std::vector<Line> FileText;
 typedef std::list<FileText> FilesText;
+

@@ -31,12 +31,12 @@ class ClpInvocation{
 	std::vector<std::string> CommandLine;
 	std::unique_ptr<FrontendAction> Action;
 protected:
-	bool RunInvocation(std::vector<std::string> &Code,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args);
+	bool RunInvocation(char* Code,int Length,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args);
 public:
 	ClpInvocation(std::vector<std::string> CommandLine,FrontendAction *Action)
 	:CommandLine{CommandLine},Action{Action}{
 	}
-	bool RunCode(std::vector<std::string> &Code);
+	bool RunCode(char* Code,int Length);
 };
 
-void CodeToCompilerInstance(std::vector<std::string> &Code,CompilerInstance &Compiler);
+void CodeToCompilerInstance(char* Code,int Length,CompilerInstance &Compiler);
