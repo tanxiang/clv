@@ -14,4 +14,4 @@ build filemap.o: cxx filemap.cc
 rule link
     command = $cxx $in $cxxflags $linkflags -o $out
 
-build clv: link clvfile.o clangparse.o
+build clv: link clvfile.o clangparse.o filemap.o
