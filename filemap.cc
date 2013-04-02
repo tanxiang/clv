@@ -24,7 +24,6 @@ FileMap::FileMap(char* FilePath){
 		close(FD);
 		throw;
 	}
-	std::cout<<P<<"########"<<std::endl;	
 }
 
 FileMap::~FileMap(){

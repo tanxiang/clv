@@ -32,11 +32,11 @@ bool ClpInvocation::RunCode(char* Code,int Length){
 
 	IntrusiveRefCntPtr<DiagnosticOptions> DiagOpts = new DiagnosticOptions();
 	TextDiagnosticPrinter DiagnosticPrinter(llvm::errs(), &*DiagOpts);
-	DiagnosticsEngine Diagnostics{
+	IntrusiveRefCntPtr<DiagnosticsEngine> Diagnostics = new DiagnosticsEngine{
 		IntrusiveRefCntPtr<clang::DiagnosticIDs>{new DiagnosticIDs{}},
 		&*DiagOpts,&DiagnosticPrinter,false};
 
-	driver::Driver Driver{"clang-tool",llvm::sys::getDefaultTargetTriple(),"a.out",false,Diagnostics};
+	driver::Driver Driver{"clang-tool",llvm::sys::getDefaultTargetTriple(),"a.out",false,*Diagnostics};
 	Driver.setCheckInputsExist(false);
 	driver::Compilation Compilation{*Driver.BuildCompilation(llvm::makeArrayRef(Argv))};
 
@@ -47,20 +47,16 @@ bool ClpInvocation::RunCode(char* Code,int Length){
 	clang::driver::ArgStringList CC1Args = Cmd->getArguments();
 	//need check cc1args
 
-	/*clang::driver::ArgStringList CC1Args = getCC1Arguments(&Diagnostics, Compilation.get());
-	if (CC1Args == NULL) {
-		return false;
-	}*/
-	CompilerInvocation Invocation{};
+	IntrusiveRefCntPtr<CompilerInvocation> Invocation=new CompilerInvocation{};
 	clang::CompilerInvocation::CreateFromArgs(
-		Invocation, CC1Args.data() + 1, CC1Args.data() + CC1Args.size(),
-		Diagnostics);
-	Invocation.getFrontendOpts().DisableFree = false;
+		*Invocation, CC1Args.data() + 1, CC1Args.data() + CC1Args.size(),
+		*Diagnostics);
+	Invocation->getFrontendOpts().DisableFree = false;
 	Compilation.PrintJob(llvm::errs(), Compilation.getJobs(), "\n", true);
 	llvm::errs() << "\n";
 
 
-	return RunInvocation(Code,Length,Invocation,CC1Args);
+	return RunInvocation(Code,Length,*Invocation,CC1Args);
 }
 
 bool ClpInvocation::RunInvocation(char* Code,int Length,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args){
