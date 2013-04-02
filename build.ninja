@@ -1,13 +1,17 @@
-cxxflags = -std=c++11
+cxxflags = -std=c++11 -fpic -O2
 linkflags = -L/usr/lib/llvm -lclangTooling -lclangFrontend -lclangDriver -lclangParse -lclangSema -lclangAST -lclangSerialization -lclangLex -lclangBasic -lclangEdit -lclang -lclangAnalysis `llvm-config --libs` -ldl -lpthread
+cxx = g++
 
 rule cxx
-    command = clang++ $cxxflags -c $in -o $out
+    command = $cxx -MMD -MT $out -MF $out.d $cxxflags -c $in -o $out
+    description = CXX $out
+    depfile = $out.d
 
 build clvfile.o: cxx clvfile.cc
 build clangparse.o: cxx clangparse.cc
+build filemap.o: cxx filemap.cc
 
 rule link
-    command = clang++ $in $cxxflags $linkflags -o $out
+    command = $cxx $in $cxxflags $linkflags -o $out
 
 build clv: link clvfile.o clangparse.o
