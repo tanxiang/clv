@@ -12,12 +12,21 @@
 using namespace std;
 using namespace clang::tooling;
 
-//CommonOptionsParser OptionsParser(argc, argv);
-
 ASTConsumer* ClpAction::CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile){
 	//std::cout<<"cASTConsumer"<<std::endl;
 	return new ClpConsumer;
 	//return CreateASTViewer();
+}
+
+void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
+	//Context.getTranslationUnitDecl()->dump(llvm::outs());
+	TraverseDecl(Context.getTranslationUnitDecl());
+}
+
+bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
+	cout<<endl;
+	Declaration->dump(llvm::outs());
+	return true;
 }
 
 bool ClpInvocation::RunCode(char* Code,int Length){
@@ -55,18 +64,14 @@ bool ClpInvocation::RunCode(char* Code,int Length){
 	Compilation.PrintJob(llvm::errs(), Compilation.getJobs(), "\n", true);
 	llvm::errs() << "\n";
 
-
 	return RunInvocation(Code,Length,*Invocation,CC1Args);
 }
 
 bool ClpInvocation::RunInvocation(char* Code,int Length,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args){
-//////////////////////////////
 	clang::CompilerInstance Compiler;
 	Compiler.setInvocation(&Invocation);
-	//  Compiler.setFileManager(Files);
 
-	Compiler.createDiagnostics(CC1Args.size(),
-                             const_cast<char**>(CC1Args.data()));
+	Compiler.createDiagnostics(CC1Args.size(),const_cast<char**>(CC1Args.data()));
 	if (!Compiler.hasDiagnostics())
 		return false;
 	
@@ -82,16 +87,5 @@ void CodeToCompilerInstance(char* Code,int Length,CompilerInstance &Compiler){
 	const llvm::MemoryBuffer *Input = llvm::MemoryBuffer::getMemBuffer(Code);
 	const FileEntry *FromFile = Compiler.getFileManager().getVirtualFile("input.cc",Length, 0);
 	Compiler.getSourceManager().overrideFileContents(FromFile,Input);
-}
-
-int rmain(int argc,const char** argv){
-	//CommonOptionsParser OptionsParser(argc, argv);
-	//ClangTool Tool(OptionsParser.GetCompilations(),OptionsParser.GetSourcePathList());
-	//return Tool.run(newFrontendActionFactory<clang::SyntaxOnlyAction>());
-	
-	runToolOnCodeWithArgs(new ClpAction,
-	" class X {public:\n int in;};X x1{};\nint main(){ x1.in==0;}",
-	std::vector<std::string> {"-std=c++11"});
-	return 0;
 }
 

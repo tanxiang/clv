@@ -12,12 +12,13 @@
 using namespace clang;
 
 class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
+	typedef RecursiveASTVisitor<ClpConsumer> base;
 	public:
-	virtual void HandleTranslationUnit(ASTContext &Context){
-		TraverseDecl(Context.getTranslationUnitDecl());
-	}
+	virtual void HandleTranslationUnit(ASTContext &Context);
+
+	void HandleTopLevelSingleDecl(Decl *Declaration){};
 	//hand
-	bool VisitCXXRecordDecl(CXXRecordDecl *Declaration) {return true;}
+	bool VisitCXXRecordDecl(CXXRecordDecl *Declaration);
 };
 
 class ClpAction:public ASTFrontendAction{

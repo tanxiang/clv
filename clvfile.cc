@@ -22,6 +22,4 @@ int main(int argc,char* argv[])
 	//cout<<static_cast<char*>(Map.Get());
 	ClpInvocation Invocation{vector<string>{"-std=c++11","-c"},new ClpAction{}};
 	Invocation.RunCode(static_cast<char*>(Map.Get()),Map.GetLength());
-	char c;
-	cin>>c;
 }
