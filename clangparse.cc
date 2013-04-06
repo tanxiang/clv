@@ -24,8 +24,8 @@ void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 }
 
 bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
-	cout<<endl;
-	Declaration->dump(llvm::outs());
+	//cout<<endl;
+	//Declaration->dump(llvm::outs());
 	return true;
 }
 

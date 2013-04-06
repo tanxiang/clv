@@ -14,11 +14,13 @@ using namespace clang;
 class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	typedef RecursiveASTVisitor<ClpConsumer> base;
 	public:
-	virtual void HandleTranslationUnit(ASTContext &Context);
+	virtual void HandleTranslationUnit(ASTContext &Context) override;
 
-	void HandleTopLevelSingleDecl(Decl *Declaration){};
+	virtual bool HandleTopLevelDecl(DeclGroupRef D) override{}
 	//hand
 	bool VisitCXXRecordDecl(CXXRecordDecl *Declaration);
+	bool VisitCallExpr(CallExpr *expr){}
+
 };
 
 class ClpAction:public ASTFrontendAction{
