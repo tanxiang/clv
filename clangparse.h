@@ -19,10 +19,32 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 		for(DeclGroupRef::iterator It : D)
 			TraverseDecl(*It);
 	}*/
-
+	//AST中各种声明Node访问者方法
+	/*
+	void VisitDeclContext(DeclContext *DC, bool Indent) //?
+	void VisitTypedefDecl(TypedefDecl *D) //typedef ??
+	void VisitTypeAliasDecl(TypeAliasDecl *D) //using ?? as ??
+	void VisitEnumDecl(EnumDecl *D) //
+	void VisitFunctionDecl(FunctionDecl *D) 
+	void VisitFieldDecl(FieldDecl *D) // mutable?? 
+	void VisitLabelDecl(LabelDecl *D) // goto lable
+	void VisitVarDecl(VarDecl *D) //var
+	void VisitFileScopeAsmDecl(FileScopeAsmDecl *D) // inline asm
+	bool VisitNamespaceDecl(NamespaceDecl *D) //namespace ??
+	void VisitUsingDirectiveDecl(UsingDirectiveDecl *D) //using namespace ??
+	*/
 	bool VisitCXXRecordDecl(CXXRecordDecl *Declaration);
-	bool VisitCallExpr(CallExpr *expr){}
+	/*
+	void VisitLinkageSpecDecl(LinkageSpecDecl *D) //cpp link symb
+	void VisitTemplateDecl(const TemplateDecl *D);
+	void VisitFunctionTemplateDecl(FunctionTemplateDecl *D);
+	void VisitClassTemplateDecl(ClassTemplateDecl *D);
 
+	暂无objc特性支持计划
+	*/
+	//表达式node访问
+	bool VisitCallExpr(CallExpr *expr){}
+	//语义node访问方法
 };
 
 class ClpAction:public ASTFrontendAction{
