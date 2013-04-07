@@ -2,7 +2,6 @@
 #define __STDC_CONSTANT_MACROS
 #include <clang/Frontend/FrontendActions.h>
 #include <clang/Frontend/CompilerInvocation.h>
-
 #include <clang/AST/ASTConsumer.h>
 #include <clang/AST/ASTContext.h>
 #include <clang/AST/RecursiveASTVisitor.h>
@@ -16,8 +15,11 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	public:
 	virtual void HandleTranslationUnit(ASTContext &Context) override;
 
-	virtual bool HandleTopLevelDecl(DeclGroupRef D) override{}
-	//hand
+	/*virtual bool HandleTopLevelDecl(DeclGroupRef D) override{
+		for(DeclGroupRef::iterator It : D)
+			TraverseDecl(*It);
+	}*/
+
 	bool VisitCXXRecordDecl(CXXRecordDecl *Declaration);
 	bool VisitCallExpr(CallExpr *expr){}
 

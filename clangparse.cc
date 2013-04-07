@@ -1,9 +1,8 @@
 #include "clangparse.h"
 #include <clang/Frontend/CompilerInstance.h>
 #include <clang/Frontend/FrontendDiagnostic.h>
-#include <clang/Frontend/TextDiagnosticPrinter.h>
+//#include <clang/Frontend/TextDiagnosticPrinter.h>
 #include <clang/Tooling/CommonOptionsParser.h>
-//#include <clang/Frontend/ASTConsumers.h>
 #include <clang/Tooling/Tooling.h>
 #include <clang/Driver/Compilation.h>
 #include <llvm/Support/Host.h>
@@ -24,8 +23,20 @@ void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 }
 
 bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
-	//cout<<endl;
-	//Declaration->dump(llvm::outs());
+	llvm::outs()<< Declaration->getKindName();
+	if (Declaration->getIdentifier())
+		llvm::outs() << '\t' << *Declaration;
+	llvm::outs() << '\n';
+	//VisitDeclContext(Declaration);
+	if (Declaration->isCompleteDefinition() && Declaration->getNumBases()){
+		for(auto It = Declaration->bases_begin();
+			It !=Declaration->bases_end();++It){
+			llvm::outs() << '\t';
+			llvm::outs() << (It->isVirtual() ?  "V:" : "N:");
+			//llvm::outs() << It->getType();//.getAsString(PrintingPolicy{});
+			llvm::outs() << '\n';
+		}
+	}
 	return true;
 }
 
@@ -40,20 +51,21 @@ bool ClpInvocation::RunCode(char* Code,int Length){
 		Argv.push_back(Commands[I].c_str());
 
 	IntrusiveRefCntPtr<DiagnosticOptions> DiagOpts = new DiagnosticOptions();
-	TextDiagnosticPrinter DiagnosticPrinter(llvm::errs(), &*DiagOpts);
+	//TextDiagnosticPrinter DiagnosticPrinter(llvm::errs(), &*DiagOpts);
 	IntrusiveRefCntPtr<DiagnosticsEngine> Diagnostics = new DiagnosticsEngine{
 		IntrusiveRefCntPtr<clang::DiagnosticIDs>{new DiagnosticIDs{}},
-		&*DiagOpts,&DiagnosticPrinter,false};
+		&*DiagOpts,nullptr,false};
 
 	driver::Driver Driver{"clang-tool",llvm::sys::getDefaultTargetTriple(),"a.out",false,*Diagnostics};
 	Driver.setCheckInputsExist(false);
+
 	driver::Compilation Compilation{*Driver.BuildCompilation(llvm::makeArrayRef(Argv))};
 
-	const clang::driver::JobList &Jobs = Compilation.getJobs();
+	const auto &Jobs = Compilation.getJobs();
 	//need check job 
-	const clang::driver::Command *Cmd = cast<clang::driver::Command>(*Jobs.begin());
+	const auto *Cmd = cast<clang::driver::Command>(*Jobs.begin());
 	//need check cmd
-	clang::driver::ArgStringList CC1Args = Cmd->getArguments();
+	auto CC1Args = Cmd->getArguments();
 	//need check cc1args
 
 	IntrusiveRefCntPtr<CompilerInvocation> Invocation=new CompilerInvocation{};
@@ -61,8 +73,10 @@ bool ClpInvocation::RunCode(char* Code,int Length){
 		*Invocation, CC1Args.data() + 1, CC1Args.data() + CC1Args.size(),
 		*Diagnostics);
 	Invocation->getFrontendOpts().DisableFree = false;
-	Compilation.PrintJob(llvm::errs(), Compilation.getJobs(), "\n", true);
-	llvm::errs() << "\n";
+	//if("-v"){
+	//	Compilation.PrintJob(llvm::errs(), Compilation.getJobs(), "\n", true);
+	//	llvm::errs() << "\n";
+	//}
 
 	return RunInvocation(Code,Length,*Invocation,CC1Args);
 }
