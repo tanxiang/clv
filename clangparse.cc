@@ -19,7 +19,34 @@ ASTConsumer* ClpAction::CreateASTConsumer(CompilerInstance &CI, llvm::StringRef 
 
 void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 	//Context.getTranslationUnitDecl()->dump(llvm::outs());
+	pContext = &Context;
 	TraverseDecl(Context.getTranslationUnitDecl());
+}
+
+bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
+	if (Declaration->isInlineSpecified())  llvm::outs() << "inline ";
+	if (Declaration->isVirtualAsWritten()) llvm::outs() << "virtual ";
+	if (Declaration->isModulePrivate())    llvm::outs() << "__module_private__ ";
+	switch (Declaration->getStorageClassAsWritten()) {
+	case SC_None: break;
+	case SC_Extern: llvm::outs() << "extern "; break;
+	case SC_Static: llvm::outs() << "static "; break;
+	case SC_PrivateExtern: llvm::outs() << "__private_extern__ "; break;
+	case SC_Auto: case SC_Register: case SC_OpenCLWorkGroupLocal:
+		llvm_unreachable("invalid for functions");
+	}
+	llvm::outs() << Declaration->getNameInfo().getAsString() << "()\t"
+		<<Declaration->getType().getAsString() <<'\n';
+	auto Location = pContext->getFullLoc(Declaration->getLocStart());
+	if (Location.isValid())
+		llvm::outs() << "declaration at FileID=" << Location.getFileID().getHashValue()
+			<< "\tLine=" << Location.getSpellingLineNumber() 
+			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
+}
+
+bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
+	llvm::outs() << Declaration->getName() << "\t"
+		<< Declaration->getType().getAsString() <<'\n';
 }
 
 bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
@@ -27,13 +54,23 @@ bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
 	if (Declaration->getIdentifier())
 		llvm::outs() << '\t' << *Declaration;
 	llvm::outs() << '\n';
-	//VisitDeclContext(Declaration);
+	auto Location = pContext->getFullLoc(Declaration->getLocStart());
+	if (Location.isValid())
+		llvm::outs() << "declaration at FileID=" << Location.getFileID().getHashValue()
+			<< "\tLine=" << Location.getSpellingLineNumber() 
+			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
+
 	if (Declaration->isCompleteDefinition() && Declaration->getNumBases()){
 		for(auto It = Declaration->bases_begin();
-			It !=Declaration->bases_end();++It){
+			It !=Declaration->bases_end();++It){ //继承关系
 			llvm::outs() << '\t';
 			llvm::outs() << (It->isVirtual() ?  "V:" : "N:");
-			//llvm::outs() << It->getType();//.getAsString(PrintingPolicy{});
+			switch(It->getAccessSpecifier()) {
+			case AS_public:    llvm::outs() << "public:"; break;
+			case AS_protected: llvm::outs() << "protected:"; break;
+			case AS_private:   llvm::outs() << "private:"; break;
+			}
+			llvm::outs() << It->getType().getAsString();
 			llvm::outs() << '\n';
 		}
 	}

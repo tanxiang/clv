@@ -12,6 +12,7 @@ using namespace clang;
 
 class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	typedef RecursiveASTVisitor<ClpConsumer> base;
+	ASTContext *pContext;
 	public:
 	virtual void HandleTranslationUnit(ASTContext &Context) override;
 
@@ -25,10 +26,14 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	void VisitTypedefDecl(TypedefDecl *D) //typedef ??
 	void VisitTypeAliasDecl(TypeAliasDecl *D) //using ?? as ??
 	void VisitEnumDecl(EnumDecl *D) //
-	void VisitFunctionDecl(FunctionDecl *D) 
+	*/
+	bool VisitFunctionDecl(FunctionDecl *Declaration); 
+	/*
 	void VisitFieldDecl(FieldDecl *D) // mutable?? 
 	void VisitLabelDecl(LabelDecl *D) // goto lable
-	void VisitVarDecl(VarDecl *D) //var
+	*/
+	bool VisitVarDecl(VarDecl *Declaration); //var
+	/*
 	void VisitFileScopeAsmDecl(FileScopeAsmDecl *D) // inline asm
 	bool VisitNamespaceDecl(NamespaceDecl *D) //namespace ??
 	void VisitUsingDirectiveDecl(UsingDirectiveDecl *D) //using namespace ??
