@@ -1,7 +1,3 @@
 #!/bin/sh
-clang++ --std=c++11 clangparse.cc -L/usr/lib/llvm \
--lclangTooling -lclangFrontend -lclangDriver -lclangParse \
--lclangSema -lclangAST -lclangSerialization -lclangLex -lclangBasic \
--lclangEdit -lclang -lclangAnalysis \
-`llvm-config --libs` -ldl -lpthread
+clang++ --std=c++11 veiw.cc -I../skia/include/veiws -I../skia/include/core -I../skia/include/config -I../skia/include/xml -c
 

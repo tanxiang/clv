@@ -1,5 +1,6 @@
 #define __STDC_LIMIT_MACROS
 #define __STDC_CONSTANT_MACROS
+
 #include <clang/Frontend/FrontendActions.h>
 #include <clang/Frontend/CompilerInvocation.h>
 #include <clang/AST/ASTConsumer.h>
@@ -48,8 +49,9 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	暂无objc特性支持计划
 	*/
 	//表达式node访问
-	bool VisitCallExpr(CallExpr *expr){}
+	bool VisitCallExpr(CallExpr *expr){return true;}
 	//语义node访问方法
+	
 };
 
 class ClpAction:public ASTFrontendAction{
