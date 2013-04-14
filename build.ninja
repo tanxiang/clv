@@ -1,5 +1,5 @@
 cxxflags = -std=c++11 -fpic -O2
-cxxflags_skia = -I../skia/include/views -I../skia/include/core -I../skia/include/config -I../skia/include/xml
+cxxflags_skia = -I../skia/include/views -I../skia/include/core -I../skia/include/config -I../skia/include/xml -I../skia/include/gpu -I../skia/include/utils -I../skia/src/gpu
 
 linkflags_clang = -L/usr/lib/llvm -lclangTooling -lclangFrontend -lclangDriver -lclangParse -lclangSema -lclangAST -lclangSerialization -lclangLex -lclangBasic -lclangEdit -lclang -lclangAnalysis `llvm-config --libs` -ldl -lpthread
 
