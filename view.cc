@@ -40,11 +40,11 @@ public:
 	};
 
 	ClvWindow(void* hwnd);//:SkOSWindow{nullptr};//{}
-	virtual ~ClvWindow(){};
+	virtual ~ClvWindow(){detach();};
 
 	virtual SkCanvas* createCanvas() override;
 
-	virtual void draw(SkCanvas* canvas) override;
+	//virtual void draw(SkCanvas* canvas) override;
 
 	void setDeviceType(DeviceType type);
 	DeviceType getDeviceType() const { return fDeviceType; }
@@ -72,13 +72,15 @@ private:
 class ClvView : public SkView {
 public:
 	ClvView():fBGColor(SK_ColorWHITE){
+		setVisibleP(true);
+		setClipToBounds(false);
 	}
 
 	virtual ~ClvView(){}
 
 protected:
 	void onDrawBackground(SkCanvas*);
-	virtual void draw(SkCanvas*) override;
+	//virtual void draw(SkCanvas*) override;
 	virtual void onDraw(SkCanvas*) override;
 
 	SkColor fBGColor;
@@ -95,35 +97,36 @@ static void inline postEventToSink(SkEvent* evt, SkEventSink* sink) {
 
 ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd){
 	cout<<__FUNCTION__<<endl;
-
+	fMSAASampleCount=0;
 	AttachmentInfo attachmentInfo;
-	bool result = attach(kNativeGL_BackEndType, 2, &attachmentInfo);
-	if(!result){
-		cerr<<"3D Attch err"<<endl;
-		//canvas = INHERITED::createCanvas();
-		//return canvas;
-	}
-		cerr<<"try 3D Attch"<<endl;
+	bool result = attach(kNativeGL_BackEndType, fMSAASampleCount, &attachmentInfo);
+	if(!result)
+		cerr<<"3D Attach err"<<endl;
+
 	fCurIntf = GrGLCreateNativeInterface();
-		cerr<<"try 3D Attch"<<endl;
 	fCurContext = GrContext::Create(kOpenGL_GrBackend, (GrBackendContext) fCurIntf);
-		cerr<<"try 3D Create"<<endl;
 	if (NULL == fCurContext || NULL == fCurIntf) {
-		cerr<<"3D Create err"<<endl;
+		cerr<<"GrContext Create err"<<endl;
 		detach();
 	}
+
+	//attach(kNativeGL_BackEndType, fMSAASampleCount, &attachmentInfo);
 	GrBackendRenderTargetDesc desc;
 	desc.fWidth = SkScalarRound(width());
 	desc.fHeight = SkScalarRound(height());
+
 	desc.fConfig = kSkia8888_GrPixelConfig;
 	desc.fOrigin = kBottomLeft_GrSurfaceOrigin;
 	desc.fSampleCnt = attachmentInfo.fSampleCount;
 	desc.fStencilBits = attachmentInfo.fStencilBits;
-	GrGLint buffer;
-	GR_GL_GetIntegerv(fCurIntf, GR_GL_FRAMEBUFFER_BINDING, &buffer);
-	desc.fRenderTargetHandle = buffer;
+	GrGLint FBid;
+	GR_GL_GetIntegerv(fCurIntf, GR_GL_FRAMEBUFFER_BINDING, &FBid);
+cerr<<desc.fWidth<<'X'<<desc.fHeight<<",hand="<<FBid<<endl;
+	desc.fRenderTargetHandle = FBid;
+//SkSafeUnref(fCurRenderTarget);
 	fCurRenderTarget = fCurContext->wrapBackendRenderTarget(desc);
-	fCurContext->setRenderTarget(fCurRenderTarget);
+	//fCurContext->setRenderTarget(fCurRenderTarget);
+	//	detach();
 	//auto fTypeface = SkTypeface::CreateFromTypeface(NULL, SkTypeface::kBold);
 	//load view
 	//SkView::F2BIter iter(this);
@@ -134,30 +137,29 @@ ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd){
 	//}
 
 	//setConfig(SkBitmap::kRGB_565_Config);
-	setConfig(SkBitmap::kARGB_8888_Config);
+	//setConfig(SkBitmap::kARGB_8888_Config);
 	setVisibleP(true);
-	//setClipToBounds(false);
-	//attachChildToFront(new ClvView{})->unref();	
+	setClipToBounds(false);
+	//attachChildToFront(new ClvView{})->unref();
+	//detach();	
 }
 
 SkCanvas* ClvWindow::createCanvas() {
 	cout<<__FUNCTION__<<endl;	//return INHERITED::createCanvas();
 	SkAutoTUnref<SkDevice> device{new SkGpuDevice{fCurContext, fCurRenderTarget}};
-		cerr<<"try 3D dev"<<endl;
-
+		cerr<<"try SkDevice"<<endl;
 	return new SkCanvas{device};
-
 }
-
+/*
 void ClvWindow::draw(SkCanvas* canvas){
 	cout<<__FUNCTION__<<endl;
 		canvas->drawColor(0xFFFF8080);
 }
-
+*/
 bool ClvWindow::onEvent(const SkEvent& evt){
-	SkString typeE;
-	evt.getType(&typeE);
-	cout<<__FUNCTION__<<':'<<typeE.c_str()<<endl;
+	//SkString typeE;
+	//evt.getType(&typeE);
+	//cout<<__FUNCTION__<<':'<<typeE.c_str()<<endl;
 	//if(evt.isType(gUpdateWindowTitleEvtName)){
 	//	updateTitle();
 	//	return true;
@@ -169,9 +171,22 @@ bool ClvWindow::onClick(Click* click){
 	cout<<__FUNCTION__<<endl;
 	return true;
 }
-
+/*
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+#include <X11/XKBlib.h>
+#include <GL/glx.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+	  glBegin(GL_POINTS);
+  glVertex3f(0,10,0);
+  glVertex3f(10,10,0);
+  glVertex3f(0,0,0);
+  glEnd();
+*/
 void ClvWindow::onDraw(SkCanvas* canvas){
-	cout<<__FUNCTION__<<endl;
+	canvas->drawColor(0xFFFF8080);
+	cout<<__FUNCTION__<<fCurRenderTarget->numSamples()<<endl;
 }
 
 bool ClvWindow::onHandleKey(SkKey key) {
@@ -195,9 +210,6 @@ bool ClvWindow::onHandleKey(SkKey key) {
 	return INHERITED::onHandleKey(key);
 }
 
-void ClvView::draw(SkCanvas* canvas){
-	cout<<__FUNCTION__<<endl;
-}
 
 void ClvView::onDraw(SkCanvas* canvas){
 	cout<<__FUNCTION__<<endl;
