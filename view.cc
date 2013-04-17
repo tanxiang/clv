@@ -44,7 +44,7 @@ public:
 
 	virtual SkCanvas* createCanvas() override;
 
-	//virtual void draw(SkCanvas* canvas) override;
+	virtual void draw(SkCanvas* canvas) override;
 
 	void setDeviceType(DeviceType type);
 	DeviceType getDeviceType() const { return fDeviceType; }
@@ -52,6 +52,8 @@ public:
 protected:
 	virtual bool onHandleKey(SkKey key) override;
 	virtual void onDraw(SkCanvas* canvas) override;
+	virtual void onSizeChange() override;
+
 	virtual bool onEvent(const SkEvent& evt) override;
 	virtual bool onClick(Click* click) override;
 private:
@@ -64,6 +66,7 @@ private:
 	GrContext*              fCurContext;
 	const GrGLInterface*    fCurIntf;
 	GrRenderTarget*         fCurRenderTarget;
+	SkTypeface*		fTypeface;
 	int fMSAASampleCount;
 
 	typedef SkOSWindow INHERITED;
@@ -97,6 +100,13 @@ static void inline postEventToSink(SkEvent* evt, SkEventSink* sink) {
 
 ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd){
 	cout<<__FUNCTION__<<endl;
+	fTypeface = SkTypeface::CreateFromTypeface(NULL, SkTypeface::kBold);
+	//setConfig(SkBitmap::kRGB_565_Config);
+	setConfig(SkBitmap::kARGB_8888_Config);
+	setVisibleP(true);
+	setClipToBounds(false);
+	//attachChildToFront(new ClvView{})->unref();
+
 	fMSAASampleCount=0;
 	AttachmentInfo attachmentInfo;
 	bool result = attach(kNativeGL_BackEndType, fMSAASampleCount, &attachmentInfo);
@@ -121,13 +131,13 @@ ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd){
 	desc.fStencilBits = attachmentInfo.fStencilBits;
 	GrGLint FBid;
 	GR_GL_GetIntegerv(fCurIntf, GR_GL_FRAMEBUFFER_BINDING, &FBid);
-cerr<<desc.fWidth<<'X'<<desc.fHeight<<",hand="<<FBid<<endl;
+	cerr<<desc.fWidth<<'X'<<desc.fHeight<<",hand="<<FBid<<endl;
 	desc.fRenderTargetHandle = FBid;
 //SkSafeUnref(fCurRenderTarget);
 	fCurRenderTarget = fCurContext->wrapBackendRenderTarget(desc);
 	//fCurContext->setRenderTarget(fCurRenderTarget);
 	//	detach();
-	//auto fTypeface = SkTypeface::CreateFromTypeface(NULL, SkTypeface::kBold);
+
 	//load view
 	//SkView::F2BIter iter(this);
 	//SkView* prev = iter.next();
@@ -136,11 +146,6 @@ cerr<<desc.fWidth<<'X'<<desc.fHeight<<",hand="<<FBid<<endl;
 	//	prev->detachFromParent();
 	//}
 
-	//setConfig(SkBitmap::kRGB_565_Config);
-	//setConfig(SkBitmap::kARGB_8888_Config);
-	setVisibleP(true);
-	setClipToBounds(false);
-	//attachChildToFront(new ClvView{})->unref();
 	//detach();	
 }
 
@@ -150,12 +155,29 @@ SkCanvas* ClvWindow::createCanvas() {
 		cerr<<"try SkDevice"<<endl;
 	return new SkCanvas{device};
 }
-/*
+
 void ClvWindow::draw(SkCanvas* canvas){
 	cout<<__FUNCTION__<<endl;
-		canvas->drawColor(0xFFFF8080);
+	INHERITED::draw(canvas);
+
+	fCurContext->flush();
+	fCurContext->setRenderTarget(fCurRenderTarget);
+	/**
+	const SkBitmap& bm = getBitmap();
+	fCurRenderTarget->writePixels(0, 0,
+		bm.width(), bm.height(),
+		kSkia8888_GrPixelConfig,
+		bm.getPixels(),
+		bm.rowBytes());
+	*/
+	present();
 }
-*/
+
+void ClvWindow::onSizeChange(){
+	INHERITED::onSizeChange();
+	cout<<__FUNCTION__<<endl;
+}
+
 bool ClvWindow::onEvent(const SkEvent& evt){
 	//SkString typeE;
 	//evt.getType(&typeE);
@@ -178,7 +200,7 @@ bool ClvWindow::onClick(Click* click){
 #include <GL/glx.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-	  glBegin(GL_POINTS);
+  glBegin(GL_POINTS);
   glVertex3f(0,10,0);
   glVertex3f(10,10,0);
   glVertex3f(0,0,0);
