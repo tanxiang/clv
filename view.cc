@@ -8,20 +8,15 @@
 #include "SkString.h"
 #include "SkTouchGesture.h"
 #include "SkWindow.h"
-
 #include "SkTypeface.h"
 
-//#include "gm.h"
 #include <memory>
-
 
 #include "gl/GrGLInterface.h"
 #include "gl/GrGLUtil.h"
 #include "GrRenderTarget.h"
 #include "GrContext.h"
 #include "SkGpuDevice.h"
-
-static const char gUpdateWindowTitleEvtName[] = "SkUpdateWindowTitle";
 
 class ClvWindow : public SkOSWindow {
 	void* hwnd;
@@ -39,15 +34,15 @@ public:
 		kDeviceTypeCnt
 	};
 
-	ClvWindow(void* hwnd);//:SkOSWindow{nullptr};//{}
+	ClvWindow(void* hwnd);
 	virtual ~ClvWindow(){detach();};
 
 	virtual SkCanvas* createCanvas() override;
-
 	virtual void draw(SkCanvas* canvas) override;
 
 	void setDeviceType(DeviceType type);
 	DeviceType getDeviceType() const { return fDeviceType; }
+	bool setFormat();
 
 protected:
 	virtual bool onHandleKey(SkKey key) override;
@@ -68,7 +63,8 @@ private:
 	GrRenderTarget*         fCurRenderTarget;
 	SkTypeface*		fTypeface;
 	int fMSAASampleCount;
-
+	SkPaint paint;
+	SkColor fBGColor;
 	typedef SkOSWindow INHERITED;
 };
 
@@ -100,7 +96,6 @@ static void inline postEventToSink(SkEvent* evt, SkEventSink* sink) {
 
 ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd){
 	cout<<__FUNCTION__<<endl;
-	fTypeface = SkTypeface::CreateFromTypeface(NULL, SkTypeface::kBold);
 	//setConfig(SkBitmap::kRGB_565_Config);
 	setConfig(SkBitmap::kARGB_8888_Config);
 	setVisibleP(true);
@@ -120,7 +115,6 @@ ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd){
 		detach();
 	}
 
-	//attach(kNativeGL_BackEndType, fMSAASampleCount, &attachmentInfo);
 	GrBackendRenderTargetDesc desc;
 	desc.fWidth = SkScalarRound(width());
 	desc.fHeight = SkScalarRound(height());
@@ -131,12 +125,10 @@ ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd){
 	desc.fStencilBits = attachmentInfo.fStencilBits;
 	GrGLint FBid;
 	GR_GL_GetIntegerv(fCurIntf, GR_GL_FRAMEBUFFER_BINDING, &FBid);
-	cerr<<desc.fWidth<<'X'<<desc.fHeight<<",hand="<<FBid<<endl;
+	//cerr<<desc.fWidth<<'X'<<desc.fHeight<<",hand="<<FBid<<endl;
 	desc.fRenderTargetHandle = FBid;
-//SkSafeUnref(fCurRenderTarget);
+	//SkSafeUnref(fCurRenderTarget);
 	fCurRenderTarget = fCurContext->wrapBackendRenderTarget(desc);
-	//fCurContext->setRenderTarget(fCurRenderTarget);
-	//	detach();
 
 	//load view
 	//SkView::F2BIter iter(this);
@@ -144,25 +136,33 @@ ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd){
 	//if (prev) {
 	//	cout<<"get prev\n"<<endl;
 	//	prev->detachFromParent();
-	//}
+	//}	
+}
 
-	//detach();	
+bool ClvWindow::setFormat(){
+	fBGColor = 0xFF888888;
+	fTypeface = SkTypeface::CreateFromName("Source Code Pro", SkTypeface::kNormal);
+	paint.setTypeface(fTypeface);
+	SkScalar textSize = SkIntToScalar(30);
+        paint.setAntiAlias(true);
+	paint.setLCDRenderText(true);
+	paint.setTextSize(textSize);
+	paint.setColor(0xFF00FFFF);
 }
 
 SkCanvas* ClvWindow::createCanvas() {
 	cout<<__FUNCTION__<<endl;	//return INHERITED::createCanvas();
 	SkAutoTUnref<SkDevice> device{new SkGpuDevice{fCurContext, fCurRenderTarget}};
-		cerr<<"try SkDevice"<<endl;
 	return new SkCanvas{device};
 }
 
 void ClvWindow::draw(SkCanvas* canvas){
 	cout<<__FUNCTION__<<endl;
+	setFormat();
 	INHERITED::draw(canvas);
-
 	fCurContext->flush();
+	/** Raster bits into GPU RenderTarget
 	fCurContext->setRenderTarget(fCurRenderTarget);
-	/**
 	const SkBitmap& bm = getBitmap();
 	fCurRenderTarget->writePixels(0, 0,
 		bm.width(), bm.height(),
@@ -174,8 +174,23 @@ void ClvWindow::draw(SkCanvas* canvas){
 }
 
 void ClvWindow::onSizeChange(){
-	INHERITED::onSizeChange();
 	cout<<__FUNCTION__<<endl;
+	INHERITED::onSizeChange();
+
+	AttachmentInfo attachmentInfo;
+	attach(kNativeGL_BackEndType, fMSAASampleCount, &attachmentInfo);
+	GrBackendRenderTargetDesc desc;
+	desc.fWidth = SkScalarRound(width());
+	desc.fHeight = SkScalarRound(height());
+	desc.fConfig = kSkia8888_GrPixelConfig;
+	desc.fOrigin = kBottomLeft_GrSurfaceOrigin;
+	desc.fSampleCnt = attachmentInfo.fSampleCount;
+	desc.fStencilBits = attachmentInfo.fStencilBits;
+	GrGLint FBid;
+	GR_GL_GetIntegerv(fCurIntf, GR_GL_FRAMEBUFFER_BINDING, &FBid);
+	desc.fRenderTargetHandle = FBid;
+	SkSafeUnref(fCurRenderTarget);
+	fCurRenderTarget = fCurContext->wrapBackendRenderTarget(desc);
 }
 
 bool ClvWindow::onEvent(const SkEvent& evt){
@@ -193,22 +208,19 @@ bool ClvWindow::onClick(Click* click){
 	cout<<__FUNCTION__<<endl;
 	return true;
 }
-/*
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/XKBlib.h>
-#include <GL/glx.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-  glBegin(GL_POINTS);
-  glVertex3f(0,10,0);
-  glVertex3f(10,10,0);
-  glVertex3f(0,0,0);
-  glEnd();
-*/
+
 void ClvWindow::onDraw(SkCanvas* canvas){
-	canvas->drawColor(0xFFFF8080);
-	cout<<__FUNCTION__<<fCurRenderTarget->numSamples()<<endl;
+	cout<<__FUNCTION__<<endl;
+	canvas->drawColor(fBGColor);
+	const char* text = "HHHamburgefonts\n iii";
+        size_t len = strlen(text);
+        SkScalar x0 = SkIntToScalar(10);
+        SkScalar x1 = SkIntToScalar(310);
+        SkScalar y = SkIntToScalar(20);
+	for (int i = 0; i < 20; i++) {
+		canvas->drawText(text, len, x0, y, paint);
+		y += paint.getFontSpacing();
+	}
 }
 
 bool ClvWindow::onHandleKey(SkKey key) {
@@ -249,6 +261,5 @@ void application_term() {
 
 SkOSWindow* create_sk_window(void* hwnd, int argc, char** argv) {
 	return new ClvWindow{hwnd};
-	//return new SkOSWindow{nullptr};
 }
 
