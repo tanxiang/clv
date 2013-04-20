@@ -46,18 +46,21 @@ public:
 
 protected:
 	virtual bool onHandleKey(SkKey key) override;
+	virtual bool onHandleChar(SkUnichar uni) override;
+	virtual Click* onFindClickHandler(SkScalar x, SkScalar y,unsigned modi) override;
+	virtual bool onClick(Click* click) override;
 	virtual void onDraw(SkCanvas* canvas) override;
 	virtual void onSizeChange() override;
 
 	virtual bool onEvent(const SkEvent& evt) override;
-	virtual bool onClick(Click* click) override;
 private:
 	DeviceType fDeviceType;
 
-	//SkTouchGesture fGesture;
+	SkTouchGesture fGesture;
 	//SkScalar fZoomLevel;
 	//SkScalar fZoomScale;
-
+	//SkScrollBarView ScrollBarX,* ScrollBarY;
+	int fScrollX, fScrollY;
 	GrContext*              fCurContext;
 	const GrGLInterface*    fCurIntf;
 	GrRenderTarget*         fCurRenderTarget;
@@ -139,6 +142,38 @@ ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd){
 	//}	
 }
 
+bool ClvWindow::onHandleChar(SkUnichar uni) {//input
+	cout<<__FUNCTION__<<uni<<endl;
+	int dx = 0xFF;
+	int dy = 0xFF;
+	switch (uni) {
+	case '5': dx =  0; dy =  0; break;
+	case '8': dx =  0; dy = -1; break;
+	case '6': dx =  1; dy =  0; break;
+	case '2': dx =  0; dy =  1; break;
+	case '4': dx = -1; dy =  0; break;
+	case '7': dx = -1; dy = -1; break;
+	case '9': dx =  1; dy = -1; break;
+	case '3': dx =  1; dy =  1; break;
+	case '1': dx = -1; dy =  1; break;
+	//default: break;
+	}
+	
+	return INHERITED::onHandleChar(uni);
+}
+
+SkView::Click* ClvWindow::onFindClickHandler(SkScalar x, SkScalar y,unsigned modi){
+	cout<<__FUNCTION__<<x<<'.'<<y<<endl;
+	return INHERITED::onFindClickHandler(x,y,modi);
+}
+
+bool ClvWindow::onClick(Click* click) {
+	float x = static_cast<float>(click->fICurr.fX);
+	float y = static_cast<float>(click->fICurr.fY);
+	cout<<__FUNCTION__<<x<<'.'<<y<<endl;
+	return true;
+}
+
 bool ClvWindow::setFormat(){
 	fBGColor = 0xFF888888;
 	fTypeface = SkTypeface::CreateFromName("Source Code Pro", SkTypeface::kNormal);
@@ -148,10 +183,11 @@ bool ClvWindow::setFormat(){
 	paint.setLCDRenderText(true);
 	paint.setTextSize(textSize);
 	paint.setColor(0xFF00FFFF);
+	return true;
 }
 
 SkCanvas* ClvWindow::createCanvas() {
-	cout<<__FUNCTION__<<endl;	//return INHERITED::createCanvas();
+	//cout<<__FUNCTION__<<endl;return INHERITED::createCanvas();
 	SkAutoTUnref<SkDevice> device{new SkGpuDevice{fCurContext, fCurRenderTarget}};
 	return new SkCanvas{device};
 }
@@ -204,10 +240,6 @@ bool ClvWindow::onEvent(const SkEvent& evt){
 	return INHERITED::onEvent(evt);
 }
 
-bool ClvWindow::onClick(Click* click){
-	cout<<__FUNCTION__<<endl;
-	return true;
-}
 
 void ClvWindow::onDraw(SkCanvas* canvas){
 	cout<<__FUNCTION__<<endl;
