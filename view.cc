@@ -18,6 +18,25 @@
 #include "GrContext.h"
 #include "SkGpuDevice.h"
 
+class ClvScroller : public SkView {
+public:
+	enum ScrollerType{
+		ScrollX,ScrollY
+	};
+	ClvScroller(ScrollerType st);
+	virtual ~ClvScroller(){}
+
+protected:
+	void onDrawBackground(SkCanvas*);
+	//virtual void draw(SkCanvas*) override;
+	virtual void onDraw(SkCanvas*) override;
+
+private:
+	SkPaint paint;
+	ScrollerType fType;
+	typedef SkView INHERITED;
+};
+
 class ClvWindow : public SkOSWindow {
 	void* hwnd;
 public:
@@ -43,7 +62,12 @@ public:
 	void setDeviceType(DeviceType type);
 	DeviceType getDeviceType() const { return fDeviceType; }
 	bool setFormat();
-
+	int Ewidth(){
+		return width()-fBorder;
+	}
+	int Eheight(){
+		return height()-fBorder;
+	}
 protected:
 	virtual bool onHandleKey(SkKey key) override;
 	virtual bool onHandleChar(SkUnichar uni) override;
@@ -61,6 +85,7 @@ private:
 	//SkScalar fZoomScale;
 	//SkScrollBarView ScrollBarX,* ScrollBarY;
 	int fScrollX, fScrollY;
+	int fBorder;
 	GrContext*              fCurContext;
 	const GrGLInterface*    fCurIntf;
 	GrRenderTarget*         fCurRenderTarget;
@@ -71,25 +96,6 @@ private:
 	typedef SkOSWindow INHERITED;
 };
 
-class ClvView : public SkView {
-public:
-	ClvView():fBGColor(SK_ColorWHITE){
-		setVisibleP(true);
-		setClipToBounds(false);
-	}
-
-	virtual ~ClvView(){}
-
-protected:
-	void onDrawBackground(SkCanvas*);
-	//virtual void draw(SkCanvas*) override;
-	virtual void onDraw(SkCanvas*) override;
-
-	SkColor fBGColor;
-private:
-	typedef SkView INHERITED;
-};
-
 #include <iostream>
 
 using namespace std;
@@ -97,15 +103,22 @@ static void inline postEventToSink(SkEvent* evt, SkEventSink* sink) {
     evt->setTargetID(sink->getSinkID())->post();
 }
 
-ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd){
-	cout<<__FUNCTION__<<endl;
+ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd),fBorder(12){
+	cout<<__PRETTY_FUNCTION__<<endl;
 	//setConfig(SkBitmap::kRGB_565_Config);
 	setConfig(SkBitmap::kARGB_8888_Config);
 	setVisibleP(true);
 	setClipToBounds(false);
-	//attachChildToFront(new ClvView{})->unref();
+	attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollX})->unref();
+	attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollY})->unref();
 
-	fMSAASampleCount=0;
+SkView::F2BIter iter(this);
+auto ScrollX = iter.next();
+auto ScrollY = iter.next();
+ScrollX->setSize(Ewidth(),fBorder);
+ScrollY->setSize(fBorder,Eheight());
+
+	fMSAASampleCount=2;
 	AttachmentInfo attachmentInfo;
 	bool result = attach(kNativeGL_BackEndType, fMSAASampleCount, &attachmentInfo);
 	if(!result)
@@ -143,7 +156,7 @@ ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd){
 }
 
 bool ClvWindow::onHandleChar(SkUnichar uni) {//input
-	cout<<__FUNCTION__<<uni<<endl;
+	cout<<__PRETTY_FUNCTION__<<uni<<endl;
 	int dx = 0xFF;
 	int dy = 0xFF;
 	switch (uni) {
@@ -163,14 +176,14 @@ bool ClvWindow::onHandleChar(SkUnichar uni) {//input
 }
 
 SkView::Click* ClvWindow::onFindClickHandler(SkScalar x, SkScalar y,unsigned modi){
-	cout<<__FUNCTION__<<x<<'.'<<y<<endl;
+	cout<<__PRETTY_FUNCTION__<<x<<'.'<<y<<endl;
 	return INHERITED::onFindClickHandler(x,y,modi);
 }
 
 bool ClvWindow::onClick(Click* click) {
 	float x = static_cast<float>(click->fICurr.fX);
 	float y = static_cast<float>(click->fICurr.fY);
-	cout<<__FUNCTION__<<x<<'.'<<y<<endl;
+	cout<<__PRETTY_FUNCTION__<<x<<'.'<<y<<endl;
 	return true;
 }
 
@@ -179,7 +192,7 @@ bool ClvWindow::setFormat(){
 	fTypeface = SkTypeface::CreateFromName("Source Code Pro", SkTypeface::kNormal);
 	paint.setTypeface(fTypeface);
 	SkScalar textSize = SkIntToScalar(30);
-        paint.setAntiAlias(true);
+	paint.setAntiAlias(true);
 	paint.setLCDRenderText(true);
 	paint.setTextSize(textSize);
 	paint.setColor(0xFF00FFFF);
@@ -187,13 +200,13 @@ bool ClvWindow::setFormat(){
 }
 
 SkCanvas* ClvWindow::createCanvas() {
-	//cout<<__FUNCTION__<<endl;return INHERITED::createCanvas();
+	//cout<<__PRETTY_FUNCTION__<<endl;return INHERITED::createCanvas();
 	SkAutoTUnref<SkDevice> device{new SkGpuDevice{fCurContext, fCurRenderTarget}};
 	return new SkCanvas{device};
 }
 
 void ClvWindow::draw(SkCanvas* canvas){
-	cout<<__FUNCTION__<<endl;
+	cout<<__PRETTY_FUNCTION__<<endl;
 	setFormat();
 	INHERITED::draw(canvas);
 	fCurContext->flush();
@@ -210,7 +223,7 @@ void ClvWindow::draw(SkCanvas* canvas){
 }
 
 void ClvWindow::onSizeChange(){
-	cout<<__FUNCTION__<<endl;
+	cout<<__PRETTY_FUNCTION__<<endl;
 	INHERITED::onSizeChange();
 
 	AttachmentInfo attachmentInfo;
@@ -232,7 +245,7 @@ void ClvWindow::onSizeChange(){
 bool ClvWindow::onEvent(const SkEvent& evt){
 	//SkString typeE;
 	//evt.getType(&typeE);
-	//cout<<__FUNCTION__<<':'<<typeE.c_str()<<endl;
+	//cout<<__PRETTY_FUNCTION__<<':'<<typeE.c_str()<<endl;
 	//if(evt.isType(gUpdateWindowTitleEvtName)){
 	//	updateTitle();
 	//	return true;
@@ -242,13 +255,13 @@ bool ClvWindow::onEvent(const SkEvent& evt){
 
 
 void ClvWindow::onDraw(SkCanvas* canvas){
-	cout<<__FUNCTION__<<endl;
+	cout<<__PRETTY_FUNCTION__<<endl;
 	canvas->drawColor(fBGColor);
 	const char* text = "HHHamburgefonts\n iii";
-        size_t len = strlen(text);
-        SkScalar x0 = SkIntToScalar(10);
-        SkScalar x1 = SkIntToScalar(310);
-        SkScalar y = SkIntToScalar(20);
+	size_t len = strlen(text);
+	SkScalar x0 = SkIntToScalar(10);
+	SkScalar x1 = SkIntToScalar(310);
+	SkScalar y = SkIntToScalar(20);
 	for (int i = 0; i < 20; i++) {
 		canvas->drawText(text, len, x0, y, paint);
 		y += paint.getFontSpacing();
@@ -256,7 +269,7 @@ void ClvWindow::onDraw(SkCanvas* canvas){
 }
 
 bool ClvWindow::onHandleKey(SkKey key) {
-	cout<<__FUNCTION__<<endl;
+	cout<<__PRETTY_FUNCTION__<<endl;
 	switch (key) {
 	case kRight_SkKey:
 		break;
@@ -276,9 +289,23 @@ bool ClvWindow::onHandleKey(SkKey key) {
 	return INHERITED::onHandleKey(key);
 }
 
+ClvScroller::ClvScroller(ScrollerType st):fType{st}{
+	cout<<__PRETTY_FUNCTION__<<endl;
+	setVisibleP(true);
+	setClipToBounds(false);
+	paint.setAntiAlias(true);
+	paint.setLCDRenderText(true);
+	paint.setColor(0xFFFFFFFF);
+}
 
-void ClvView::onDraw(SkCanvas* canvas){
-	cout<<__FUNCTION__<<endl;
+
+void ClvScroller::onDraw(SkCanvas* canvas){
+	cout<<__PRETTY_FUNCTION__<<endl;
+                auto rect = SkRect::MakeLTRB(SkFloatToScalar(0.f),
+                                                SkFloatToScalar(0.f),
+                                                SkFloatToScalar(40.f),
+                                                SkFloatToScalar(40.f));
+                        canvas->drawRect(rect, paint);
 }
 
 void application_init() {
