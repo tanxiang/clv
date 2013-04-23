@@ -32,6 +32,7 @@ protected:
 	virtual void onDraw(SkCanvas*) override;
 
 private:
+	int fBorder;
 	SkPaint paint;
 	ScrollerType fType;
 	typedef SkView INHERITED;
@@ -109,14 +110,18 @@ ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd),fBorder(12){
 	setConfig(SkBitmap::kARGB_8888_Config);
 	setVisibleP(true);
 	setClipToBounds(false);
+/*
 	attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollX})->unref();
 	attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollY})->unref();
 
 SkView::F2BIter iter(this);
 auto ScrollX = iter.next();
 auto ScrollY = iter.next();
+ScrollX->setLocY(Eheight());
 ScrollX->setSize(Ewidth(),fBorder);
+ScrollY->setLocX(Ewidth());
 ScrollY->setSize(fBorder,Eheight());
+*/
 
 	fMSAASampleCount=2;
 	AttachmentInfo attachmentInfo;
@@ -289,23 +294,28 @@ bool ClvWindow::onHandleKey(SkKey key) {
 	return INHERITED::onHandleKey(key);
 }
 
-ClvScroller::ClvScroller(ScrollerType st):fType{st}{
+ClvScroller::ClvScroller(ScrollerType st):fType{st},fBorder{1}{
 	cout<<__PRETTY_FUNCTION__<<endl;
 	setVisibleP(true);
 	setClipToBounds(false);
 	paint.setAntiAlias(true);
-	paint.setLCDRenderText(true);
-	paint.setColor(0xFFFFFFFF);
+	paint.setColor(0xAAFFFFFF);
 }
 
 
 void ClvScroller::onDraw(SkCanvas* canvas){
-	cout<<__PRETTY_FUNCTION__<<endl;
-                auto rect = SkRect::MakeLTRB(SkFloatToScalar(0.f),
-                                                SkFloatToScalar(0.f),
-                                                SkFloatToScalar(40.f),
-                                                SkFloatToScalar(40.f));
-                        canvas->drawRect(rect, paint);
+	cout<<__PRETTY_FUNCTION__<<endl<<
+		width()<<'X'<<height()<<':'<<
+		locX()<<'X'<<locY()<<endl;
+	//canvas->drawColor(0x55FFFFFF);
+	if(fType==ScrollY){
+		auto rect = SkRect::MakeLTRB(0,fBorder,width(),height()-2*fBorder);
+		canvas->drawRoundRect(rect,3,3,paint);
+	}else{
+		auto rect = SkRect::MakeLTRB(fBorder,0,width()-2*fBorder,height());
+		canvas->drawRoundRect(rect,3,3,paint);
+	}//canvas->drawRect(rect, paint);
+
 }
 
 void application_init() {
