@@ -76,7 +76,7 @@ protected:
 	virtual bool onClick(Click* click) override;
 	virtual void onDraw(SkCanvas* canvas) override;
 	virtual void onSizeChange() override;
-
+	void resetChildrenView();
 	virtual bool onEvent(const SkEvent& evt) override;
 private:
 	DeviceType fDeviceType;
@@ -110,20 +110,12 @@ ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd),fBorder(12){
 	setConfig(SkBitmap::kARGB_8888_Config);
 	setVisibleP(true);
 	setClipToBounds(false);
-/*
-	attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollX})->unref();
-	attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollY})->unref();
 
-SkView::F2BIter iter(this);
-auto ScrollX = iter.next();
-auto ScrollY = iter.next();
-ScrollX->setLocY(Eheight());
-ScrollX->setSize(Ewidth(),fBorder);
-ScrollY->setLocX(Ewidth());
-ScrollY->setSize(fBorder,Eheight());
-*/
+attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollX})->unref();
+attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollY})->unref();
+resetChildrenView();
 
-	fMSAASampleCount=2;
+	fMSAASampleCount=0;
 	AttachmentInfo attachmentInfo;
 	bool result = attach(kNativeGL_BackEndType, fMSAASampleCount, &attachmentInfo);
 	if(!result)
@@ -160,6 +152,16 @@ ScrollY->setSize(fBorder,Eheight());
 	//}	
 }
 
+void ClvWindow::resetChildrenView(){
+	SkView::F2BIter iter(this);
+	auto ScrollX = iter.next();
+	auto ScrollY = iter.next();
+	ScrollX->setLocY(Eheight());
+	ScrollX->setSize(Ewidth(),fBorder);
+	ScrollY->setLocX(Ewidth());
+	ScrollY->setSize(fBorder,Eheight());
+};
+
 bool ClvWindow::onHandleChar(SkUnichar uni) {//input
 	cout<<__PRETTY_FUNCTION__<<uni<<endl;
 	int dx = 0xFF;
@@ -194,9 +196,9 @@ bool ClvWindow::onClick(Click* click) {
 
 bool ClvWindow::setFormat(){
 	fBGColor = 0xFF888888;
-	fTypeface = SkTypeface::CreateFromName("Source Code Pro", SkTypeface::kNormal);
+	fTypeface = SkTypeface::CreateFromName("Source Code Pro Light", SkTypeface::kNormal);
 	paint.setTypeface(fTypeface);
-	SkScalar textSize = SkIntToScalar(30);
+	SkScalar textSize = SkIntToScalar(15);
 	paint.setAntiAlias(true);
 	paint.setLCDRenderText(true);
 	paint.setTextSize(textSize);
@@ -228,11 +230,16 @@ void ClvWindow::draw(SkCanvas* canvas){
 }
 
 void ClvWindow::onSizeChange(){
-	cout<<__PRETTY_FUNCTION__<<endl;
+	cout<<__PRETTY_FUNCTION__<<width()<<'X'<<height()<<endl;
 	INHERITED::onSizeChange();
+	resetChildrenView();
 
+	//detach();
 	AttachmentInfo attachmentInfo;
-	attach(kNativeGL_BackEndType, fMSAASampleCount, &attachmentInfo);
+	bool result = attach(kNativeGL_BackEndType, fMSAASampleCount, &attachmentInfo);
+	if(!result)
+		cerr<<"3D Attach err"<<endl;
+
 	GrBackendRenderTargetDesc desc;
 	desc.fWidth = SkScalarRound(width());
 	desc.fHeight = SkScalarRound(height());
@@ -262,7 +269,7 @@ bool ClvWindow::onEvent(const SkEvent& evt){
 void ClvWindow::onDraw(SkCanvas* canvas){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	canvas->drawColor(fBGColor);
-	const char* text = "HHHamburgefonts\n iii";
+	const char* text = "Source Code Pro Light\n iii";
 	size_t len = strlen(text);
 	SkScalar x0 = SkIntToScalar(10);
 	SkScalar x1 = SkIntToScalar(310);
@@ -304,9 +311,7 @@ ClvScroller::ClvScroller(ScrollerType st):fType{st},fBorder{1}{
 
 
 void ClvScroller::onDraw(SkCanvas* canvas){
-	cout<<__PRETTY_FUNCTION__<<endl<<
-		width()<<'X'<<height()<<':'<<
-		locX()<<'X'<<locY()<<endl;
+	cout<<__PRETTY_FUNCTION__<<endl<<width()<<'X'<<height()<<':'<<locX()<<'X'<<locY()<<endl;
 	//canvas->drawColor(0x55FFFFFF);
 	if(fType==ScrollY){
 		auto rect = SkRect::MakeLTRB(0,fBorder,width(),height()-2*fBorder);
