@@ -20,12 +20,12 @@ FileMap::FileMap(const char* FilePath){
 			close(FD);
 			throw;
 		}
-		Length=sb.st_size;
-		P = mmap(NULL,Length,PROT_READ|PROT_WRITE,MAP_SHARED,FD,0);
+		Len=sb.st_size;
+		P = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_SHARED,FD,0);
 	}
 	else{
-		Length=1024;
-		P = mmap(NULL,Length,PROT_READ|PROT_WRITE,MAP_SHARED,FD,0);
+		Len=1024;
+		P = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_SHARED,FD,0);
 	}
 	if(P == MAP_FAILED){
 		close(FD);
@@ -34,11 +34,11 @@ FileMap::FileMap(const char* FilePath){
 }
 
 FileMap::~FileMap(){
-	munmap(P,Length);
+	munmap(P,Len);
 	close(FD);
 }
 
 int FileMap::Merge(){
-	return msync(P,Length,MS_SYNC);
+	return msync(P,Len,MS_SYNC);
 }
 

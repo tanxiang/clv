@@ -21,5 +21,5 @@ int main(int argc,char* argv[])
 	FileMap Map{argv[1]};
 	//cout<<static_cast<char*>(Map.Get());
 	ClpInvocation Invocation{vector<string>{"-std=c++11","-c"},new ClpAction{}};
-	Invocation.RunCode(static_cast<char*>(Map.Get()),Map.GetLength());
+	Invocation.RunCode(static_cast<char*>(Map.Get()),Map.Length());
 }

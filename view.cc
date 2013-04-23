@@ -192,13 +192,11 @@ bool ClvWindow::onEvent(const SkEvent& evt){
 void ClvWindow::onDraw(SkCanvas* canvas){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	canvas->drawColor(fBGColor);
-	const char* text = "Source Code Pro Light\n iii";
-	size_t len = strlen(text);
-	SkScalar x0 = SkIntToScalar(10);
-	SkScalar x1 = SkIntToScalar(310);
+
+	SkScalar x0 = SkIntToScalar(30);
 	SkScalar y = SkIntToScalar(20);
 	for (int i = 0; i < 20; i++) {
-		canvas->drawText(text, len, x0, y, paint);
+		canvas->drawText(file.Get(),file.Length(), x0, y, paint);
 		y += paint.getFontSpacing();
 	}
 }
