@@ -1,6 +1,5 @@
 #define linux
 #define NDEBUG
-#include "view.h"
 #include "SkData.h"
 #include "SkCanvas.h"
 #include "SkDevice.h"
@@ -18,85 +17,8 @@
 #include "GrContext.h"
 #include "SkGpuDevice.h"
 
-class ClvScroller : public SkView {
-public:
-	enum ScrollerType{
-		ScrollX,ScrollY
-	};
-	ClvScroller(ScrollerType st);
-	virtual ~ClvScroller(){}
-
-protected:
-	void onDrawBackground(SkCanvas*);
-	//virtual void draw(SkCanvas*) override;
-	virtual void onDraw(SkCanvas*) override;
-
-private:
-	int fBorder;
-	SkPaint paint;
-	ScrollerType fType;
-	typedef SkView INHERITED;
-};
-
-class ClvWindow : public SkOSWindow {
-	void* hwnd;
-public:
-	enum DeviceType {
-		kRaster_DeviceType,
-		kPicture_DeviceType,
-#if SK_SUPPORT_GPU
-		kGPU_DeviceType,
-#if SK_ANGLE
-		kANGLE_DeviceType,
-#endif // SK_ANGLE
-		kNullGPU_DeviceType,
-#endif // SK_SUPPORT_GPU
-		kDeviceTypeCnt
-	};
-
-	ClvWindow(void* hwnd);
-	virtual ~ClvWindow(){detach();};
-
-	virtual SkCanvas* createCanvas() override;
-	virtual void draw(SkCanvas* canvas) override;
-
-	void setDeviceType(DeviceType type);
-	DeviceType getDeviceType() const { return fDeviceType; }
-	bool setFormat();
-	int Ewidth(){
-		return width()-fBorder;
-	}
-	int Eheight(){
-		return height()-fBorder;
-	}
-protected:
-	virtual bool onHandleKey(SkKey key) override;
-	virtual bool onHandleChar(SkUnichar uni) override;
-	virtual Click* onFindClickHandler(SkScalar x, SkScalar y,unsigned modi) override;
-	virtual bool onClick(Click* click) override;
-	virtual void onDraw(SkCanvas* canvas) override;
-	virtual void onSizeChange() override;
-	void resetChildrenView();
-	virtual bool onEvent(const SkEvent& evt) override;
-private:
-	DeviceType fDeviceType;
-
-	SkTouchGesture fGesture;
-	//SkScalar fZoomLevel;
-	//SkScalar fZoomScale;
-	//SkScrollBarView ScrollBarX,* ScrollBarY;
-	int fScrollX, fScrollY;
-	int fBorder;
-	GrContext*              fCurContext;
-	const GrGLInterface*    fCurIntf;
-	GrRenderTarget*         fCurRenderTarget;
-	SkTypeface*		fTypeface;
-	int fMSAASampleCount;
-	SkPaint paint;
-	SkColor fBGColor;
-	typedef SkOSWindow INHERITED;
-};
-
+#include "filemap.h"
+#include "view.h"
 #include <iostream>
 
 using namespace std;
@@ -104,18 +26,19 @@ static void inline postEventToSink(SkEvent* evt, SkEventSink* sink) {
     evt->setTargetID(sink->getSinkID())->post();
 }
 
-ClvWindow::ClvWindow(void* hwnd):INHERITED{hwnd},hwnd(hwnd),fBorder(12){
+ClvWindow::ClvWindow(void* hwnd,const char* filepath):INHERITED{hwnd},hwnd{hwnd},file{filepath},fBorder{12}{
 	cout<<__PRETTY_FUNCTION__<<endl;
 	//setConfig(SkBitmap::kRGB_565_Config);
 	setConfig(SkBitmap::kARGB_8888_Config);
 	setVisibleP(true);
 	setClipToBounds(false);
 
-attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollX})->unref();
-attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollY})->unref();
-resetChildrenView();
+	attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollX})->unref();
+	attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollY})->unref();
+	resetChildrenView();
 
 	fMSAASampleCount=0;
+	//FIXME:if use MSAA in attach XGL;crash at ClvWindow::onSizeChang
 	AttachmentInfo attachmentInfo;
 	bool result = attach(kNativeGL_BackEndType, fMSAASampleCount, &attachmentInfo);
 	if(!result)
@@ -309,7 +232,6 @@ ClvScroller::ClvScroller(ScrollerType st):fType{st},fBorder{1}{
 	paint.setColor(0xAAFFFFFF);
 }
 
-
 void ClvScroller::onDraw(SkCanvas* canvas){
 	cout<<__PRETTY_FUNCTION__<<endl<<width()<<'X'<<height()<<':'<<locX()<<'X'<<locY()<<endl;
 	//canvas->drawColor(0x55FFFFFF);
@@ -334,6 +256,8 @@ void application_term() {
 }
 
 SkOSWindow* create_sk_window(void* hwnd, int argc, char** argv) {
-	return new ClvWindow{hwnd};
+	if(argc!=2)
+		return new ClvWindow{hwnd,nullptr};
+	return new ClvWindow{hwnd,argv[1]};
 }
 

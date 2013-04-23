@@ -31,4 +31,4 @@ rule link_skia
 
 build clv: link clvfile.o clangparse.o filemap.o
 
-build sk: link_skia view.o
+build sk: link_skia view.o filemap.o
