@@ -75,7 +75,7 @@ private:
 	int fMSAASampleCount;
 	SkPaint paint;
 	SkColor fBGColor;
-	FileMap file;
+	FileMap<char> file;
 	typedef SkOSWindow INHERITED;
 };
 

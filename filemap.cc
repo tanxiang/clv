@@ -8,7 +8,8 @@
 
 #include <iostream>
 
-FileMap::FileMap(const char* FilePath){
+template<typename Code>
+FileMap<Code>::FileMap(const char* FilePath){
 	FD = -1;
 	if(FilePath){
 		FD=open(FilePath,O_RDWR);
@@ -33,12 +34,14 @@ FileMap::FileMap(const char* FilePath){
 	}
 }
 
-FileMap::~FileMap(){
+template<typename Code>
+FileMap<Code>::~FileMap(){
 	munmap(P,Len);
 	close(FD);
 }
 
-int FileMap::Merge(){
+template<typename Code>
+int FileMap<Code>::Merge(){
 	return msync(P,Len,MS_SYNC);
 }
 

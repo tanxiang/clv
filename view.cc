@@ -195,10 +195,8 @@ void ClvWindow::onDraw(SkCanvas* canvas){
 
 	SkScalar x0 = SkIntToScalar(30);
 	SkScalar y = SkIntToScalar(20);
-	for (int i = 0; i < 20; i++) {
-		canvas->drawText(file.Get(),file.Length(), x0, y, paint);
-		y += paint.getFontSpacing();
-	}
+	canvas->drawText(file.Get(),file.Length(), x0, y, paint);
+	y += paint.getFontSpacing();
 }
 
 bool ClvWindow::onHandleKey(SkKey key) {
