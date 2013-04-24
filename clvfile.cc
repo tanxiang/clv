@@ -2,12 +2,14 @@
 #include <fstream>
 #include <iterator>
 #include <algorithm>
-//#include "filemap.h"
-#include "filemap.cc"
+#include "filemap.h"
+//#include "filemap.cc"
 #include "clvfile.h"
 #include "clangparse.h"
 
 using namespace std;
+
+extern template class FileMap<char>;
 
 int main(int argc,char* argv[])
 {

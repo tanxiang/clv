@@ -17,8 +17,8 @@
 #include "GrContext.h"
 #include "SkGpuDevice.h"
 
-//#include "filemap.h"
-#include "filemap.cc"
+#include "filemap.h"
+//#include "filemap.cc"
 #include "view.h"
 #include <iostream>
 

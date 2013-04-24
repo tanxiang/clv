@@ -8,7 +8,6 @@
 
 #include <iostream>
 
-template class FileMap<char>;
 template<typename Code>
 FileMap<Code>::FileMap(const char* FilePath){
 	FD = -1;
@@ -42,8 +41,12 @@ FileMap<Code>::~FileMap(){
 	close(FD);
 }
 
+
+//template FileMap<char>::FileMap(const char* FilePath);
+//template FileMap<char>::~FileMap();
+
 template<typename Code>
 int FileMap<Code>::Merge(){
 	return msync(P,Len,MS_SYNC);
 }
-
+template class FileMap<char>;
