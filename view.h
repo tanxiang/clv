@@ -52,8 +52,10 @@ public:
 	}
 protected:
 	virtual bool onHandleKey(SkKey key) override;
+	virtual bool onHandleKeyUp(SkKey key) override;
 	virtual bool onHandleChar(SkUnichar uni) override;
 	virtual Click* onFindClickHandler(SkScalar x, SkScalar y,unsigned modi) override;
+	virtual bool onSendClickToChildren(SkScalar x, SkScalar y, unsigned modi) override;
 	virtual bool onClick(Click* click) override;
 	virtual void onDraw(SkCanvas* canvas) override;
 	virtual void onSizeChange() override;
