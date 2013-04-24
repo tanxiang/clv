@@ -2,7 +2,8 @@
 #include <fstream>
 #include <iterator>
 #include <algorithm>
-#include "filemap.h"
+//#include "filemap.h"
+#include "filemap.cc"
 #include "clvfile.h"
 #include "clangparse.h"
 

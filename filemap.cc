@@ -8,6 +8,7 @@
 
 #include <iostream>
 
+template class FileMap<char>;
 template<typename Code>
 FileMap<Code>::FileMap(const char* FilePath){
 	FD = -1;
@@ -33,6 +34,7 @@ FileMap<Code>::FileMap(const char* FilePath){
 		throw;
 	}
 }
+
 
 template<typename Code>
 FileMap<Code>::~FileMap(){

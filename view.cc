@@ -17,7 +17,8 @@
 #include "GrContext.h"
 #include "SkGpuDevice.h"
 
-#include "filemap.h"
+//#include "filemap.h"
+#include "filemap.cc"
 #include "view.h"
 #include <iostream>
 
@@ -32,7 +33,7 @@ ClvWindow::ClvWindow(void* hwnd,const char* filepath):INHERITED{hwnd},hwnd{hwnd}
 	setConfig(SkBitmap::kARGB_8888_Config);
 	setVisibleP(true);
 	setClipToBounds(false);
-
+file.Merge();
 	attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollX})->unref();
 	attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollY})->unref();
 	resetChildrenView();

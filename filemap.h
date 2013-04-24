@@ -1,10 +1,13 @@
 template<typename Code>
 class FileMap{
 	class iterator{
-		iterator operator ++ (){return nullptr;}
-		int Length(){return 3;}
+		void *P;
+		int Len;
+	public:
+		iterator operator ++ (){return *this;}
+		int Length(){return Len;}
 		bool operator !=(iterator it){return true;}
-		Code* operator *(){return nullptr;}
+		void* operator *(){return P;}
 	};
 
 	void *P;
@@ -20,3 +23,4 @@ public:
 	int Length(){return Len;}
 	int Merge();
 };
+
