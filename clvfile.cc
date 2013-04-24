@@ -9,8 +9,6 @@
 
 using namespace std;
 
-extern template class FileMap<char>;
-
 int main(int argc,char* argv[])
 {
 	ios::sync_with_stdio(false);

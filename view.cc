@@ -24,19 +24,19 @@
 
 using namespace std;
 static void inline postEventToSink(SkEvent* evt, SkEventSink* sink) {
-    evt->setTargetID(sink->getSinkID())->post();
+	evt->setTargetID(sink->getSinkID())->post();
 }
 
 ClvWindow::ClvWindow(void* hwnd,const char* filepath):INHERITED{hwnd},hwnd{hwnd},file{filepath},fBorder{12}{
-	cout<<__PRETTY_FUNCTION__<<endl;
+	//cout<<__PRETTY_FUNCTION__<<endl;
 	//setConfig(SkBitmap::kRGB_565_Config);
 	setConfig(SkBitmap::kARGB_8888_Config);
 	setVisibleP(true);
 	setClipToBounds(false);
-file.Merge();
 	attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollX})->unref();
 	attachChildToFront(new ClvScroller{ClvScroller::ScrollerType::ScrollY})->unref();
 	resetChildrenView();
+	setFormat();
 
 	fMSAASampleCount=0;
 	//FIXME:if use MSAA in attach XGL;crash at ClvWindow::onSizeChang
@@ -137,8 +137,8 @@ SkCanvas* ClvWindow::createCanvas() {
 }
 
 void ClvWindow::draw(SkCanvas* canvas){
-	cout<<__PRETTY_FUNCTION__<<endl;
-	setFormat();
+	//cout<<__PRETTY_FUNCTION__<<endl;
+	//setFormat();
 	INHERITED::draw(canvas);
 	fCurContext->flush();
 	/** Raster bits into GPU RenderTarget
@@ -154,7 +154,7 @@ void ClvWindow::draw(SkCanvas* canvas){
 }
 
 void ClvWindow::onSizeChange(){
-	cout<<__PRETTY_FUNCTION__<<width()<<'X'<<height()<<endl;
+	//cout<<__PRETTY_FUNCTION__<<width()<<'X'<<height()<<endl;
 	INHERITED::onSizeChange();
 	resetChildrenView();
 
@@ -197,11 +197,12 @@ void ClvWindow::onDraw(SkCanvas* canvas){
 	SkScalar x0 = SkIntToScalar(30);
 	SkScalar y = SkIntToScalar(20);
 	canvas->drawText(file.Get(),file.Length(), x0, y, paint);
+	auto itr = file.begin();
 	y += paint.getFontSpacing();
 }
 
 bool ClvWindow::onHandleKey(SkKey key) {
-	cout<<__PRETTY_FUNCTION__<<endl;
+	//cout<<__PRETTY_FUNCTION__<<endl;
 	switch (key) {
 	case kRight_SkKey:
 		break;
@@ -222,7 +223,7 @@ bool ClvWindow::onHandleKey(SkKey key) {
 }
 
 ClvScroller::ClvScroller(ScrollerType st):fType{st},fBorder{1}{
-	cout<<__PRETTY_FUNCTION__<<endl;
+	//cout<<__PRETTY_FUNCTION__<<endl;
 	setVisibleP(true);
 	setClipToBounds(false);
 	paint.setAntiAlias(true);
@@ -230,7 +231,7 @@ ClvScroller::ClvScroller(ScrollerType st):fType{st},fBorder{1}{
 }
 
 void ClvScroller::onDraw(SkCanvas* canvas){
-	cout<<__PRETTY_FUNCTION__<<endl<<width()<<'X'<<height()<<':'<<locX()<<'X'<<locY()<<endl;
+	//cout<<__PRETTY_FUNCTION__<<endl<<width()<<'X'<<height()<<':'<<locX()<<'X'<<locY()<<endl;
 	//canvas->drawColor(0x55FFFFFF);
 	if(fType==ScrollY){
 		auto rect = SkRect::MakeLTRB(0,fBorder,width(),height()-2*fBorder);
@@ -238,7 +239,7 @@ void ClvScroller::onDraw(SkCanvas* canvas){
 	}else{
 		auto rect = SkRect::MakeLTRB(fBorder,0,width()-2*fBorder,height());
 		canvas->drawRoundRect(rect,3,3,paint);
-	}//canvas->drawRect(rect, paint);
+	}
 
 }
 
