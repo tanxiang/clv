@@ -9,19 +9,18 @@
 #include "SkWindow.h"
 #include "SkTypeface.h"
 
-#include <memory>
-
 #include "gl/GrGLInterface.h"
 #include "gl/GrGLUtil.h"
 #include "GrRenderTarget.h"
 #include "GrContext.h"
 #include "SkGpuDevice.h"
 
-#include "filemap.h"
 //#include "filemap.cc"
-#include "view.h"
+#include <memory>
 #include <iostream>
-
+#include <iterator>
+#include "filemap.h"
+#include "view.h"
 using namespace std;
 static void inline postEventToSink(SkEvent* evt, SkEventSink* sink) {
 	evt->setTargetID(sink->getSinkID())->post();

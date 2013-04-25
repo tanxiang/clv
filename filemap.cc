@@ -4,12 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <iostream>
+#include <iterator>
 #include "filemap.h"
 
-#include <iostream>
-
-template<typename Code>
-FileMap<Code>::FileMap(const char* FilePath){
+template<typename LineRef>
+FileMap<LineRef>::FileMap(const char* FilePath){
 	FD = -1;
 	if(FilePath){
 		FD=open(FilePath,O_RDWR);
@@ -35,8 +35,8 @@ FileMap<Code>::FileMap(const char* FilePath){
 }
 
 
-template<typename Code>
-FileMap<Code>::~FileMap(){
+template<typename LineRef>
+FileMap<LineRef>::~FileMap(){
 	munmap(P,Len);
 	close(FD);
 }
@@ -45,8 +45,19 @@ FileMap<Code>::~FileMap(){
 //template FileMap<char>::FileMap(const char* FilePath);
 //template FileMap<char>::~FileMap();
 
-template<typename Code>
-int FileMap<Code>::Merge(){
+template<typename LineRef>
+int FileMap<LineRef>::Merge(){
 	return msync(P,Len,MS_SYNC);
 }
+/*
+template<typename LineRef>
+FileMap<LineRef>::iterator FileMap<LineRef>::begin(){
+	return nullptr;
+}
+
+template<typename LineRef>
+FileMap<LineRef>::iterator FileMap<LineRef>::end(){
+	return nullptr;
+}
+*/
 template class FileMap<char>;
