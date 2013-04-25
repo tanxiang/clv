@@ -105,9 +105,14 @@ bool ClvWindow::onHandleChar(SkUnichar uni) {//input
 	return INHERITED::onHandleChar(uni);
 }
 
-SkView::Click* ClvWindow::onFindClickHandler(SkScalar x, SkScalar y,unsigned modi){
+SkView::Click* ClvWindow::onFindClickHandler(SkScalar x, SkScalar y,unsigned modi) {
 	cout<<__PRETTY_FUNCTION__<<x<<'.'<<y<<endl;
 	return INHERITED::onFindClickHandler(x,y,modi);
+}
+
+bool ClvWindow::onSendClickToChildren(SkScalar x, SkScalar y, unsigned modi) {
+	cout<<__PRETTY_FUNCTION__<<x<<'.'<<y<<endl;
+	return INHERITED::onSendClickToChildren(x,y,modi);
 }
 
 bool ClvWindow::onClick(Click* click) {
@@ -200,7 +205,7 @@ void ClvWindow::onDraw(SkCanvas* canvas){
 	y += paint.getFontSpacing();
 }
 
-bool ClvWindow::onHandleKey(SkKey key) {
+bool ClvWindow::onHandleKey(SkKey key){
 	//cout<<__PRETTY_FUNCTION__<<endl;
 	switch (key) {
 	case kRight_SkKey:
@@ -219,6 +224,10 @@ bool ClvWindow::onHandleKey(SkKey key) {
 		break;
 	}
 	return INHERITED::onHandleKey(key);
+}
+
+bool ClvWindow::onHandleKeyUp(SkKey key){
+	return INHERITED::onHandleKeyUp(key);
 }
 
 ClvScroller::ClvScroller(ScrollerType st):fType{st},fBorder{1}{

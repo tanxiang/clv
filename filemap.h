@@ -51,18 +51,16 @@ public:
 		typedef LineRef&		reference;
 	};
 	struct iterator:public iterator_traits{
-		void *P;
-		int Len;
+		LineRef Line;
 		iterator operator ++ (){return *this;}
-		int Length(){return Len;}
 		bool operator !=(iterator it){return true;}
-		void* operator *(){return P;}
+		LineRef operator *(){return Line;}
 	};
 	//edit iface
-	iterator begin(){
-		return NULL;
-	}
-	//iterator end(){
+	iterator begin();//{
+	//	return NULL;
+	//}
+	iterator end();//{
 	//	return NULL;
 	//}
 
