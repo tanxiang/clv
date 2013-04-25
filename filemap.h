@@ -1,5 +1,48 @@
+template<typename SourceChar>
+class MBLineRef{
+	void *P;
+	int Len;
+protected:
+public:
+	struct iterator_traits {
+		typedef std::bidirectional_iterator_tag iterator_category;
+		typedef SourceChar		value_type;
+		typedef std::ptrdiff_t	difference_type;
+		typedef SourceChar*		pointer;
+		typedef SourceChar&		reference;
+	};
+	struct iterator:public iterator_traits{
+	};
+};
+
+template<typename SourceChar>
+class WCLineRef{
+	void *P;
+	int Len;
+protected:
+public:
+	struct iterator_traits {
+		typedef std::random_access_iterator_tag iterator_category;
+		typedef SourceChar		value_type;
+		typedef std::ptrdiff_t	difference_type;
+		typedef SourceChar*		pointer;
+		typedef SourceChar&		reference;
+	};
+	struct iterator:public iterator_traits{
+	};
+};
+
 template<typename LineRef>
 class FileMap{
+	void *P;
+	int Len;
+	int FD;
+
+protected:
+public:
+	FileMap(const char* FilePath);
+	~FileMap();
+
 	struct iterator_traits {
 		typedef std::bidirectional_iterator_tag iterator_category;
 		typedef LineRef		value_type;
@@ -10,25 +53,11 @@ class FileMap{
 	struct iterator:public iterator_traits{
 		void *P;
 		int Len;
-	public:
 		iterator operator ++ (){return *this;}
 		int Length(){return Len;}
 		bool operator !=(iterator it){return true;}
 		void* operator *(){return P;}
 	};
-
-	void *P;
-	int Len;
-	int FD;
-
-protected:
-public:
-	FileMap(const char* FilePath);
-	~FileMap();
-	//low level getdata
-	void* Get(){return P;}
-	int Length(){return Len;}
-	int Merge();
 	//edit iface
 	iterator begin(){
 		return NULL;
@@ -36,5 +65,11 @@ public:
 	//iterator end(){
 	//	return NULL;
 	//}
+
+	//low level getdata
+	void* Get(){return P;}
+	int Length(){return Len;}
+	int Merge();
+
 };
 
