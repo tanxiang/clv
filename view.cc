@@ -201,9 +201,13 @@ void ClvWindow::onDraw(SkCanvas* canvas){
 	SkScalar x0 = SkIntToScalar(30);
 	SkScalar y = SkIntToScalar(20);
 	canvas->drawText(file.Get(),file.Length(), x0, y, paint);
-	
-	y += paint.getFontSpacing();
+
 	auto itr = file.begin();
+	y += paint.getFontSpacing();
+	canvas->drawText(itr->Get(),itr->Length(), x0, y, paint);
+	cout<<"Length"<<itr->Length()<<endl;
+	++itr;
+	y += paint.getFontSpacing();
 	canvas->drawText(itr->Get(),itr->Length(), x0, y, paint);
 	cout<<"Length"<<itr->Length()<<endl;
 }

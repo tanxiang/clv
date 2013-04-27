@@ -19,14 +19,19 @@ public:
 	};
 
 	MBLineRef(void* P):P{P},Len{0}{
-		char* Pc=static_cast<char*>(P);
-		while(*(Pc++)!='\n')
-			++Len;
+		CalLength();
 	}
 
 	//low level getdata
 	void* Get(){return P;}
+	void Set(void* Pt){P=Pt;}
 	int Length(){return Len;}
+	void CalLength(){
+		Len=0;
+		char* Pc=static_cast<char*>(P);
+		while(*(Pc++)!='\n')
+			++Len;
+	}
 };
 
 template<typename SourceChar>
@@ -67,7 +72,13 @@ public:
 	};
 	struct iterator:public iterator_traits{
 		LineRef Line;
-		iterator operator ++ (){return *this;}
+		iterator operator ++ (){
+			char* Pc=static_cast<char*>(Line.Get());
+			Pc += Line.Length();
+			Line.Set(static_cast<void*>(++Pc));
+			Line.CalLength();
+			return *this;
+		}
 		bool operator !=(iterator it){return Line.Get() != it->Get();}
 		LineRef operator *(){return Line;}
 		LineRef* operator -> (){return &Line;}
