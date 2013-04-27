@@ -60,5 +60,5 @@ FileMap<LineRef>::iterator FileMap<LineRef>::end(){
 	return nullptr;
 }
 */
-template class FileMap<char>;
+//template class FileMap<char>;
 template class FileMap<MBLineRef<char> >;

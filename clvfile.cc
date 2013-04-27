@@ -19,7 +19,7 @@ int main(int argc,char* argv[])
 	//runToolOnCodeWithArgs(new ClpAction,static_cast<vector<string> >(text),
 	//std::vector<std::string> {"-std=c++11"});
 	//copy(text.begin(),text.end(),ostream_iterator<Line>{cout,"\n"});
-	FileMap<char> Map{argv[1]};
+	FileMap<MBLineRef<char> > Map{argv[1]};
 	//cout<<static_cast<char*>(Map.Get());
 	ClpInvocation Invocation{vector<string>{"-std=c++11","-c"},new ClpAction{}};
 	Invocation.RunCode(static_cast<char*>(Map.Get()),Map.Length());

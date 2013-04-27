@@ -1,3 +1,7 @@
+class CharRef{
+
+};
+
 template<typename SourceChar>
 class MBLineRef{
 	void *P;
@@ -13,6 +17,16 @@ public:
 	};
 	struct iterator:public iterator_traits{
 	};
+
+	MBLineRef(void* P):P{P},Len{0}{
+		char* Pc=static_cast<char*>(P);
+		while(*(Pc++)!='\n')
+			++Len;
+	}
+
+	//low level getdata
+	void* Get(){return P;}
+	int Length(){return Len;}
 };
 
 template<typename SourceChar>
@@ -30,6 +44,7 @@ public:
 	};
 	struct iterator:public iterator_traits{
 	};
+	WCLineRef(void* P):P{P},Len{0}{}
 };
 
 template<typename LineRef>
@@ -53,13 +68,16 @@ public:
 	struct iterator:public iterator_traits{
 		LineRef Line;
 		iterator operator ++ (){return *this;}
-		bool operator !=(iterator it){return true;}
+		bool operator !=(iterator it){return Line.Get() != it->Get();}
 		LineRef operator *(){return Line;}
+		LineRef* operator -> (){return &Line;}
+		iterator(void* P):Line{P}{}
 	};
 	//edit iface
-	iterator begin();//{
-	//	return NULL;
-	//}
+	iterator begin(){
+		iterator itr{P};
+		return itr;
+	}
 	iterator end();//{
 	//	return NULL;
 	//}
@@ -68,6 +86,5 @@ public:
 	void* Get(){return P;}
 	int Length(){return Len;}
 	int Merge();
-
 };
 
