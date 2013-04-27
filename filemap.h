@@ -1,5 +1,8 @@
 class CharRef{
-
+	void *P;
+protected:
+public:
+	int Length(){return 1;}
 };
 
 template<typename SourceChar>
@@ -16,6 +19,7 @@ public:
 		typedef SourceChar&		reference;
 	};
 	struct iterator:public iterator_traits{
+		CharRef Char;
 	};
 
 	MBLineRef(void* P):P{P},Len{0}{
@@ -50,6 +54,9 @@ public:
 	struct iterator:public iterator_traits{
 	};
 	WCLineRef(void* P):P{P},Len{0}{}
+	void* Get(){return P;}
+	void Set(void* Pt){P=Pt;}
+	int Length(){return Len;}
 };
 
 template<typename LineRef>
