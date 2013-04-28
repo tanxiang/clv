@@ -21,7 +21,7 @@ public:
 	struct iterator:public iterator_traits{
 		CharRef Char;
 	};
-
+	MBLineRef(){}
 	MBLineRef(void* P):P{P},Len{0}{
 		CalLength();
 	}
@@ -53,10 +53,12 @@ public:
 	};
 	struct iterator:public iterator_traits{
 	};
+	WCLineRef(){}
 	WCLineRef(void* P):P{P},Len{0}{}
 	void* Get(){return P;}
 	void Set(void* Pt){P=Pt;}
 	int Length(){return Len;}
+	void CalLength(){}
 };
 
 template<typename LineRef>
@@ -64,7 +66,6 @@ class FileMap{
 	void *P;
 	int Len;
 	int FD;
-
 protected:
 public:
 	FileMap(const char* FilePath);
@@ -90,19 +91,23 @@ public:
 		LineRef operator *(){return Line;}
 		LineRef* operator -> (){return &Line;}
 		iterator(void* P):Line{P}{}
+		iterator(){}
 	};
 	//edit iface
 	iterator begin(){
-		iterator itr{P};
-		return itr;
+		//iterator itr{P};
+		return start;
 	}
-	iterator end();//{
-	//	return NULL;
-	//}
+	iterator end(){
+		return finish;
+	}
 
 	//low level getdata
 	void* Get(){return P;}
 	int Length(){return Len;}
 	int Merge();
+private:
+	iterator start;
+	iterator finish;
 };
 
