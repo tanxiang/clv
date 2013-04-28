@@ -63,5 +63,5 @@ FileMap<LineRef>::iterator FileMap<LineRef>::end(){
 }
 */
 //template class FileMap<char>;
-template class FileMap<MBLineRef<char> >;
+template class FileMap<MBLineRef<CharRef> >;
 template class WCLineRef<wchar_t>;

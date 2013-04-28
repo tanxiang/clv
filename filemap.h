@@ -3,6 +3,25 @@ class CharRef{
 protected:
 public:
 	int Length(){return 1;}
+	int WLength(){return 1;}
+	void n(){}//移动一个字符
+	void n(int i){
+		while(i--)n();
+	}
+	void p(){}//反向移动一个字符
+	void p(int i){
+		while(i--)p();
+	}
+	void w(){}//移动一个word
+	void w(int i){
+		while(i--)w();
+	}
+	void b(){}//反向移动一个word
+	void b(int i){
+		while(i--)b();
+	}
+	void reset(){}//行首^
+	void toend(){}//行末$
 };
 
 template<typename SourceChar>
@@ -26,16 +45,28 @@ public:
 		CalLength();
 	}
 
-	//low level getdata
-	void* Get(){return P;}
-	void Set(void* Pt){P=Pt;}
-	int Length(){return Len;}
 	void CalLength(){
 		Len=0;
 		char* Pc=static_cast<char*>(P);
 		while(*(Pc++)!='\n')
 			++Len;
 	}
+	//low level getdata
+	void* Get(){return P;}
+	void Set(void* Pt){P=Pt;}
+	int Length(){return Len;}
+
+	//edit iface
+	iterator begin(){
+		//iterator itr{P};
+		return start;
+	}
+	iterator end(){
+		return finish;
+	}
+private:
+	iterator start;
+	iterator finish;
 };
 
 template<typename SourceChar>
@@ -52,13 +83,26 @@ public:
 		typedef SourceChar&		reference;
 	};
 	struct iterator:public iterator_traits{
+
 	};
 	WCLineRef(){}
 	WCLineRef(void* P):P{P},Len{0}{}
+	void CalLength(){}
+
 	void* Get(){return P;}
 	void Set(void* Pt){P=Pt;}
 	int Length(){return Len;}
-	void CalLength(){}
+	//edit iface
+	iterator begin(){
+		//iterator itr{P};
+		return start;
+	}
+	iterator end(){
+		return finish;
+	}
+private:
+	iterator start;
+	iterator finish;
 };
 
 template<typename LineRef>
@@ -90,9 +134,13 @@ public:
 		bool operator !=(iterator it){return Line.Get() != it->Get();}
 		LineRef operator *(){return Line;}
 		LineRef* operator -> (){return &Line;}
-		iterator(void* P):Line{P}{}
-		iterator(){}
+		//iterator(void* P):Line{P}{}
+		//iterator(){}
 	};
+	//low level getdata
+	void* Get(){return P;}
+	int Length(){return Len;}
+	int Merge();
 	//edit iface
 	iterator begin(){
 		//iterator itr{P};
@@ -101,11 +149,6 @@ public:
 	iterator end(){
 		return finish;
 	}
-
-	//low level getdata
-	void* Get(){return P;}
-	int Length(){return Len;}
-	int Merge();
 private:
 	iterator start;
 	iterator finish;
