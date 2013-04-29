@@ -1,25 +1,60 @@
-class CharRef{
+class CharRef{//utf-8 char ref & opts
 	void *P;
+	enum CodeType{
+		EXTN=0,		//10xxxxxx
+		ASCII=1,	//0xxxxxxx
+		EXT1=2,		//110xxxxx
+		EXT2=3,		//1110xxxx
+		EXT3=4,		//11110xxx
+		EXT4=5		//111110xx
+	};
 protected:
+	CodeType Code(char c){
+		if(!(c & 0x80)) return ASCII;
+		if((c & 0xc0) == 0x80) return EXTN;
+		if((c & 0xe0) == 0xc0) return EXT1;
+		if((c & 0xf0) == 0xe0) return EXT2;
+		if((c & 0xf8) == 0xf0) return EXT3;
+		return EXT4;
+	}
 public:
 	int Length(){return 1;}
-	int WLength(){return 1;}
-	void n(){}//移动一个字符
-	void n(int i){
-		while(i--)n();
+	int WordLength(){return 1;}
+	int n(){//移动一个字符
+		char* Pc = static_cast<char*>(P);
+		int Len = Code(*Pc);
+		Pc += Len;
+		P = static_cast<void*>(Pc);
+		return Len;
 	}
-	void p(){}//反向移动一个字符
-	void p(int i){
-		while(i--)p();
+	int n(int i){
+		int Len = 0;
+		while(i--)Len += n();
+		return Len;
+	}
+	int p(){//反向移动一个字符
+		char* Pc = static_cast<char*>(P);
+		int Len = 0;
+		while(!Len){
+			--Pc;
+			Len = Code(*Pc);
+		}
+		P = static_cast<void*>(Pc);
+		return Len;
+	}
+	int p(int i){
+		int Len = 0;
+		while(i--)Len += p();
+		return Len;
 	}
 	void w(){}//移动一个word
-	void w(int i){
-		while(i--)w();
-	}
+	//void w(int i){
+	//	while(i--)w();
+	//}
 	void b(){}//反向移动一个word
-	void b(int i){
-		while(i--)b();
-	}
+	//void b(int i){
+	//	while(i--)b();
+	//}
 	void reset(){}//行首^
 	void toend(){}//行末$
 };

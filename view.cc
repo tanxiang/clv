@@ -124,7 +124,7 @@ bool ClvWindow::onClick(Click* click) {
 
 bool ClvWindow::setFormat(){
 	fBGColor = 0xFF888888;
-	fTypeface = SkTypeface::CreateFromName("Source Code Pro Light", SkTypeface::kNormal);
+	fTypeface = SkTypeface::CreateFromName("sans", SkTypeface::kNormal);
 	paint.setTypeface(fTypeface);
 	SkScalar textSize = SkIntToScalar(15);
 	paint.setAntiAlias(true);
