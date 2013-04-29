@@ -210,7 +210,7 @@ void ClvWindow::onDraw(SkCanvas* canvas){
 	y += paint.getFontSpacing();
 	canvas->drawText(itr->Get(),itr->Length(), x0, y, paint);
 	cout<<"Length"<<itr->Length()<<endl;
-	++itr;
+	++itr;/*
 	y += paint.getFontSpacing();
 	canvas->drawText(itr->Get(),itr->Length(), x0, y, paint);
 	cout<<"Length"<<itr->Length()<<endl;
@@ -229,7 +229,7 @@ void ClvWindow::onDraw(SkCanvas* canvas){
 	++itr;
 	y += paint.getFontSpacing();
 	canvas->drawText(itr->Get(),itr->Length(), x0, y, paint);
-	cout<<"Length"<<itr->Length()<<endl;
+	cout<<"Length"<<itr->Length()<<endl;*/
 }
 
 bool ClvWindow::onHandleKey(SkKey key){

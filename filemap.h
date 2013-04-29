@@ -55,8 +55,9 @@ public:
 	//void b(int i){
 	//	while(i--)b();
 	//}
-	void reset(){}//行首^
-	void toend(){}//行末$
+	void Set(void*Pt){P=Pt;}
+	void* Get(){return P;}
+	char GetChar(){return *static_cast<char*>(P);}
 };
 
 template<typename SourceChar>
@@ -64,31 +65,48 @@ class MBLineRef{
 	void *P;
 	int Len;
 protected:
+	void CalLength(){
+		Len=0;
+		start->Set(P);
+		finish->Set(P);
+		while(finish->GetChar()!='\n'){
+			++Len;
+			++finish;
+		}
+	}
 public:
 	struct iterator_traits {
 		typedef std::bidirectional_iterator_tag iterator_category;
 		typedef SourceChar		value_type;
-		typedef std::ptrdiff_t	difference_type;
+		typedef std::ptrdiff_t		difference_type;
 		typedef SourceChar*		pointer;
 		typedef SourceChar&		reference;
 	};
 	struct iterator:public iterator_traits{
 		CharRef Char;
+		iterator operator ++ (){
+			Char.n();
+			return *this;
+		}
+		iterator operator -- (){
+			Char.p();
+			return *this;
+		}
+		bool operator !=(iterator it){return Char.Get() != it->Get();}
+		CharRef operator *(){return Char;}
+		CharRef* operator -> (){return &Char;}
 	};
 	MBLineRef(){}
 	MBLineRef(void* P):P{P},Len{0}{
 		CalLength();
 	}
 
-	void CalLength(){
-		Len=0;
-		char* Pc=static_cast<char*>(P);
-		while(*(Pc++)!='\n')
-			++Len;
-	}
 	//low level getdata
 	void* Get(){return P;}
-	void Set(void* Pt){P=Pt;}
+	void Set(void* Pt){
+		P=Pt;
+		CalLength();
+	}
 	int Length(){return Len;}
 
 	//edit iface
@@ -109,11 +127,12 @@ class WCLineRef{
 	void *P;
 	int Len;
 protected:
+	void CalLength(){}
 public:
 	struct iterator_traits {
 		typedef std::random_access_iterator_tag iterator_category;
 		typedef SourceChar		value_type;
-		typedef std::ptrdiff_t	difference_type;
+		typedef std::ptrdiff_t		difference_type;
 		typedef SourceChar*		pointer;
 		typedef SourceChar&		reference;
 	};
@@ -122,7 +141,7 @@ public:
 	};
 	WCLineRef(){}
 	WCLineRef(void* P):P{P},Len{0}{}
-	void CalLength(){}
+
 
 	void* Get(){return P;}
 	void Set(void* Pt){P=Pt;}
@@ -152,8 +171,8 @@ public:
 
 	struct iterator_traits {
 		typedef std::bidirectional_iterator_tag iterator_category;
-		typedef LineRef		value_type;
-		typedef std::ptrdiff_t	difference_type;
+		typedef LineRef			value_type;
+		typedef std::ptrdiff_t		difference_type;
 		typedef LineRef*		pointer;
 		typedef LineRef&		reference;
 	};
@@ -163,7 +182,7 @@ public:
 			char* Pc=static_cast<char*>(Line.Get());
 			Pc += Line.Length();
 			Line.Set(static_cast<void*>(++Pc));
-			Line.CalLength();
+			//Line.CalLength();
 			return *this;
 		}
 		bool operator !=(iterator it){return Line.Get() != it->Get();}
