@@ -34,7 +34,7 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 	}
 	start.Line.Set(P);
 	//start.Line.CalLength();
-	finish.Line.Set(P);
+	//finish.Line.Set(P);
 	//finish.Line.CalLength();
 }
 
