@@ -18,7 +18,7 @@ protected:
 		return EXT4;
 	}
 public:
-	int Length(){return 1;}
+	int Length(){return Code(*static_cast<char*>(P));}
 	int WordLength(){return 1;}
 	int n(){//移动一个字符
 		char* Pc = static_cast<char*>(P);
