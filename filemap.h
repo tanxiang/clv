@@ -106,7 +106,7 @@ public:
 
 	//low level getdata
 	void* Get(){return P;}
-	void Set(void* Pt){
+	void Set(void* Pt,int PLen){
 		P=Pt;
 		CalLength();
 	}
@@ -149,7 +149,7 @@ public:
 
 
 	void* Get(){return P;}
-	void Set(void* Pt){P=Pt;}
+	void Set(void* Pt,int PLen=0){P=Pt;}
 	int Length(){return Len;}
 	//edit iface
 	iterator begin(){
@@ -186,7 +186,7 @@ public:
 		iterator operator ++ (){
 			char* Pc=static_cast<char*>(Line.Get());
 			Pc += Line.Length();
-			Line.Set(static_cast<void*>(Pc));
+			Line.Set(static_cast<void*>(Pc),0);
 			return *this;
 		}
 		bool operator !=(iterator it){return Line.Get() != it->Get();}

@@ -32,7 +32,7 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 		close(FD);
 		throw;
 	}
-	start.Line.Set(P);
+	start.Line.Set(P,Len);
 	auto l=Len;
 	finish=start;
 	l-=finish->Length();
