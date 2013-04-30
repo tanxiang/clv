@@ -200,7 +200,7 @@ void ClvWindow::onDraw(SkCanvas* canvas){
 
 	SkScalar x0 = SkIntToScalar(30);
 	SkScalar y = SkIntToScalar(20);
-	canvas->drawText(file.Get(),file.Length(), x0, y, paint);
+	//canvas->drawText(file.Get(),file.Length(), x0, y, paint);
 
 	auto itr = file.begin();
 	y += paint.getFontSpacing();
@@ -208,25 +208,9 @@ void ClvWindow::onDraw(SkCanvas* canvas){
 	cout<<"Length"<<itr->Length()<<endl;
 	++itr;
 	y += paint.getFontSpacing();
-	canvas->drawText(itr->Get(),itr->Length(), x0, y, paint);
-	cout<<"Length"<<itr->Length()<<endl;
-	++itr;
-	y += paint.getFontSpacing();
-	canvas->drawText(itr->Get(),itr->Length(), x0, y, paint);
-	cout<<"Length"<<itr->Length()<<endl;
-	++itr;
-	y += paint.getFontSpacing();
-	canvas->drawText(itr->Get(),itr->Length(), x0, y, paint);
-	cout<<"Length"<<itr->Length()<<endl;
-	++itr;
-	y += paint.getFontSpacing();
-	canvas->drawText(itr->Get(),itr->Length(), x0, y, paint);
-	cout<<"Length"<<itr->Length()<<endl;
-	++itr;
-	y += paint.getFontSpacing();
-	canvas->drawText(itr->Get(),itr->Length(), x0, y, paint);
-	cout<<"Length"<<itr->Length()<<endl;
-	++itr;
+	auto x=x0;
+	for (auto Char : *itr)
+		canvas->drawText(Char.Get(),Char.Length(), x+=12, y, paint);
 	y += paint.getFontSpacing();
 	canvas->drawText(itr->Get(),itr->Length(), x0, y, paint);
 	cout<<"Length"<<itr->Length()<<endl;

@@ -64,7 +64,7 @@ template<typename SourceChar>
 class MBLineRef{
 	void *P;
 	int Len;
-	int Bits;
+	//int Bits;
 protected:
 	void CalLength(){
 		Len=0;
@@ -74,8 +74,8 @@ protected:
 			++Len;
 			++finish;
 		}
-		Bits = static_cast<char*>(finish->Get()) -
-			static_cast<char*>(start->Get());
+		//Bits = static_cast<char*>(finish->Get()) -
+		//	static_cast<char*>(start->Get());
 	}
 public:
 	struct iterator_traits {
@@ -88,7 +88,7 @@ public:
 	struct iterator:public iterator_traits{
 		CharRef Char;
 		iterator operator ++ (){
-			std::cout<<Char.n()<<' ';
+			Char.n();
 			return *this;
 		}
 		iterator operator -- (){
@@ -110,11 +110,13 @@ public:
 		P=Pt;
 		CalLength();
 	}
-	int Length(){return Bits;}
+	int Length(){
+		return 1 + (static_cast<char*>(finish->Get()) -
+			static_cast<char*>(start->Get()));
+	}
 
 	//edit iface
 	iterator begin(){
-		//iterator itr{P};
 		return start;
 	}
 	iterator end(){
@@ -184,8 +186,7 @@ public:
 		iterator operator ++ (){
 			char* Pc=static_cast<char*>(Line.Get());
 			Pc += Line.Length();
-			Line.Set(static_cast<void*>(++Pc));
-			//Line.CalLength();
+			Line.Set(static_cast<void*>(Pc));
 			return *this;
 		}
 		bool operator !=(iterator it){return Line.Get() != it->Get();}
