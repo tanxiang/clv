@@ -71,6 +71,7 @@ protected:
 		start->Set(P);
 		finish->Set(P);
 		while(finish->GetChar()!='\n'){
+			//std::cout<<"char"<<std::endl;
 			++Len;
 			++finish;
 		}
@@ -99,24 +100,26 @@ public:
 		CharRef operator *(){return Char;}
 		CharRef* operator -> (){return &Char;}
 	};
-	MBLineRef(){}
-	MBLineRef(void* P):P{P},Len{0}{
-		CalLength();
-	}
+	MBLineRef():Len{0}{}
+	MBLineRef(void* P):P{P},Len{0}{}
 
 	//low level getdata
 	void* Get(){return P;}
 	void Set(void* Pt){
 		P=Pt;
-		CalLength();
+		//CalLength();
 	}
 	int Length(){
+		//FIXME:bug!! CalLength init start finish when to call CalLength??
+		CalLength();
+		//std::cout<<"CalLength();"<<start->Get()<<'-'<<finish->Get()<<std::endl;
 		return 1 + (static_cast<char*>(finish->Get()) -
 			static_cast<char*>(start->Get()));
 	}
 
 	//edit iface
 	iterator begin(){
+		CalLength();
 		return start;
 	}
 	iterator end(){

@@ -32,20 +32,23 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 		close(FD);
 		throw;
 	}
+	//static_cast<char*>(P)[Len]='\n';
 	start.Line.Set(P);
 	auto l=Len;
 	finish=start;
-	l-=finish->Length();
+	//l-=finish->Length();
+
 	while(l){
-		++finish;
+		//std::cout<<finish->Length()<<':'<<l<<'-'<<std::endl;
 		l-=finish->Length();
+		++finish;
 	}
 }
 
 
 template<typename LineRef>
 FileMap<LineRef>::~FileMap(){
-	munmap(P,Len);
+	munmap(P,Len+1);
 	close(FD);
 }
 
