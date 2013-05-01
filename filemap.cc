@@ -34,14 +34,14 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 	}
 
 	//static_cast<char*>(P)[Len]='\n';
-	start.Line.Set(P);
-	auto l=Len;
+	start.Line.Set(P,Len);
+	//auto l=Len;
 	finish=start;
 	//l-=finish->Length();
 
-	while(l){
+	while(finish->AllLength()){
 		//std::cout<<finish->Length()<<':'<<l<<'-'<<std::endl;
-		l-=finish->Length();
+		//l-=finish->Length();
 		++finish;
 	}
 }

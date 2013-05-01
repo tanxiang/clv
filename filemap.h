@@ -64,9 +64,9 @@ template<typename SourceChar>
 class MBLineRef{
 	void *P;
 	int Len;
-	//int Bits;
+	int BitsToEnd;
 protected:
-	void CalLength(){
+	void CalLength(int Plen){
 		Len=0;
 		start->Set(P);
 		finish->Set(P);
@@ -75,8 +75,6 @@ protected:
 			++Len;
 			++finish;
 		}
-		//Bits = static_cast<char*>(finish->Get()) -
-		//	static_cast<char*>(start->Get());
 	}
 public:
 	struct iterator_traits {
@@ -101,17 +99,30 @@ public:
 		CharRef* operator -> (){return &Char;}
 	};
 	MBLineRef():Len{0}{}
-	MBLineRef(void* P):P{P},Len{0}{}
+	MBLineRef(void* P,int Plen):P{P},BitsToEnd{Plen},Len{0}{
+		if(Plen)
+			CalLength(Plen);
+	}
 
 	//low level getdata
 	void* Get(){return P;}
-	void Set(void* Pt){
+	void Set(void* Pt,int Plen){
 		P=Pt;
-		//CalLength();
+		BitsToEnd=Plen;
+		if(Plen)
+			CalLength(Plen);
 	}
+
+	int AllLength(){
+		//FIXME:bug!! CalLength init start finish when to call CalLength??
+		//CalLength();
+		//std::cout<<"CalLength();"<<start->Get()<<'-'<<finish->Get()<<std::endl;
+		return BitsToEnd;
+	}
+
 	int Length(){
 		//FIXME:bug!! CalLength init start finish when to call CalLength??
-		CalLength();
+		//CalLength();
 		//std::cout<<"CalLength();"<<start->Get()<<'-'<<finish->Get()<<std::endl;
 		return 1 + (static_cast<char*>(finish->Get()) -
 			static_cast<char*>(start->Get()));
@@ -119,7 +130,7 @@ public:
 
 	//edit iface
 	iterator begin(){
-		CalLength();
+		//CalLength();
 		return start;
 	}
 	iterator end(){
@@ -189,7 +200,7 @@ public:
 		iterator operator ++ (){
 			char* Pc=static_cast<char*>(Line.Get());
 			Pc += Line.Length();
-			Line.Set(static_cast<void*>(Pc));
+			Line.Set(static_cast<void*>(Pc),Line.AllLength()-Line.Length());
 			return *this;
 		}
 		bool operator !=(iterator it){return Line.Get() != it->Get();}
