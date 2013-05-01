@@ -198,13 +198,16 @@ void ClvWindow::onDraw(SkCanvas* canvas){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	canvas->drawColor(fBGColor);
 
-	SkScalar x0 = SkIntToScalar(30);
+	SkScalar x0 = SkIntToScalar(10);
 	SkScalar y = SkIntToScalar(20);
 	//canvas->drawText(file.Get(),file.Length(), x0, y, paint);
 
-	for(auto itr : file){
-		canvas->drawText(itr.Get(),itr.Length(), x0, y, paint);
-		cout<<"Length"<<itr.Length()<<endl;
+	for(auto &Line : file){
+		SkScalar x=x0;
+		for(auto &Char : Line){
+			canvas->drawText(Char.Get(),Char.Length(), x+=16, y, paint);
+		}
+		//cout<<"Length"<<Line.Length()<<endl;
 		y += paint.getFontSpacing();
 	}
 	//y += paint.getFontSpacing();

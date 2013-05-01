@@ -95,7 +95,7 @@ public:
 			return *this;
 		}
 		bool operator !=(iterator it){return Char.Get() != it->Get();}
-		CharRef operator *(){return Char;}
+		CharRef& operator *(){return Char;}
 		CharRef* operator -> (){return &Char;}
 	};
 	MBLineRef():Len{0}{}
@@ -204,7 +204,7 @@ public:
 			return *this;
 		}
 		bool operator !=(iterator it){return Line.Get() != it->Get();}
-		LineRef operator *(){return Line;}
+		LineRef& operator *(){return Line;}
 		LineRef* operator -> (){return &Line;}
 		//iterator(void* P):Line{P}{}
 		//iterator(){}
