@@ -32,6 +32,7 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 		close(FD);
 		throw;
 	}
+
 	//static_cast<char*>(P)[Len]='\n';
 	start.Line.Set(P);
 	auto l=Len;
