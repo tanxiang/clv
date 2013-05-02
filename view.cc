@@ -205,7 +205,8 @@ void ClvWindow::onDraw(SkCanvas* canvas){
 	for(auto &Line : file){
 		SkScalar x=x0;
 		for(auto &Char : Line){
-			canvas->drawText(Char.Get(),Char.Length(), x+=16, y, paint);
+			canvas->drawText(Char.Get(),Char.Length(), x, y, paint);
+			x += paint.measureText(Char.Get(),Char.Length());
 		}
 		//cout<<"Length"<<Line.Length()<<endl;
 		y += paint.getFontSpacing();

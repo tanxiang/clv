@@ -47,11 +47,15 @@ public:
 		while(i--)Len += p();
 		return Len;
 	}
-	void w(){}//移动一个word
+	void w(){//移动一个word
+		;
+	}
 	//void w(int i){
 	//	while(i--)w();
 	//}
-	void b(){}//反向移动一个word
+	void b(){//反向移动一个word
+		;
+	}
 	//void b(int i){
 	//	while(i--)b();
 	//}
@@ -63,16 +67,16 @@ public:
 template<typename SourceChar>
 class MBLineRef{
 	void *P;
-	int Len;
+	int NumChar;
 	int BitsToEnd;
 protected:
 	void CalLength(int Plen){
-		Len=0;
+		NumChar=0;
 		start->Set(P);
 		finish->Set(P);
 		while(finish->GetChar()!='\n'){
 			//std::cout<<"char"<<std::endl;
-			++Len;
+			++NumChar;
 			++finish;
 		}
 	}
@@ -98,8 +102,8 @@ public:
 		CharRef& operator *(){return Char;}
 		CharRef* operator -> (){return &Char;}
 	};
-	MBLineRef():Len{0}{}
-	MBLineRef(void* P,int Plen):P{P},BitsToEnd{Plen},Len{0}{
+	MBLineRef():NumChar{0}{}
+	MBLineRef(void* P,int Plen):P{P},BitsToEnd{Plen},NumChar{0}{
 		if(Plen)
 			CalLength(Plen);
 	}
