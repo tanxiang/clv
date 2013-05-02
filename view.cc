@@ -124,13 +124,13 @@ bool ClvWindow::onClick(Click* click) {
 
 bool ClvWindow::setFormat(){
 	fBGColor = 0xFF888888;
-	fTypeface = SkTypeface::CreateFromName("sans", SkTypeface::kNormal);
+	fTypeface = SkTypeface::CreateFromName("monospace", SkTypeface::kNormal);
 	paint.setTypeface(fTypeface);
 	SkScalar textSize = SkIntToScalar(15);
 	paint.setAntiAlias(true);
 	paint.setLCDRenderText(true);
 	paint.setTextSize(textSize);
-	paint.setColor(0xFF00FFFF);
+	paint.setColor(0xFF30F066);
 	return true;
 }
 
@@ -195,8 +195,8 @@ bool ClvWindow::onEvent(const SkEvent& evt){
 
 
 void ClvWindow::onDraw(SkCanvas* canvas){
-	cout<<__PRETTY_FUNCTION__<<endl;
-	canvas->drawColor(fBGColor);
+	//cout<<__PRETTY_FUNCTION__<<endl;
+	//canvas->drawColor(fBGColor);
 
 	SkScalar x0 = SkIntToScalar(10);
 	SkScalar y = SkIntToScalar(20);

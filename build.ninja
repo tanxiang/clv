@@ -17,17 +17,17 @@ rule cxx_skia
     description = CXX $out
     depfile = $out.d
 
-build clvfile.o: cxx clvfile.cc
+build clthread.o: cxx clthread.cc
 build clangparse.o: cxx clangparse.cc
 build filemap.o: cxx filemap.cc
 build view.o: cxx_skia view.cc
 
 rule link
-    command = $cxx $in $cxxflags $linkflags_clang -o $out
+    command = $cxx $in $cxxflags $linkflags_clang $linkflags_skia -o $out
 
 rule link_skia
     command = $cxx $in $cxxflags $linkflags_skia -o $out
 
-build clv: link clvfile.o clangparse.o filemap.o
+build clv: link view.o clthread.o clangparse.o filemap.o
 
-build sk: link_skia view.o filemap.o
+#build sk: link_skia view.o filemap.o

@@ -4,12 +4,12 @@
 #include <algorithm>
 #include "filemap.h"
 //#include "filemap.cc"
-#include "clvfile.h"
+#include "clthread.h"
 #include "clangparse.h"
 
 using namespace std;
 
-int main(int argc,char* argv[])
+int clmain(int argc,char* argv[])
 {
 	ios::sync_with_stdio(false);
 	if(argc!=2)
