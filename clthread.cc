@@ -1,4 +1,4 @@
-#include <thread>
+#include <future>
 
 #include "filemap.h"
 #include "clthread.h"
@@ -6,13 +6,8 @@
 
 using namespace std;
 
-int clmain(int argc,char* argv[])
+void parse_thread(void* P,int Len)
 {
-	ios::sync_with_stdio(false);
-	if(argc!=2)
-		return 0;
-	FileMap<MBLineRef<CharRef> > Map{argv[1]};
-
 	ClpInvocation Invocation{vector<string>{"-std=c++11","-c"},new ClpAction{}};
-	Invocation.RunCode(static_cast<char*>(Map.Get()),Map.Length());
+	Invocation.RunCode(static_cast<char*>(P),Len);
 }

@@ -21,6 +21,7 @@
 #include <iterator>
 #include "filemap.h"
 #include "view.h"
+#include "clthread.h"
 using namespace std;
 static void inline postEventToSink(SkEvent* evt, SkEventSink* sink) {
 	evt->setTargetID(sink->getSinkID())->post();
@@ -90,15 +91,8 @@ bool ClvWindow::onHandleChar(SkUnichar uni) {//input
 	int dx = 0xFF;
 	int dy = 0xFF;
 	switch (uni) {
-	case '5': dx =  0; dy =  0; break;
-	case '8': dx =  0; dy = -1; break;
-	case '6': dx =  1; dy =  0; break;
-	case '2': dx =  0; dy =  1; break;
-	case '4': dx = -1; dy =  0; break;
-	case '7': dx = -1; dy = -1; break;
-	case '9': dx =  1; dy = -1; break;
-	case '3': dx =  1; dy =  1; break;
-	case '1': dx = -1; dy =  1; break;
+	case 'p':
+	parse_thread(file.Get(),file.Length());
 	//default: break;
 	}
 	
