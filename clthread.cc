@@ -13,6 +13,8 @@ void parse_thread(void* P,int Len)
 		Invocation.RunCode(static_cast<char*>(P),Len);
 	}};
 	//cout<<"pppppp"<<endl;
-	clangt.join();
-	
+	//clangt.detach();
+	cout << "Hello, Thread!\n";
+	this_thread::sleep_for(std::chrono::seconds(6));
+	clangt.detach();
 }

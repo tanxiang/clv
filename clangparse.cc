@@ -42,11 +42,13 @@ bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 		llvm::outs() << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
+	return true;
 }
 
 bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
 	llvm::outs() << Declaration->getName() << "\t"
 		<< Declaration->getType().getAsString() <<'\n';
+	return true;
 }
 
 bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
@@ -69,6 +71,7 @@ bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
 			case AS_public:    llvm::outs() << "public:"; break;
 			case AS_protected: llvm::outs() << "protected:"; break;
 			case AS_private:   llvm::outs() << "private:"; break;
+			case AS_none: break;
 			}
 			llvm::outs() << It->getType().getAsString();
 			llvm::outs() << '\n';

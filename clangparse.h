@@ -1,5 +1,5 @@
-#define __STDC_LIMIT_MACROS
-#define __STDC_CONSTANT_MACROS
+//#define __STDC_LIMIT_MACROS
+//#define __STDC_CONSTANT_MACROS
 
 #include <clang/Frontend/FrontendActions.h>
 #include <clang/Frontend/CompilerInvocation.h>
