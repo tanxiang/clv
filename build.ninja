@@ -5,7 +5,7 @@ linkflags_clang = -L/usr/lib/llvm -lclangTooling -lclangFrontend -lclangDriver -
 
 linkflags_skia = -L../skia/out/Release -lskia_sfnt -lskia_views -lskia_utils -lskia_xml -lskia_core -lskia_ports -lskia_images -lskia_core -lskia_opts -lskia_opts_ssse3 -lskia_skgr -lskia_effects -lskia_gr -lGL -lglut -lX11 -lpthread -lfreetype -lz -lbz2 -lfontconfig
 
-cxx = clang++
+cxx = g++
 
 rule cxx
     command = $cxx -MMD -MT $out -MF $out.d $cxxflags -c $in -o $out
