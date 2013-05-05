@@ -1,4 +1,3 @@
-#include <future>
 #include <iostream>
 #include "clthread.h"
 #include "clangparse.h"
