@@ -12,6 +12,7 @@ template<typename LineRef>
 FileMap<LineRef>::FileMap(const char* FilePath){
 	FD = -1;
 	if(FilePath){
+		file_name=FilePath;
 		FD=open(FilePath,O_RDWR);
 		if(FD == -1){
 			throw;

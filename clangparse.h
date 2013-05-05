@@ -62,15 +62,15 @@ public:
 };
 
 class ClpInvocation{
-	std::vector<std::string> CommandLine;
+	//std::vector<std::string> CommandLine;
 	std::unique_ptr<FrontendAction> Action;
 protected:
-	bool RunInvocation(char* Code,int Length,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args);
+	bool RunInvocation(const char* Name,char* Code,int Length,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args);
 public:
-	ClpInvocation(std::vector<std::string> CommandLine,FrontendAction *Action)
-	:CommandLine{CommandLine},Action{Action}{
+	ClpInvocation(FrontendAction *Action)
+	:Action{Action}{
 	}
-	bool RunCode(char* Code,int Length);
+	bool RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine);
 };
 
-void CodeToCompilerInstance(char* Code,int Length,CompilerInstance &Compiler);
+void CodeToCompilerInstance(const char* Name,char* Code,int Length,CompilerInstance &Compiler);

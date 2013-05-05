@@ -80,13 +80,13 @@ bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
 	return true;
 }
 
-bool ClpInvocation::RunCode(char* Code,int Length){
+bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine){
 	vector<string> Commands;
 	vector<const char*> Argv;
 	Commands.push_back("clang-tool");
 	Commands.push_back("-fsyntax-only");
 	Commands.insert(Commands.end(),CommandLine.begin(),CommandLine.end());
-	Commands.push_back("input.cc");
+	Commands.push_back(Name);
 	for (int I = 0, E = Commands.size(); I != E; ++I)
 		Argv.push_back(Commands[I].c_str());
 
@@ -118,10 +118,10 @@ bool ClpInvocation::RunCode(char* Code,int Length){
 	//	llvm::errs() << "\n";
 	//}
 
-	return RunInvocation(Code,Length,*Invocation,CC1Args);
+	return RunInvocation(Name,Code,Length,*Invocation,CC1Args);
 }
 
-bool ClpInvocation::RunInvocation(char* Code,int Length,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args){
+bool ClpInvocation::RunInvocation(const char* Name,char* Code,int Length,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args){
 	clang::CompilerInstance Compiler;
 	Compiler.setInvocation(&Invocation);
 
@@ -131,15 +131,15 @@ bool ClpInvocation::RunInvocation(char* Code,int Length,CompilerInvocation &Invo
 	
 	Compiler.createFileManager();
 	Compiler.createSourceManager(Compiler.getFileManager());
-	CodeToCompilerInstance(Code,Length,Compiler);
+	CodeToCompilerInstance(Name,Code,Length,Compiler);
 	const bool Success = Compiler.ExecuteAction(*Action);
 	Compiler.resetAndLeakFileManager();
 	return Success;
 }
 
-void CodeToCompilerInstance(char* Code,int Length,CompilerInstance &Compiler){
+void CodeToCompilerInstance(const char* Name,char* Code,int Length,CompilerInstance &Compiler){
 	const llvm::MemoryBuffer *Input = llvm::MemoryBuffer::getMemBuffer(Code);
-	const FileEntry *FromFile = Compiler.getFileManager().getVirtualFile("input.cc",Length, 0);
+	const FileEntry *FromFile = Compiler.getFileManager().getVirtualFile(Name,Length, 0);
 	Compiler.getSourceManager().overrideFileContents(FromFile,Input);
 }
 

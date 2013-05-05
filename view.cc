@@ -92,7 +92,7 @@ bool ClvWindow::onHandleChar(SkUnichar uni) {//input
 	int dy = 0xFF;
 	switch (uni) {
 	case 'p':
-	parse_thread(file.Get(),file.Length());
+	parse_thread(file.Name(),file.Get(),file.Length());
 	//default: break;
 	}
 	

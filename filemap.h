@@ -185,6 +185,7 @@ private:
 template<typename LineRef>
 class FileMap{
 	void *P;
+	const char *file_name;
 	int Len;
 	int FD;
 protected:
@@ -214,6 +215,7 @@ public:
 		//iterator(){}
 	};
 	//low level getdata
+	const char* Name(){return file_name;}
 	void* Get(){return P;}
 	int Length(){return Len;}
 	int Merge();

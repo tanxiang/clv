@@ -1,2 +1,2 @@
 
-void parse_thread(void* P,int Len);
+void parse_thread(const char* CodeName,void* P,int Len);

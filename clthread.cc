@@ -3,25 +3,27 @@
 #include "clthread.h"
 #include "clangparse.h"
 
+
 using namespace std;
-thread gt;
+//thread gt;
 
 
-void parse_thread(void* P,int Len)
+void parse_thread(const char* CodeName,void* P,int Len)
 {
 	//if(gt.joinable())
 	//	cout<<"canjoin";
 	//thread clangt{cl,P,Len};
+	cout<<CodeName<<endl;
 	thread clangt{[=]{
-		ClpInvocation Invocation{vector<string>{"-std=c++11","-c"},new ClpAction{}};
-		Invocation.RunCode(static_cast<char*>(P),Len);
+		ClpInvocation Invocation{new ClpAction{}};
+		Invocation.RunCode(CodeName,static_cast<char*>(P),Len,vector<string>{"-std=c++11","-c"});
 	}};
-	gt=move(clangt);
+	//gt=move(clangt);
 	//if(gt.joinable())
 	//	cout<<"canjoin2\n";
-	gt.detach();
+	//gt.detach();
 
-	//clangt.detach();
+	clangt.detach();
 	//cout << "Hello, Thread!\n";
 	//this_thread::sleep_for(std::chrono::seconds(6));
 	//clangt.detach();
