@@ -1,9 +1,10 @@
 #include <future>
 class ClvCompile{
-	std::packaged_task<bool(const char* CodeName,void* P,int Len)> CompileThread;
+	std::thread CompileThread;
 	//std::thread SearchThread;
 	std::future<bool> CompileResult;
 	std::promise<int> SearchPromise;
+	std::future<int> SearchResult;
 public:
 	ClvCompile();
 	void* PchCode(const char* CodeName,void* P,int Len);
