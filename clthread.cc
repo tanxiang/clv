@@ -25,6 +25,6 @@ bool ClvCompile::ParseCode(const char* CodeName,void* P,int Len,void* Pch){
 bool ClvCompile::SearchAST(){
 	if(!Ready())
 		return false;
-	
+	return true;
 }
 ClvCompile clast;

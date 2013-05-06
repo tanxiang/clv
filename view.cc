@@ -27,7 +27,7 @@ static void inline postEventToSink(SkEvent* evt, SkEventSink* sink) {
 	evt->setTargetID(sink->getSinkID())->post();
 }
 
-ClvWindow::ClvWindow(void* hwnd,const char* filepath):INHERITED{hwnd},hwnd{hwnd},file{filepath},fBorder{12}{
+ClvWindow::ClvWindow(void* hwnd,const char* filepath):INHERITED{hwnd},hwnd{hwnd},fBorder{12},file{filepath}{
 	//cout<<__PRETTY_FUNCTION__<<endl;
 	//setConfig(SkBitmap::kRGB_565_Config);
 	setConfig(SkBitmap::kARGB_8888_Config);
@@ -237,7 +237,7 @@ bool ClvWindow::onHandleKeyUp(SkKey key){
 	return INHERITED::onHandleKeyUp(key);
 }
 
-ClvScroller::ClvScroller(ScrollerType st):fType{st},fBorder{1}{
+ClvScroller::ClvScroller(ScrollerType st):fBorder{1},fType{st}{
 	//cout<<__PRETTY_FUNCTION__<<endl;
 	setVisibleP(true);
 	setClipToBounds(false);
