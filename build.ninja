@@ -1,4 +1,4 @@
-cxxflags = -std=c++11 -fpic -O2 -fno-rtti -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS -Wall
+cxxflags = -std=c++11 -fpic -O2 -fno-rtti -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS
 cxxflags_skia = -I../skia/include/views -I../skia/include/animator -I../skia/include/views/animated -I../skia/include/core -I../skia/include/config -I../skia/include/xml -I../skia/include/gpu -I../skia/include/utils -I../skia/src/gpu
 
 linkflags_clang = -L/usr/lib/llvm -lclangTooling -lclangFrontend -lclangDriver -lclangParse -lclangSema -lclangAST -lclangSerialization -lclangLex -lclangBasic -lclangEdit -lclang -lclangAnalysis `llvm-config --libs` -ldl -lpthread

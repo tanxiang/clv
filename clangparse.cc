@@ -13,12 +13,13 @@ using namespace clang::tooling;
 
 ASTConsumer* ClpAction::CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile){
 	//std::cout<<"cASTConsumer"<<std::endl;
-	return new ClpConsumer;
+	return new ClpConsumer{SearchPromise};
 	//return CreateASTViewer();
 }
 
 void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 	//Context.getTranslationUnitDecl()->dump(llvm::outs());
+	//sleep & wait sreach opt
 	pContext = &Context;
 	TraverseDecl(Context.getTranslationUnitDecl());
 }

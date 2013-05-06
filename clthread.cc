@@ -13,7 +13,7 @@ void* ClvCompile::PchCode(const char* CodeName,void* P,int Len){
 bool ClvCompile::ParseCode(const char* CodeName,void* P,int Len,void* Pch){
 	CompileThread = thread{
 		[=](promise<int>& SearchPromise){
-			ClpInvocation Invocation{new ClpAction{}};
+			ClpInvocation Invocation{new ClpAction{&SearchPromise}};
 			Invocation.RunCode(CodeName,static_cast<char*>(P),Len,vector<string>{"-std=c++11","-c"});
 			},
 			ref(SearchPromise)

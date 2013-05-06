@@ -8,13 +8,17 @@
 #include <clang/AST/RecursiveASTVisitor.h>
 #include <clang/Driver/Driver.h>
 #include <memory>
+#include <future>
 
 using namespace clang;
 
 class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	typedef RecursiveASTVisitor<ClpConsumer> base;
+	std::promise<int>* SearchPromise;
 	ASTContext *pContext;
 	public:
+	ClpConsumer(std::promise<int>* Promise):SearchPromise{Promise}{}
+
 	virtual void HandleTranslationUnit(ASTContext &Context) override;
 
 	/*virtual bool HandleTopLevelDecl(DeclGroupRef D) override{
@@ -55,9 +59,11 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 };
 
 class ClpAction:public ASTFrontendAction{
+	std::promise<int>* SearchPromise;
 protected:
 	virtual ASTConsumer *CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile); 
 public:
+	ClpAction(std::promise<int>* Promise):SearchPromise{Promise}{}
 	virtual bool hasCodeCompletionSupport() const {return true;}
 };
 
