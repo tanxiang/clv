@@ -9,7 +9,8 @@ ClvCompile::ClvCompile():CompileThread{
 		ClpInvocation Invocation{new ClpAction{}};
 		return Invocation.RunCode(CodeName,static_cast<char*>(P),Len,vector<string>{"-std=c++11","-c"});
 	}
-}{}
+}
+,CompileResult{CompileThread.get_future()}{}
 
 void* ClvCompile::PchCode(const char* CodeName,void* P,int Len){
 	return nullptr;
@@ -22,6 +23,8 @@ bool ClvCompile::ParseCode(const char* CodeName,void* P,int Len,void* Pch){
 	//}};
 	//CompileThread.detach();
 	CompileThread(CodeName,P,Len);
+	cout<<"return!!"<<endl;
+	CompileResult.get();
 	return true;
 }
 

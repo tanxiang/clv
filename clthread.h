@@ -2,7 +2,7 @@
 class ClvCompile{
 	std::packaged_task<bool(const char* CodeName,void* P,int Len)> CompileThread;
 	//std::thread SearchThread;
-	//std::futrue SearchFutrue;
+	std::future<bool> CompileResult;
 	std::promise<int> SearchPromise;
 public:
 	ClvCompile();
