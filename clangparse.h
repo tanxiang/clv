@@ -47,10 +47,10 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	bool VisitUsingDirectiveDecl(UsingDirectiveDecl *D); //using namespace ??
 	bool VisitCXXRecordDecl(CXXRecordDecl *Declaration); //class
 
-	/*
-	void VisitLinkageSpecDecl(LinkageSpecDecl *D) //cpp link symb
-	void VisitTemplateDecl(const TemplateDecl *D);
-	*/
+	
+	bool VisitLinkageSpecDecl(LinkageSpecDecl *D); //cpp link symb
+	bool VisitTemplateDecl(const TemplateDecl *D);
+	
 	bool VisitFunctionTemplateDecl(FunctionTemplateDecl *D);
 	bool VisitClassTemplateDecl(ClassTemplateDecl *D);
 

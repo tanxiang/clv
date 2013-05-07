@@ -88,6 +88,16 @@ bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
 	return true;
 }
 
+bool ClpConsumer::VisitLinkageSpecDecl(LinkageSpecDecl *D){
+	cout<<__PRETTY_FUNCTION__<<endl;
+	return true;
+}
+
+bool ClpConsumer::VisitTemplateDecl(const TemplateDecl *D){
+	cout<<__PRETTY_FUNCTION__<<endl;
+	return true;
+}
+
 bool ClpConsumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *D){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	return true;
