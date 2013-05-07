@@ -108,6 +108,10 @@ bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *D){
 	return true;
 }
 
+bool ClpConsumer::VisitCallExpr(CallExpr *expr){
+	cout<<__PRETTY_FUNCTION__<<endl;
+	return true;
+}
 
 bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine){
 	vector<string> Commands;

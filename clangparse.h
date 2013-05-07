@@ -57,7 +57,7 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	//暂无objc特性支持计划
 	
 	//表达式node访问
-	bool VisitCallExpr(CallExpr *expr){return true;}
+	bool VisitCallExpr(CallExpr *expr);//
 	//语义node访问方法
 	
 };
