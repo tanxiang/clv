@@ -38,20 +38,24 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	void VisitLabelDecl(LabelDecl *D) // goto lable
 	*/
 	bool VisitVarDecl(VarDecl *Declaration); //var
+
 	/*
 	void VisitFileScopeAsmDecl(FileScopeAsmDecl *D) // inline asm
-	bool VisitNamespaceDecl(NamespaceDecl *D) //namespace ??
-	void VisitUsingDirectiveDecl(UsingDirectiveDecl *D) //using namespace ??
 	*/
-	bool VisitCXXRecordDecl(CXXRecordDecl *Declaration);
+
+	bool VisitNamespaceDecl(NamespaceDecl *D); //namespace ??
+	bool VisitUsingDirectiveDecl(UsingDirectiveDecl *D); //using namespace ??
+	bool VisitCXXRecordDecl(CXXRecordDecl *Declaration); //class
+
 	/*
 	void VisitLinkageSpecDecl(LinkageSpecDecl *D) //cpp link symb
 	void VisitTemplateDecl(const TemplateDecl *D);
-	void VisitFunctionTemplateDecl(FunctionTemplateDecl *D);
-	void VisitClassTemplateDecl(ClassTemplateDecl *D);
-
-	暂无objc特性支持计划
 	*/
+	bool VisitFunctionTemplateDecl(FunctionTemplateDecl *D);
+	bool VisitClassTemplateDecl(ClassTemplateDecl *D);
+
+	//暂无objc特性支持计划
+	
 	//表达式node访问
 	bool VisitCallExpr(CallExpr *expr){return true;}
 	//语义node访问方法

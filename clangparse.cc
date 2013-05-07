@@ -19,6 +19,7 @@ void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 }
 
 bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
+	cout<<__PRETTY_FUNCTION__<<endl;
 	if (Declaration->isInlineSpecified())  llvm::outs() << "inline ";
 	if (Declaration->isVirtualAsWritten()) llvm::outs() << "virtual ";
 	if (Declaration->isModulePrivate())    llvm::outs() << "__module_private__ ";
@@ -41,12 +42,24 @@ bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 }
 
 bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
+	cout<<__PRETTY_FUNCTION__<<endl;
 	llvm::outs() << Declaration->getName() << "\t"
 		<< Declaration->getType().getAsString() <<'\n';
 	return true;
 }
 
+bool ClpConsumer::VisitNamespaceDecl(NamespaceDecl *D){
+	cout<<__PRETTY_FUNCTION__<<endl;
+	return true;
+}
+
+bool ClpConsumer::VisitUsingDirectiveDecl(UsingDirectiveDecl *D){ //using 
+	cout<<__PRETTY_FUNCTION__<<endl;
+	return true;
+}
+
 bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
+	cout<<__PRETTY_FUNCTION__<<endl;
 	llvm::outs()<< Declaration->getKindName();
 	if (Declaration->getIdentifier())
 		llvm::outs() << '\t' << *Declaration;
@@ -74,6 +87,17 @@ bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
 	}
 	return true;
 }
+
+bool ClpConsumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *D){
+	cout<<__PRETTY_FUNCTION__<<endl;
+	return true;
+}
+
+bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *D){
+	cout<<__PRETTY_FUNCTION__<<endl;
+	return true;
+}
+
 
 bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine){
 	vector<string> Commands;
