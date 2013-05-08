@@ -2,9 +2,16 @@
 class ClvCompile{
 	std::thread CompileThread;
 	//std::thread SearchThread;
-	std::future<bool> CompileResult;
+	//std::future<bool> CompileResult;
 	std::promise<int> SearchPromise;
 	std::future<int> SearchResult;
+
+	std::promise<int> ReadyPromise;
+	std::future<int> ReadyResult;
+
+	std::promise<int> CmdPromise;
+	std::future<int> CmdResult;
+
 public:
 	ClvCompile();
 	void* PchCode(const char* CodeName,void* P,int Len);

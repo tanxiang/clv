@@ -15,6 +15,8 @@ void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 	//Context.getTranslationUnitDecl()->dump(llvm::outs());
 	//sleep & wait sreach opt
 	pContext = &Context;
+	//ReadyPromise.put(1);
+	//CmdResult.get();
 	TraverseDecl(Context.getTranslationUnitDecl());
 }
 

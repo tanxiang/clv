@@ -12,12 +12,17 @@
 
 using namespace clang;
 
+
 class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	typedef RecursiveASTVisitor<ClpConsumer> base;
 	std::promise<int>& SearchPromise;
+	std::promise<int>& ReadyPromise;
+	std::future<int>& CmdResult;
 	ASTContext *pContext;
+
 	public:
-	ClpConsumer(std::promise<int>& Promise):SearchPromise(Promise){}
+	ClpConsumer(std::promise<int>& SearchPromise,std::promise<int>& ReadyPromise,std::future<int>& CmdResult)
+		:SearchPromise(SearchPromise),ReadyPromise(ReadyPromise),CmdResult(CmdResult){}
 
 	virtual void HandleTranslationUnit(ASTContext &Context) override;
 
@@ -57,6 +62,7 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	//暂无objc特性支持计划
 	
 	//表达式node访问
+
 	bool VisitCallExpr(CallExpr *expr);//
 	//语义node访问方法
 	
@@ -64,14 +70,18 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 
 class ClpAction:public ASTFrontendAction{
 	std::promise<int>& SearchPromise;
+	std::promise<int>& ReadyPromise;
+	std::future<int>& CmdResult;
 protected:
 	virtual ASTConsumer *CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile){
 		//std::cout<<"cASTConsumer"<<std::endl;
-		return new ClpConsumer{SearchPromise};
+		return new ClpConsumer{SearchPromise,ReadyPromise,CmdResult};
 		//return nullptr;
 	} 
 public:
-	ClpAction(std::promise<int>& Promise):SearchPromise(Promise){}
+	ClpAction(std::promise<int>& SearchPromise,std::promise<int>& ReadyPromise,std::future<int>& CmdResult)
+		:SearchPromise(SearchPromise),ReadyPromise(ReadyPromise),CmdResult(CmdResult){}
+
 	virtual bool hasCodeCompletionSupport() const {return true;}
 };
 
