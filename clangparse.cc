@@ -50,12 +50,12 @@ bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
 	return true;
 }
 
-bool ClpConsumer::VisitNamespaceDecl(NamespaceDecl *D){
+bool ClpConsumer::VisitNamespaceDecl(NamespaceDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	return true;
 }
 
-bool ClpConsumer::VisitUsingDirectiveDecl(UsingDirectiveDecl *D){ //using 
+bool ClpConsumer::VisitUsingDirectiveDecl(UsingDirectiveDecl *Declaration){ //using 
 	cout<<__PRETTY_FUNCTION__<<endl;
 	return true;
 }

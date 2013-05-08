@@ -3,7 +3,9 @@
 #include "clangparse.h"
 
 using namespace std;
-ClvCompile::ClvCompile():SearchResult{SearchPromise.get_future()}{}
+ClvCompile::ClvCompile():SearchResult{SearchPromise.get_future()},
+	ReadyResult{ReadyPromise.get_future()},CmdResult{CmdPromise.get_future()}
+	{}
 
 void* ClvCompile::PchCode(const char* CodeName,void* P,int Len){
 	return nullptr;
