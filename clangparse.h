@@ -15,14 +15,11 @@ using namespace clang;
 
 class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	typedef RecursiveASTVisitor<ClpConsumer> base;
-	std::promise<int>& SearchPromise;
-	std::promise<int>& ReadyPromise;
-	std::future<int>& CmdResult;
+
 	ASTContext *pContext;
 
 	public:
-	ClpConsumer(std::promise<int>& SearchPromise,std::promise<int>& ReadyPromise,std::future<int>& CmdResult)
-		:SearchPromise(SearchPromise),ReadyPromise(ReadyPromise),CmdResult(CmdResult){}
+	ClpConsumer(){}
 
 	virtual void HandleTranslationUnit(ASTContext &Context) override;
 
@@ -69,19 +66,15 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 };
 
 class ClpAction:public ASTFrontendAction{
-	std::promise<int>& SearchPromise;
-	std::promise<int>& ReadyPromise;
-	std::future<int>& CmdResult;
+
 protected:
 	virtual ASTConsumer *CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile){
 		//std::cout<<"cASTConsumer"<<std::endl;
-		return new ClpConsumer{SearchPromise,ReadyPromise,CmdResult};
+		return new ClpConsumer{};
 		//return nullptr;
 	} 
 public:
-	ClpAction(std::promise<int>& SearchPromise,std::promise<int>& ReadyPromise,std::future<int>& CmdResult)
-		:SearchPromise(SearchPromise),ReadyPromise(ReadyPromise),CmdResult(CmdResult){}
-
+	ClpAction(){}
 	virtual bool hasCodeCompletionSupport() const {return true;}
 };
 
