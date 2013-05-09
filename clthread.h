@@ -1,7 +1,9 @@
-#include <future>
+#include <condition_variable>
+#include <thread>
 class ClvCompile{
 	std::thread CompileThread;
-
+	std::condition_variable CondReady;
+	std::condition_variable CondSearch;
 public:
 	ClvCompile();
 	void* PchCode(const char* CodeName,void* P,int Len);

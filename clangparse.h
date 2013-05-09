@@ -8,18 +8,21 @@
 #include <clang/AST/RecursiveASTVisitor.h>
 #include <clang/Driver/Driver.h>
 #include <memory>
-#include <future>
+#include <condition_variable>
+#include <thread>
 
 using namespace clang;
 
 
 class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	typedef RecursiveASTVisitor<ClpConsumer> base;
-
+	std::condition_variable& CondReady;
+	std::condition_variable& CondSearch;
 	ASTContext *pContext;
 
 	public:
-	ClpConsumer(){}
+	ClpConsumer(std::condition_variable& CondReady,std::condition_variable& CondSearch)
+	:CondReady(CondReady),CondSearch(CondSearch){}
 
 	virtual void HandleTranslationUnit(ASTContext &Context) override;
 
@@ -66,15 +69,17 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 };
 
 class ClpAction:public ASTFrontendAction{
-
+	std::condition_variable& CondReady;
+	std::condition_variable& CondSearch;
 protected:
 	virtual ASTConsumer *CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile){
 		//std::cout<<"cASTConsumer"<<std::endl;
-		return new ClpConsumer{};
+		return new ClpConsumer{CondReady,CondSearch};
 		//return nullptr;
 	} 
 public:
-	ClpAction(){}
+	ClpAction(std::condition_variable& CondReady,std::condition_variable& CondSearch)
+	:CondReady(CondReady),CondSearch(CondSearch){}
 	virtual bool hasCodeCompletionSupport() const {return true;}
 };
 

@@ -11,10 +11,11 @@ void* ClvCompile::PchCode(const char* CodeName,void* P,int Len){
 
 bool ClvCompile::ParseCode(const char* CodeName,void* P,int Len,void* Pch){
 	CompileThread = thread{
-		[=](){
-			ClpInvocation Invocation{new ClpAction{}};
+		[=](condition_variable& CondReady,condition_variable& CondSearch){
+			ClpInvocation Invocation{new ClpAction{CondReady,CondSearch}};
 			Invocation.RunCode(CodeName,static_cast<char*>(P),Len,vector<string>{"-std=c++11","-c"});
 			},
+			ref(CondReady),ref(CondSearch)
 		};
 	CompileThread.detach();
 	return true;
