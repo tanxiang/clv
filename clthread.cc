@@ -33,7 +33,7 @@ bool ClvCompile::SearchAST(){
 	ReadyResult.get();
 	CmdPromise.set_value(1);
 
-	SearchResult.wait();
+	//SearchResult.wait();
 	std::cout << SearchResult.get() << "Searchd\n";
 		
 }

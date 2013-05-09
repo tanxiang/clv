@@ -15,10 +15,11 @@ void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 	//Context.getTranslationUnitDecl()->dump(llvm::outs());
 	//sleep & wait sreach opt
 	pContext = &Context;
-	ReadyPromise.set_value(2);
+	ReadyPromise.set_value(1);
 	while(CmdResult.get()){
 		TraverseDecl(Context.getTranslationUnitDecl());
 		SearchPromise.set_value(1);
+		ReadyPromise.set_value(1);
 	}
 }
 
