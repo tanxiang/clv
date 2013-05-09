@@ -11,17 +11,18 @@ void* ClvCompile::PchCode(const char* CodeName,void* P,int Len){
 
 bool ClvCompile::ParseCode(const char* CodeName,void* P,int Len,void* Pch){
 	CompileThread = thread{
-		[=](condition_variable& CondReady,condition_variable& CondSearch,mutex& MutReady,mutex& MutSearch){
-			ClpInvocation Invocation{new ClpAction{CondReady,CondSearch,MutReady,MutSearch}};
+		[=](condition_variable& CondReady,condition_variable& CondSearch){
+			ClpInvocation Invocation{new ClpAction{CondReady,CondSearch}};
 			Invocation.RunCode(CodeName,static_cast<char*>(P),Len,vector<string>{"-std=c++11","-c"});
 			},
-			ref(CondReady),ref(CondSearch),ref(MutReady),ref(MutSearch)
+			ref(CondReady),ref(CondSearch)
 		};
 	CompileThread.detach();
 	return true;
 }
 
 bool ClvCompile::SearchAST(){
-		
+	//unique_lock<mutex> lock{MutReady};
+	CondSearch.notify_all();
 }
 ClvCompile clast;

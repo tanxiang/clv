@@ -15,7 +15,8 @@ void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 	//Context.getTranslationUnitDecl()->dump(llvm::outs());
 	//sleep & wait sreach opt
 	pContext = &Context;
-	//while(CmdResult.get()){
+	unique_lock<mutex> lock{MutSearch};
+	CondSearch.wait(lock);
 	TraverseDecl(Context.getTranslationUnitDecl());
 	//}
 }

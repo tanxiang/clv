@@ -18,14 +18,13 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	typedef RecursiveASTVisitor<ClpConsumer> base;
 	std::condition_variable& CondReady;
 	std::condition_variable& CondSearch;
-	std::mutex& MutReady;
-	std::mutex& MutSearch;
+	//std::mutex& MutReady;
+	std::mutex MutSearch;
 	ASTContext *pContext;
 
 	public:
-	ClpConsumer(std::condition_variable& CondReady,std::condition_variable& CondSearch,
-		std::mutex& MutReady,std::mutex& MutSearch)
-	:CondReady(CondReady),CondSearch(CondSearch),MutReady(MutReady),MutSearch(MutSearch){}
+	ClpConsumer(std::condition_variable& CondReady,std::condition_variable& CondSearch)
+	:CondReady(CondReady),CondSearch(CondSearch){}
 
 	virtual void HandleTranslationUnit(ASTContext &Context) override;
 
@@ -74,18 +73,17 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 class ClpAction:public ASTFrontendAction{
 	std::condition_variable& CondReady;
 	std::condition_variable& CondSearch;
-	std::mutex& MutReady;
-	std::mutex& MutSearch;
+	//std::mutex& MutReady;
+	//std::mutex& MutSearch;
 protected:
 	virtual ASTConsumer *CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile){
 		//std::cout<<"cASTConsumer"<<std::endl;
-		return new ClpConsumer{CondReady,CondSearch,MutReady,MutSearch};
+		return new ClpConsumer{CondReady,CondSearch};
 		//return nullptr;
 	} 
 public:
-	ClpAction(std::condition_variable& CondReady,std::condition_variable& CondSearch,
-		std::mutex& MutReady,std::mutex& MutSearch)
-	:CondReady(CondReady),CondSearch(CondSearch),MutReady(MutReady),MutSearch(MutSearch){}
+	ClpAction(std::condition_variable& CondReady,std::condition_variable& CondSearch)
+	:CondReady(CondReady),CondSearch(CondSearch){}
 	virtual bool hasCodeCompletionSupport() const {return true;}
 };
 

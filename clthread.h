@@ -3,7 +3,6 @@
 class ClvCompile{
 	std::thread CompileThread;
 	std::mutex MutReady;
-	std::mutex MutSearch;
 	std::condition_variable CondReady;
 	std::condition_variable CondSearch;
 public:
