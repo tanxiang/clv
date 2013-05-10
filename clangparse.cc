@@ -16,9 +16,12 @@ void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 	//sleep & wait sreach opt
 	pContext = &Context;
 	unique_lock<mutex> lock{MutSearch};
+	//cout<<"ClpConsumer"<<(int)&CondReady<<endl;
 	CondSearch.wait(lock);
-	TraverseDecl(Context.getTranslationUnitDecl());
-	//}
+	while(true){//search cond
+		TraverseDecl(Context.getTranslationUnitDecl());//search ast
+		CondSearch.wait(lock);
+	}
 }
 
 bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){

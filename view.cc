@@ -95,7 +95,7 @@ bool ClvWindow::onHandleChar(SkUnichar uni) {//input
 		clast.ParseCode(file.Name(),file.Get(),file.Length());
 		break;
 	case 'q':
-		clast.SearchAST();
+		clast.SearchAST("x");
 		
 	//default: break;
 	}

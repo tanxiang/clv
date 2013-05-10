@@ -1,3 +1,4 @@
+#include <string>
 #include <condition_variable>
 #include <thread>
 class ClvCompile{
@@ -15,7 +16,9 @@ public:
 	bool Ready(){
 		return true;
 	}
-	bool SearchAST();
+	bool SearchAST(std::string Name);
+	bool SearchAST(int nLine,int nChar);
+	bool SearchAST(int nOffset);
 };
 
 extern ClvCompile clast;
