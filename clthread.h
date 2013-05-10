@@ -6,6 +6,7 @@ class ClvCompile{
 	std::mutex MutReady;
 	std::condition_variable CondReady;
 	std::condition_variable CondSearch;
+	std::string Key;
 public:
 	ClvCompile();
 	void* PchCode(const char* CodeName,void* P,int Len);
@@ -16,7 +17,7 @@ public:
 	bool Ready(){
 		return true;
 	}
-	bool SearchAST(std::string Name);
+	bool SearchAST(const std::string& Name);
 	bool SearchAST(int nLine,int nChar);
 	bool SearchAST(int nOffset);
 };

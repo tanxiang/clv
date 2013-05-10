@@ -13,16 +13,17 @@ bool ClvCompile::ParseCode(const char* CodeName,void* P,int Len,void* Pch){
 	//cout<<"ClvCompile"<<(int)&CondReady<<endl;
 	CompileThread = thread{
 		[=,&this]{
-			ClpInvocation Invocation{new ClpAction{CondReady,CondSearch}};
+			ClpInvocation Invocation{new ClpAction{CondReady,CondSearch,Key}};
 			Invocation.RunCode(CodeName,static_cast<char*>(P),Len,vector<string>{"-std=c++11","-c"});
-			}
-		};
+		}
+	};
 	CompileThread.detach();
 	return true;
 }
 
-bool ClvCompile::SearchAST(string Name){
+bool ClvCompile::SearchAST(const string& Name){
 	//unique_lock<mutex> lock{MutReady};
+	Key=Name;
 	CondSearch.notify_all();
 }
 ClvCompile clast;

@@ -18,30 +18,31 @@ void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 	unique_lock<mutex> lock{MutSearch};
 	//cout<<"ClpConsumer"<<(int)&CondReady<<endl;
 	CondSearch.wait(lock);
-	while(true){//search cond
+	while(Key!="$"){//search cond
 		TraverseDecl(Context.getTranslationUnitDecl());//search ast
+		cout<<"search:"<<Key<<endl;
 		CondSearch.wait(lock);
 	}
 }
 
 bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
-	if (Declaration->isInlineSpecified())  llvm::outs() << "inline ";
-	if (Declaration->isVirtualAsWritten()) llvm::outs() << "virtual ";
-	if (Declaration->isModulePrivate())    llvm::outs() << "__module_private__ ";
-	switch (Declaration->getStorageClassAsWritten()) {
-	case SC_None: break;
-	case SC_Extern: llvm::outs() << "extern "; break;
-	case SC_Static: llvm::outs() << "static "; break;
-	case SC_PrivateExtern: llvm::outs() << "__private_extern__ "; break;
-	case SC_Auto: case SC_Register: case SC_OpenCLWorkGroupLocal:
-		llvm_unreachable("invalid for functions");
-	}
-	llvm::outs() << Declaration->getNameInfo().getAsString() << "()\t"
+	//if (Declaration->isInlineSpecified())  llvm::outs() << "inline ";
+	//if (Declaration->isVirtualAsWritten()) llvm::outs() << "virtual ";
+	//if (Declaration->isModulePrivate())    llvm::outs() << "__module_private__ ";
+	//switch (Declaration->getStorageClassAsWritten()) {
+	//case SC_None: break;
+	//case SC_Extern: llvm::outs() << "extern "; break;
+	//case SC_Static: llvm::outs() << "static "; break;
+	//case SC_PrivateExtern: llvm::outs() << "__private_extern__ "; break;
+	//case SC_Auto: case SC_Register: case SC_OpenCLWorkGroupLocal:
+	//	llvm_unreachable("invalid for functions");
+	//}
+	cout << Declaration->getNameInfo().getAsString() << "()\t"
 		<<Declaration->getType().getAsString() <<'\n';
 	auto Location = pContext->getFullLoc(Declaration->getLocStart());
 	if (Location.isValid())
-		llvm::outs() << "declaration at FileID=" << Location.getFileID().getHashValue()
+		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
 	return true;
@@ -51,16 +52,35 @@ bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	llvm::outs() << Declaration->getName() << "\t"
 		<< Declaration->getType().getAsString() <<'\n';
+	auto Location = pContext->getFullLoc(Declaration->getLocStart());
+	if (Location.isValid())
+		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
+			<< "\tLine=" << Location.getSpellingLineNumber() 
+			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
 	return true;
 }
 
 bool ClpConsumer::VisitNamespaceDecl(NamespaceDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
+	llvm::outs() << Declaration->getName() << "\t";
+	//	<< Declaration->getType().getAsString() <<'\n';
+	auto Location = pContext->getFullLoc(Declaration->getLocStart());
+	if (Location.isValid())
+		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
+			<< "\tLine=" << Location.getSpellingLineNumber() 
+			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
 	return true;
 }
 
 bool ClpConsumer::VisitUsingDirectiveDecl(UsingDirectiveDecl *Declaration){ //using 
 	cout<<__PRETTY_FUNCTION__<<endl;
+	//llvm::outs() << Declaration->getName() << "\t";
+
+	auto Location = pContext->getFullLoc(Declaration->getLocStart());
+	if (Location.isValid())
+		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
+			<< "\tLine=" << Location.getSpellingLineNumber() 
+			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
 	return true;
 }
 
@@ -94,8 +114,15 @@ bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
 	return true;
 }
 
-bool ClpConsumer::VisitLinkageSpecDecl(LinkageSpecDecl *D){
+bool ClpConsumer::VisitLinkageSpecDecl(LinkageSpecDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
+	//llvm::outs() << Declaration->getName() << "\t"
+	//	<< Declaration->getType().getAsString() <<'\n';
+	auto Location = pContext->getFullLoc(Declaration->getLocStart());
+	if (Location.isValid())
+		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
+			<< "\tLine=" << Location.getSpellingLineNumber() 
+			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
 	return true;
 }
 
@@ -104,13 +131,26 @@ bool ClpConsumer::VisitTemplateDecl(const TemplateDecl *D){
 	return true;
 }
 
-bool ClpConsumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *D){
+bool ClpConsumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
+	cout << Declaration->getTemplatedDecl()->getNameInfo().getAsString() << "()\t"
+		<<Declaration->getTemplatedDecl()->getType().getAsString() <<'\n';
+	auto Location = pContext->getFullLoc(Declaration->getLocStart());
+	if (Location.isValid())
+		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
+			<< "\tLine=" << Location.getSpellingLineNumber() 
+			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
 	return true;
 }
 
-bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *D){
+bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
+	cout << Declaration->getTemplatedDecl()->getKindName();
+	auto Location = pContext->getFullLoc(Declaration->getLocStart());
+	if (Location.isValid())
+		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
+			<< "\tLine=" << Location.getSpellingLineNumber() 
+			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
 	return true;
 }
 
