@@ -41,7 +41,7 @@ bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 	//}
 	cout << Declaration->getNameInfo().getAsString() << "()\t"
 		<<Declaration->getType().getAsString() <<'\n';
-	if(IsInDecl(Declaration){
+	if(IsInDecl(Declaration)){
 		auto Location = pContext->getFullLoc(Declaration->getLocStart());
 		if (Location.isValid())
 			cout << "declaration at FileID=" << Location.getFileID().getHashValue()
@@ -55,7 +55,7 @@ bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	llvm::outs() << Declaration->getName() << "\t"
 		<< Declaration->getType().getAsString() <<'\n';
-	if(IsInDecl(Declaration){
+	if(IsInDecl(Declaration)){
 		auto Location = pContext->getFullLoc(Declaration->getLocStart());
 		if (Location.isValid())
 			cout << "declaration at FileID=" << Location.getFileID().getHashValue()
@@ -69,7 +69,7 @@ bool ClpConsumer::VisitNamespaceDecl(NamespaceDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	llvm::outs() << Declaration->getName() << "\t";
 	//	<< Declaration->getType().getAsString() <<'\n';
-	if(IsInDecl(Declaration){
+	if(IsInDecl(Declaration)){
 		auto Location = pContext->getFullLoc(Declaration->getLocStart());
 		if (Location.isValid())
 			cout << "declaration at FileID=" << Location.getFileID().getHashValue()
@@ -82,7 +82,7 @@ bool ClpConsumer::VisitNamespaceDecl(NamespaceDecl *Declaration){
 bool ClpConsumer::VisitUsingDirectiveDecl(UsingDirectiveDecl *Declaration){ //using 
 	cout<<__PRETTY_FUNCTION__<<endl;
 	//llvm::outs() << Declaration->getName() << "\t";
-	if(IsInDecl(Declaration){
+	if(IsInDecl(Declaration)){
 		auto Location = pContext->getFullLoc(Declaration->getLocStart());
 		if (Location.isValid())
 			cout << "declaration at FileID=" << Location.getFileID().getHashValue()
@@ -127,7 +127,7 @@ bool ClpConsumer::VisitLinkageSpecDecl(LinkageSpecDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	//llvm::outs() << Declaration->getName() << "\t"
 	//	<< Declaration->getType().getAsString() <<'\n';
-	if(IsInDecl(Declaration){
+	if(IsInDecl(Declaration)){
 		auto Location = pContext->getFullLoc(Declaration->getLocStart());
 		if (Location.isValid())
 			cout << "declaration at FileID=" << Location.getFileID().getHashValue()
@@ -147,7 +147,7 @@ bool ClpConsumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	cout << Declaration->getTemplatedDecl()->getNameInfo().getAsString() << "()\t"
 		<<Declaration->getTemplatedDecl()->getType().getAsString() <<'\n';
-	if(IsInDecl(Declaration){
+	if(IsInDecl(Declaration)){
 		auto Location = pContext->getFullLoc(Declaration->getLocStart());
 		if (Location.isValid())
 			cout << "declaration at FileID=" << Location.getFileID().getHashValue()
@@ -160,7 +160,7 @@ bool ClpConsumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *Declaration){
 bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	cout << Declaration->getTemplatedDecl()->getKindName();
-	if(IsInDecl(Declaration){
+	if(IsInDecl(Declaration)){
 		auto Location = pContext->getFullLoc(Declaration->getLocStart());
 		if (Location.isValid())
 			cout << "declaration at FileID=" << Location.getFileID().getHashValue()
