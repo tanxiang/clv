@@ -1,3 +1,4 @@
+#include "clthread.h"
 #include "clangparse.h"
 #include <clang/Frontend/CompilerInstance.h>
 #include <clang/Frontend/FrontendDiagnostic.h>
@@ -18,9 +19,9 @@ void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 	unique_lock<mutex> lock{MutSearch};
 	//cout<<"ClpConsumer"<<(int)&CondReady<<endl;
 	CondSearch.wait(lock);
-	while(Key!="$"){//search cond
+	while(SearchMsg.Key!="$"){//search cond
 		TraverseDecl(Context.getTranslationUnitDecl());//search ast
-		cout<<"search:"<<Key<<endl;
+		cout<<"search:"<<SearchMsg.Key<<endl;
 		CondSearch.wait(lock);
 	}
 }
@@ -45,7 +46,7 @@ bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return true;
+	return IsInDecl(Declaration);
 }
 
 bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
@@ -57,7 +58,7 @@ bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return true;
+	return IsInDecl(Declaration);
 }
 
 bool ClpConsumer::VisitNamespaceDecl(NamespaceDecl *Declaration){
@@ -69,7 +70,7 @@ bool ClpConsumer::VisitNamespaceDecl(NamespaceDecl *Declaration){
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return true;
+	return IsInDecl(Declaration);
 }
 
 bool ClpConsumer::VisitUsingDirectiveDecl(UsingDirectiveDecl *Declaration){ //using 
@@ -81,7 +82,7 @@ bool ClpConsumer::VisitUsingDirectiveDecl(UsingDirectiveDecl *Declaration){ //us
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return true;
+	return IsInDecl(Declaration);
 }
 
 bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
@@ -111,7 +112,7 @@ bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
 			llvm::outs() << '\n';
 		}
 	}
-	return true;
+	return IsInDecl(Declaration);
 }
 
 bool ClpConsumer::VisitLinkageSpecDecl(LinkageSpecDecl *Declaration){
@@ -123,12 +124,12 @@ bool ClpConsumer::VisitLinkageSpecDecl(LinkageSpecDecl *Declaration){
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return true;
+	return IsInDecl(Declaration);
 }
 
-bool ClpConsumer::VisitTemplateDecl(const TemplateDecl *D){
+bool ClpConsumer::VisitTemplateDecl(TemplateDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
-	return true;
+	return IsInDecl(Declaration);
 }
 
 bool ClpConsumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *Declaration){
@@ -140,7 +141,7 @@ bool ClpConsumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *Declaration){
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return true;
+	return IsInDecl(Declaration);
 }
 
 bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *Declaration){
@@ -151,12 +152,35 @@ bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *Declaration){
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return true;
+	return IsInDecl(Declaration);
 }
 
 bool ClpConsumer::VisitCallExpr(CallExpr *expr){
 	cout<<__PRETTY_FUNCTION__<<endl;
-	return true;
+	
+	return true;//IsInDecl(expr);
+}
+
+bool ClpConsumer::IsInDecl(Decl *Declaration){
+	auto LocationStart = pContext->getFullLoc(Declaration->getLocStart());
+	auto LocationEnd = pContext->getFullLoc(Declaration->getLocEnd());
+	if(LocationStart.isValid()&&LocationEnd.isValid()){
+		if(LocationStart.getFileID().getHashValue()==1 && 
+			LocationEnd.getFileID().getHashValue()==1){
+			if(SearchMsg.nLine<LocationStart.getSpellingLineNumber() ||
+				SearchMsg.nLine>LocationEnd.getSpellingLineNumber())
+				return false;
+			if(SearchMsg.nLine==LocationStart.getSpellingLineNumber() &&
+				SearchMsg.nChar<LocationStart.getSpellingColumnNumber())
+				return false;
+			if(SearchMsg.nLine==LocationEnd.getSpellingLineNumber() &&
+				SearchMsg.nChar>LocationEnd.getSpellingColumnNumber())
+				return false;
+			cout<<"RAGEin\n";
+			return true;
+		}
+	}
+	return false;
 }
 
 bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine){

@@ -12,8 +12,8 @@ void* ClvCompile::PchCode(const char* CodeName,void* P,int Len){
 bool ClvCompile::ParseCode(const char* CodeName,void* P,int Len,void* Pch){
 	//cout<<"ClvCompile"<<(int)&CondReady<<endl;
 	CompileThread = thread{
-		[=,&this]{
-			ClpInvocation Invocation{new ClpAction{CondReady,CondSearch,Key}};
+		[=]{
+			ClpInvocation Invocation{new ClpAction{CondReady,CondSearch,SearchMsg}};
 			Invocation.RunCode(CodeName,static_cast<char*>(P),Len,vector<string>{"-std=c++11","-c"});
 		}
 	};
@@ -23,7 +23,10 @@ bool ClvCompile::ParseCode(const char* CodeName,void* P,int Len,void* Pch){
 
 bool ClvCompile::SearchAST(const string& Name){
 	//unique_lock<mutex> lock{MutReady};
-	Key=Name;
+	SearchMsg.nLine=31;
+	SearchMsg.nChar=2;
+	SearchMsg.Key=Name;
 	CondSearch.notify_all();
+	return true;
 }
 ClvCompile clast;

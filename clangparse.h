@@ -18,14 +18,14 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	typedef RecursiveASTVisitor<ClpConsumer> base;
 	std::condition_variable& CondReady;
 	std::condition_variable& CondSearch;
-	std::string& Key;
+	MsgBox& SearchMsg;
 	//std::mutex& MutReady;
 	std::mutex MutSearch;
 	ASTContext *pContext;
 
 	public:
-	ClpConsumer(std::condition_variable& CondReady,std::condition_variable& CondSearch,std::string& Key)
-	:CondReady(CondReady),CondSearch(CondSearch),Key(Key){}
+	ClpConsumer(std::condition_variable& CondReady,std::condition_variable& CondSearch,MsgBox& SearchMsg)
+	:CondReady(CondReady),CondSearch(CondSearch),SearchMsg(SearchMsg){}
 
 	virtual void HandleTranslationUnit(ASTContext &Context) override;
 
@@ -51,16 +51,16 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	void VisitFileScopeAsmDecl(FileScopeAsmDecl *D) // inline asm
 	*/
 
-	bool VisitNamespaceDecl(NamespaceDecl *D); //namespace ??
-	bool VisitUsingDirectiveDecl(UsingDirectiveDecl *D); //using namespace ??
+	bool VisitNamespaceDecl(NamespaceDecl *Declaration); //namespace ??
+	bool VisitUsingDirectiveDecl(UsingDirectiveDecl *Declaration); //using namespace ??
 	bool VisitCXXRecordDecl(CXXRecordDecl *Declaration); //class
 
 	
-	bool VisitLinkageSpecDecl(LinkageSpecDecl *D); //cpp link symb
-	bool VisitTemplateDecl(const TemplateDecl *D);
+	bool VisitLinkageSpecDecl(LinkageSpecDecl *Declaration); //cpp link symb
+	bool VisitTemplateDecl(TemplateDecl *Declaration);
 	
-	bool VisitFunctionTemplateDecl(FunctionTemplateDecl *D);
-	bool VisitClassTemplateDecl(ClassTemplateDecl *D);
+	bool VisitFunctionTemplateDecl(FunctionTemplateDecl *Declaration);
+	bool VisitClassTemplateDecl(ClassTemplateDecl *Declaration);
 
 	//暂无objc特性支持计划
 	
@@ -68,24 +68,24 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 
 	bool VisitCallExpr(CallExpr *expr);//
 	//语义node访问方法
-	
+	bool IsInDecl(Decl *Declaration);
 };
 
 class ClpAction:public ASTFrontendAction{
 	std::condition_variable& CondReady;
 	std::condition_variable& CondSearch;
-	std::string& Key;
+	MsgBox& SearchMsg;
 	//std::mutex& MutReady;
 	//std::mutex& MutSearch;
 protected:
 	virtual ASTConsumer *CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile){
 		//std::cout<<"cASTConsumer"<<std::endl;
-		return new ClpConsumer{CondReady,CondSearch,Key};
+		return new ClpConsumer{CondReady,CondSearch,SearchMsg};
 		//return nullptr;
 	} 
 public:
-	ClpAction(std::condition_variable& CondReady,std::condition_variable& CondSearch,std::string& Key)
-	:CondReady(CondReady),CondSearch(CondSearch),Key(Key){}
+	ClpAction(std::condition_variable& CondReady,std::condition_variable& CondSearch,MsgBox& SearchMsg)
+	:CondReady(CondReady),CondSearch(CondSearch),SearchMsg(SearchMsg){}
 	virtual bool hasCodeCompletionSupport() const {return true;}
 };
 
