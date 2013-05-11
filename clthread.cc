@@ -23,7 +23,7 @@ bool ClvCompile::ParseCode(const char* CodeName,void* P,int Len,void* Pch){
 
 bool ClvCompile::SearchAST(const string& Name){
 	//unique_lock<mutex> lock{MutReady};
-	SearchMsg.nLine=31;
+	SearchMsg.nLine=32;
 	SearchMsg.nChar=2;
 	SearchMsg.Key=Name;
 	CondSearch.notify_all();

@@ -29,10 +29,7 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 
 	virtual void HandleTranslationUnit(ASTContext &Context) override;
 
-	/*virtual bool HandleTopLevelDecl(DeclGroupRef D) override{
-		for(DeclGroupRef::iterator It : D)
-			TraverseDecl(*It);
-	}*/
+	//bool TraverseDecl(Decl *D);
 	//AST中各种声明Node访问者方法
 	/*
 	void VisitDeclContext(DeclContext *DC, bool Indent) //?

@@ -12,16 +12,38 @@
 using namespace std;
 using namespace clang::tooling;
 
+/*
+#define DISPATCH(NAME, CLASS, VAR) \
+  return getDerived().Traverse##NAME(static_cast<CLASS*>(VAR))
+bool ClpConsumer::TraverseDecl(Decl *D) {
+cout<<"1search:"<<SearchMsg.Key<<endl;
+  if (!D)
+    return true;
+
+  // As a syntax visitor, by default we want to ignore declarations for
+  // implicit declarations (ones not typed explicitly by the user).
+  if (!getDerived().shouldVisitImplicitCode() && D->isImplicit())
+    return true;
+cout<<"2search:"<<SearchMsg.Key<<endl;
+  switch (D->getKind()) {
+#define ABSTRACT_DECL(DECL)
+#define DECL(CLASS, BASE) \
+  case Decl::CLASS: DISPATCH(CLASS##Decl, CLASS##Decl, D);
+#include "clang/AST/DeclNodes.inc"
+ }
+cout<<"3search:"<<SearchMsg.Key<<endl;
+  return true;
+}
+*/
 void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 	//Context.getTranslationUnitDecl()->dump(llvm::outs());
 	//sleep & wait sreach opt
+	//cout<<"ClpConsumer"<<(int)&CondReady<<endl;
 	pContext = &Context;
 	unique_lock<mutex> lock{MutSearch};
-	//cout<<"ClpConsumer"<<(int)&CondReady<<endl;
 	CondSearch.wait(lock);
 	while(SearchMsg.Key!="$"){//search cond
 		TraverseDecl(Context.getTranslationUnitDecl());//search ast
-		cout<<"search:"<<SearchMsg.Key<<endl;
 		CondSearch.wait(lock);
 	}
 }
@@ -55,13 +77,12 @@ bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	llvm::outs() << Declaration->getName() << "\t"
 		<< Declaration->getType().getAsString() <<'\n';
-	if(IsInDecl(Declaration)){
-		auto Location = pContext->getFullLoc(Declaration->getLocStart());
-		if (Location.isValid())
-			cout << "declaration at FileID=" << Location.getFileID().getHashValue()
-				<< "\tLine=" << Location.getSpellingLineNumber() 
-				<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	}
+	auto Location = pContext->getFullLoc(Declaration->getLocStart());
+	if (Location.isValid())
+		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
+			<< "\tLine=" << Location.getSpellingLineNumber() 
+			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
+	IsInDecl(Declaration);
 	return true;
 }
 
