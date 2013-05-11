@@ -46,7 +46,8 @@ bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return IsInDecl(Declaration);
+	IsInDecl(Declaration);
+	return true;
 }
 
 bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
@@ -58,7 +59,8 @@ bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return IsInDecl(Declaration);
+	IsInDecl(Declaration);
+	return true;
 }
 
 bool ClpConsumer::VisitNamespaceDecl(NamespaceDecl *Declaration){
@@ -70,7 +72,8 @@ bool ClpConsumer::VisitNamespaceDecl(NamespaceDecl *Declaration){
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return IsInDecl(Declaration);
+	IsInDecl(Declaration);
+	return true;
 }
 
 bool ClpConsumer::VisitUsingDirectiveDecl(UsingDirectiveDecl *Declaration){ //using 
@@ -82,7 +85,8 @@ bool ClpConsumer::VisitUsingDirectiveDecl(UsingDirectiveDecl *Declaration){ //us
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return IsInDecl(Declaration);
+	IsInDecl(Declaration);
+	return true;
 }
 
 bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
@@ -112,7 +116,8 @@ bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
 			llvm::outs() << '\n';
 		}
 	}
-	return IsInDecl(Declaration);
+	IsInDecl(Declaration);
+	return true;
 }
 
 bool ClpConsumer::VisitLinkageSpecDecl(LinkageSpecDecl *Declaration){
@@ -124,12 +129,14 @@ bool ClpConsumer::VisitLinkageSpecDecl(LinkageSpecDecl *Declaration){
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return IsInDecl(Declaration);
+	IsInDecl(Declaration);
+	return true;
 }
 
 bool ClpConsumer::VisitTemplateDecl(TemplateDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
-	return IsInDecl(Declaration);
+	IsInDecl(Declaration);
+	return true;
 }
 
 bool ClpConsumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *Declaration){
@@ -141,7 +148,8 @@ bool ClpConsumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *Declaration){
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return IsInDecl(Declaration);
+	IsInDecl(Declaration);
+	return true;
 }
 
 bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *Declaration){
@@ -152,7 +160,8 @@ bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *Declaration){
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
 			<< "\tLine=" << Location.getSpellingLineNumber() 
 			<< "\tColumn=" << Location.getSpellingColumnNumber() << '\n';
-	return IsInDecl(Declaration);
+	IsInDecl(Declaration);
+	return true;
 }
 
 bool ClpConsumer::VisitCallExpr(CallExpr *expr){
