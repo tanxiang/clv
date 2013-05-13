@@ -29,6 +29,13 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 
 	virtual void HandleTranslationUnit(ASTContext &Context) override;
 
+// ----------------- Decl traversal -----------------
+//
+// For a Decl, we automate (in the DEF_TRAVERSE_DECL macro) traversing
+// the children that come from the DeclContext associated with it.
+// Therefore each Traverse* only needs to worry about children other
+// than those.
+bool TraverseDeclContextHelper(DeclContext *DC);
 	//bool TraverseDecl(Decl *D);
 	//AST中各种声明Node访问者方法
 	/*

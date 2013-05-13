@@ -61,6 +61,7 @@ bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 	//case SC_Auto: case SC_Register: case SC_OpenCLWorkGroupLocal:
 	//	llvm_unreachable("invalid for functions");
 	//}
+	getDerived();
 	cout << Declaration->getNameInfo().getAsString() << "()\t"
 		<<Declaration->getType().getAsString() <<'\n';
 	if(IsInDecl(Declaration)){
