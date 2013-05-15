@@ -22,6 +22,17 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	//std::mutex& MutReady;
 	std::mutex MutSearch;
 	ASTContext *pContext;
+	std::string FilterString;
+
+	std::string getName(Decl *D) {
+		if (isa<NamedDecl>(D))
+			return cast<NamedDecl>(D)->getQualifiedNameAsString();
+		return "";
+	}
+
+	bool filterMatches(Decl *D) {
+		return getName(D).find(FilterString) != std::string::npos;
+	}
 
 	public:
 	ClpConsumer(std::condition_variable& CondReady,std::condition_variable& CondSearch,MsgBox& SearchMsg)
@@ -35,9 +46,11 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 // the children that come from the DeclContext associated with it.
 // Therefore each Traverse* only needs to worry about children other
 // than those.
-bool TraverseDeclContextHelper(DeclContext *DC);
+//bool TraverseDeclContextHelper(DeclContext *DC);
 	//bool TraverseDecl(Decl *D);
 	//AST中各种声明Node访问者方法
+
+	bool VisitNamedDecl(NamedDecl *Declaration);
 	/*
 	void VisitDeclContext(DeclContext *DC, bool Indent) //?
 	void VisitTypedefDecl(TypedefDecl *D) //typedef ??

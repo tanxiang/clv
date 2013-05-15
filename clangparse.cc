@@ -48,6 +48,11 @@ void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 	}
 }
 
+bool ClpConsumer::VisitNamedDecl(NamedDecl *Declaration) {
+	Declaration->getQualifiedNameAsString();
+	return true;
+}
+
 bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	//if (Declaration->isInlineSpecified())  llvm::outs() << "inline ";
