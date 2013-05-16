@@ -1,6 +1,3 @@
-//#define __STDC_LIMIT_MACROS
-//#define __STDC_CONSTANT_MACROS
-
 #include <clang/Frontend/FrontendActions.h>
 #include <clang/Frontend/CompilerInvocation.h>
 #include <clang/AST/ASTConsumer.h>
@@ -34,7 +31,7 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 		return getName(D).find(FilterString) != std::string::npos;
 	}
 
-	public:
+public:
 	ClpConsumer(std::condition_variable& CondReady,std::condition_variable& CondSearch,MsgBox& SearchMsg)
 	:CondReady(CondReady),CondSearch(CondSearch),SearchMsg(SearchMsg){}
 
@@ -49,6 +46,7 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 //bool TraverseDeclContextHelper(DeclContext *DC);
 	//bool TraverseDecl(Decl *D);
 	//AST中各种声明Node访问者方法
+	bool VisitDecl(Decl *Declaration);
 
 	bool VisitNamedDecl(NamedDecl *Declaration);
 	/*
@@ -85,7 +83,10 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 
 	bool VisitCallExpr(CallExpr *expr);//
 	//语义node访问方法
-	bool IsInDecl(Decl *Declaration);
+	bool VisitStmt(Stmt *Statement);
+private:
+	template <typename AstNode>
+	bool IsInDecl(AstNode *Node);
 };
 
 class ClpAction:public ASTFrontendAction{

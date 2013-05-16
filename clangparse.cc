@@ -199,13 +199,14 @@ bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *Declaration){
 
 bool ClpConsumer::VisitCallExpr(CallExpr *expr){
 	cout<<__PRETTY_FUNCTION__<<endl;
-	
+	IsInDecl(expr);
 	return true;//IsInDecl(expr);
 }
 
-bool ClpConsumer::IsInDecl(Decl *Declaration){
-	auto LocationStart = pContext->getFullLoc(Declaration->getLocStart());
-	auto LocationEnd = pContext->getFullLoc(Declaration->getLocEnd());
+template <typename AstNode>
+bool ClpConsumer::IsInDecl(AstNode *Node){
+	auto LocationStart = pContext->getFullLoc(Node->getLocStart());
+	auto LocationEnd = pContext->getFullLoc(Node->getLocEnd());
 	if(LocationStart.isValid()&&LocationEnd.isValid()){
 		if(LocationStart.getFileID().getHashValue()==1 && 
 			LocationEnd.getFileID().getHashValue()==1){
@@ -223,6 +224,16 @@ bool ClpConsumer::IsInDecl(Decl *Declaration){
 		}
 	}
 	return false;
+}
+
+bool ClpConsumer::VisitDecl(Decl *Declaration){
+	cout<<__PRETTY_FUNCTION__<<Declaration->getDeclKindName()<<endl;
+	return true;
+}
+
+bool ClpConsumer::VisitStmt(Stmt *Statement){
+	cout<<__PRETTY_FUNCTION__<<Statement->getStmtClassName()<<endl;
+	return true;
 }
 
 bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine){
