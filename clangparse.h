@@ -79,11 +79,13 @@ public:
 
 	//暂无objc特性支持计划
 	
-	//表达式node访问
-
-	bool VisitCallExpr(CallExpr *expr);//
 	//语义node访问方法
 	bool VisitStmt(Stmt *Statement);
+	//表达式node访问
+	bool VisitCallExpr(CallExpr *expr);//
+
+	bool VisitType(Type *Typeinfo);
+	bool VisitTypeLoc(TypeLoc TL);
 private:
 	template <typename AstNode>
 	bool IsInDecl(AstNode *Node);

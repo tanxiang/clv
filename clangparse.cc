@@ -236,6 +236,15 @@ bool ClpConsumer::VisitStmt(Stmt *Statement){
 	return true;
 }
 
+bool ClpConsumer::VisitType(Type *Typeinfo){
+	cout<<__PRETTY_FUNCTION__<<Typeinfo->getTypeClassName()<<endl;
+	return true;
+}
+
+bool ClpConsumer::VisitTypeLoc(TypeLoc TL){
+return true;
+}
+
 bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine){
 	vector<string> Commands;
 	vector<const char*> Argv;
