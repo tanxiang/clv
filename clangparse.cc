@@ -49,7 +49,9 @@ void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 }
 
 bool ClpConsumer::VisitNamedDecl(NamedDecl *Declaration) {
-	Declaration->getQualifiedNameAsString();
+	cout<<"Name:"<<Declaration->getNameAsString()<<'\n';
+	//Declaration->getQualifiedNameAsString();
+	//cout << Declaration->getName() << "\n";
 	return true;
 }
 
@@ -66,7 +68,6 @@ bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 	//case SC_Auto: case SC_Register: case SC_OpenCLWorkGroupLocal:
 	//	llvm_unreachable("invalid for functions");
 	//}
-	getDerived();
 	cout << Declaration->getNameInfo().getAsString() << "()\t"
 		<<Declaration->getType().getAsString() <<'\n';
 	if(IsInDecl(Declaration)){
@@ -242,7 +243,8 @@ bool ClpConsumer::VisitType(Type *Typeinfo){
 }
 
 bool ClpConsumer::VisitTypeLoc(TypeLoc TL){
-return true;
+	cout<<__PRETTY_FUNCTION__<<endl;
+	return true;
 }
 
 bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine){
