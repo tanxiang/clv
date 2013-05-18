@@ -56,8 +56,8 @@ public:
 	void VisitEnumDecl(EnumDecl *D) //
 	*/
 	bool VisitFunctionDecl(FunctionDecl *Declaration); 
+	bool VisitFieldDecl(FieldDecl *Declaration);
 	/*
-	void VisitFieldDecl(FieldDecl *D) // mutable?? 
 	void VisitLabelDecl(LabelDecl *D) // goto lable
 	*/
 	bool VisitVarDecl(VarDecl *Declaration); //var
@@ -83,7 +83,7 @@ public:
 	bool VisitStmt(Stmt *Statement);
 	//表达式node访问
 	bool VisitCallExpr(CallExpr *expr);//
-
+	//type node访问
 	bool VisitType(Type *Typeinfo);
 	bool VisitTypeLoc(TypeLoc TL);
 private:

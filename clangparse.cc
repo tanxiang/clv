@@ -80,9 +80,16 @@ bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 	return true;
 }
 
+bool ClpConsumer::VisitFieldDecl(FieldDecl *Declaration){
+	cout<<__PRETTY_FUNCTION__<<endl;
+	cout << Declaration->getNameAsString() << '\t'
+		<<Declaration->getType().getAsString() <<'\n';
+	return true;
+}
+
 bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
-	llvm::outs() << Declaration->getName() << "\t"
+	llvm::outs() << Declaration->getName() << '\t'
 		<< Declaration->getType().getAsString() <<'\n';
 	auto Location = pContext->getFullLoc(Declaration->getLocStart());
 	if (Location.isValid())
@@ -95,7 +102,7 @@ bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
 
 bool ClpConsumer::VisitNamespaceDecl(NamespaceDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
-	llvm::outs() << Declaration->getName() << "\t";
+	llvm::outs() << Declaration->getName() << '\t';
 	//	<< Declaration->getType().getAsString() <<'\n';
 	if(IsInDecl(Declaration)){
 		auto Location = pContext->getFullLoc(Declaration->getLocStart());
@@ -122,7 +129,7 @@ bool ClpConsumer::VisitUsingDirectiveDecl(UsingDirectiveDecl *Declaration){ //us
 
 bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
-	llvm::outs()<< Declaration->getKindName();
+	llvm::outs() << Declaration->getKindName();
 	if (Declaration->getIdentifier())
 		llvm::outs() << '\t' << *Declaration;
 	llvm::outs() << '\n';
