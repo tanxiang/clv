@@ -48,7 +48,7 @@ public:
 	//AST中各种声明Node访问者方法
 	bool VisitDecl(Decl *Declaration);
 
-	bool VisitNamedDecl(NamedDecl *Declaration);
+	//bool VisitNamedDecl(NamedDecl *Declaration);
 	/*
 	void VisitDeclContext(DeclContext *DC, bool Indent) //?
 	void VisitTypedefDecl(TypedefDecl *D) //typedef ??
@@ -81,7 +81,9 @@ public:
 	
 	//语义node访问方法
 	bool VisitStmt(Stmt *Statement);
+	bool VisitDeclStmt(DeclStmt *Statement);
 	//表达式node访问
+	bool VisitMemberExpr(MemberExpr *Expr);
 	bool VisitCallExpr(CallExpr *expr);//
 	//type node访问
 	bool VisitType(Type *Typeinfo);

@@ -36,25 +36,25 @@ cout<<"3search:"<<SearchMsg.Key<<endl;
 }
 */
 void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
-	//Context.getTranslationUnitDecl()->dump(llvm::outs());
 	//sleep & wait sreach opt
 	//cout<<"ClpConsumer"<<(int)&CondReady<<endl;
 	pContext = &Context;
 	unique_lock<mutex> lock{MutSearch};
 	CondSearch.wait(lock);
 	while(SearchMsg.Key!="$"){//search cond
+		//Context.getTranslationUnitDecl()->dump(llvm::outs());
 		TraverseDecl(Context.getTranslationUnitDecl());//search ast
 		CondSearch.wait(lock);
 	}
 }
-
+/*
 bool ClpConsumer::VisitNamedDecl(NamedDecl *Declaration) {
 	cout<<"Name:"<<Declaration->getNameAsString()<<'\n';
 	//Declaration->getQualifiedNameAsString();
-	//cout << Declaration->getName() << "\n";
+	//cout << Declaration->getName() << '\n';
 	return true;
 }
-
+*/
 bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	//if (Declaration->isInlineSpecified())  llvm::outs() << "inline ";
@@ -69,7 +69,7 @@ bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 	//	llvm_unreachable("invalid for functions");
 	//}
 	cout << Declaration->getNameInfo().getAsString() << "()\t"
-		<<Declaration->getType().getAsString() <<'\n';
+		<< Declaration->getType().getAsString() <<'\n';
 	if(IsInDecl(Declaration)){
 		auto Location = pContext->getFullLoc(Declaration->getLocStart());
 		if (Location.isValid())
@@ -83,7 +83,7 @@ bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 bool ClpConsumer::VisitFieldDecl(FieldDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	cout << Declaration->getNameAsString() << '\t'
-		<<Declaration->getType().getAsString() <<'\n';
+		<< Declaration->getType().getAsString() <<'\n';
 	return true;
 }
 
@@ -91,6 +91,8 @@ bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	llvm::outs() << Declaration->getName() << '\t'
 		<< Declaration->getType().getAsString() <<'\n';
+	Declaration->getType()->isPointerType();
+	Declaration->getType()->isObjectType();
 	auto Location = pContext->getFullLoc(Declaration->getLocStart());
 	if (Location.isValid())
 		cout << "declaration at FileID=" << Location.getFileID().getHashValue()
@@ -181,7 +183,7 @@ bool ClpConsumer::VisitTemplateDecl(TemplateDecl *Declaration){
 bool ClpConsumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	cout << Declaration->getTemplatedDecl()->getNameInfo().getAsString() << "()\t"
-		<<Declaration->getTemplatedDecl()->getType().getAsString() <<'\n';
+		<< Declaration->getTemplatedDecl()->getType().getAsString() << '\n';
 	if(IsInDecl(Declaration)){
 		auto Location = pContext->getFullLoc(Declaration->getLocStart());
 		if (Location.isValid())
@@ -207,8 +209,8 @@ bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *Declaration){
 
 bool ClpConsumer::VisitCallExpr(CallExpr *expr){
 	cout<<__PRETTY_FUNCTION__<<endl;
-	IsInDecl(expr);
-	return true;//IsInDecl(expr);
+	//IsInDecl(expr);
+	return true;
 }
 
 template <typename AstNode>
@@ -235,7 +237,7 @@ bool ClpConsumer::IsInDecl(AstNode *Node){
 }
 
 bool ClpConsumer::VisitDecl(Decl *Declaration){
-	cout<<__PRETTY_FUNCTION__<<Declaration->getDeclKindName()<<endl;
+	cout<<__PRETTY_FUNCTION__<<Declaration->getDeclKindName()<<':'<<getName(Declaration)<<endl;
 	return true;
 }
 
@@ -243,9 +245,19 @@ bool ClpConsumer::VisitStmt(Stmt *Statement){
 	cout<<__PRETTY_FUNCTION__<<Statement->getStmtClassName()<<endl;
 	return true;
 }
+bool ClpConsumer::VisitDeclStmt(DeclStmt *Statement){
+	return true;
+}
+
+bool ClpConsumer::VisitMemberExpr(MemberExpr *Expr){
+	cout<<__PRETTY_FUNCTION__<<endl;
+	return true;
+}
 
 bool ClpConsumer::VisitType(Type *Typeinfo){
 	cout<<__PRETTY_FUNCTION__<<Typeinfo->getTypeClassName()<<endl;
+	//string s;
+	//getAsStringInternal(Typeinfo,s);
 	return true;
 }
 
