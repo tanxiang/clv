@@ -2,6 +2,7 @@
 #include "clangparse.h"
 #include <clang/Frontend/CompilerInstance.h>
 #include <clang/Frontend/FrontendDiagnostic.h>
+#include <clang/Sema/CodeCompleteConsumer.h>
 //#include <clang/Frontend/TextDiagnosticPrinter.h>
 #include <clang/Tooling/CommonOptionsParser.h>
 #include <clang/Tooling/Tooling.h>
@@ -246,11 +247,13 @@ bool ClpConsumer::VisitStmt(Stmt *Statement){
 	return true;
 }
 bool ClpConsumer::VisitDeclStmt(DeclStmt *Statement){
+
 	return true;
 }
 
-bool ClpConsumer::VisitMemberExpr(MemberExpr *Expr){
-	cout<<__PRETTY_FUNCTION__<<endl;
+bool ClpConsumer::VisitMemberExpr(MemberExpr *Expression){
+	cout<<__PRETTY_FUNCTION__<<Expression->getMemberDecl()->getNameAsString()<<endl;
+	
 	return true;
 }
 
