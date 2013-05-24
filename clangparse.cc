@@ -13,6 +13,8 @@
 using namespace std;
 using namespace clang::tooling;
 
+class ClvCodeCompleteConsumer : public CodeCompleteConsumer {};
+
 /*
 #define DISPATCH(NAME, CLASS, VAR) \
   return getDerived().Traverse##NAME(static_cast<CLASS*>(VAR))
