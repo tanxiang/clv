@@ -109,6 +109,9 @@ public:
 	ClpAction(std::condition_variable& CondReady,std::condition_variable& CondSearch,MsgBox& SearchMsg)
 	:CondReady(CondReady),CondSearch(CondSearch),SearchMsg(SearchMsg){}
 	virtual bool hasCodeCompletionSupport() const {return true;}
+	virtual bool hasPCHSupport() const { return false; }
+	virtual bool hasASTFileSupport() const { return true; }
+	virtual bool hasIRSupport() const { return false; }
 };
 
 class ClpInvocation{
