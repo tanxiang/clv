@@ -1,3 +1,5 @@
+#ifndef _FILEMAP_H
+#define _FILEMAP_H
 class CharRef{//utf-8 char ref & opts
 	void *P;
 	enum CodeType{
@@ -231,4 +233,4 @@ private:
 	iterator start;
 	iterator finish;
 };
-
+#endif

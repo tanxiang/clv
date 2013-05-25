@@ -1,8 +1,11 @@
+#ifndef _CLVTHREAD_H
+#define _CLVTHREAD_H
 #include <vector>
 #include <string>
 #include <condition_variable>
 #include <thread>
-#include "clangparse.h"
+#include <memory>
+class ClpInvocation;
 
 struct MsgBox{
 	std::mutex Mut;
@@ -17,9 +20,9 @@ class ClvCompile{
 	std::condition_variable CondReady;
 	std::condition_variable CondSearch;
 	MsgBox SearchMsg;
-	ClpInvocation Invocation;
+	std::unique_ptr<ClpInvocation> Invocation;
 public:
-	ClvCompile():Invocation(new ClpAction{CondReady,CondSearch,SearchMsg});
+	ClvCompile();
 	void* PchCode(const char* CodeName,void* P,int Len);
 	bool ParseCode(const char* CodeName,void* P,int Len,void* Pch=nullptr);
 	bool ParseCodeError(){
@@ -38,3 +41,4 @@ inline void parse_thread(const char* CodeName,void* P,int Len)
 {
 	clast.ParseCode(CodeName,P,Len);
 }
+#endif

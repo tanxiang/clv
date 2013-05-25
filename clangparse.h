@@ -1,3 +1,5 @@
+#ifndef _CLANGPARSE_H
+#define _CLANGPARSE_H
 #include <clang/Frontend/FrontendActions.h>
 #include <clang/Frontend/CompilerInvocation.h>
 #include <clang/AST/ASTConsumer.h>
@@ -126,3 +128,4 @@ public:
 };
 
 void CodeToCompilerInstance(const char* Name,char* Code,int Length,CompilerInstance &Compiler);
+#endif

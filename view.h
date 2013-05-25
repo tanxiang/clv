@@ -1,4 +1,5 @@
-
+#ifndef _VIEW_H
+#define _VIEW_H
 class ClvScroller : public SkView {
 public:
 	enum ScrollerType{
@@ -80,4 +81,5 @@ private:
 	FileMap<MBLineRef<CharRef> > file;
 	typedef SkOSWindow INHERITED;
 };
+#endif
 
