@@ -2,6 +2,8 @@
 #include <string>
 #include <condition_variable>
 #include <thread>
+#include "clangparse.h"
+
 struct MsgBox{
 	std::mutex Mut;
 	std::string Key;
@@ -15,8 +17,9 @@ class ClvCompile{
 	std::condition_variable CondReady;
 	std::condition_variable CondSearch;
 	MsgBox SearchMsg;
+	ClpInvocation Invocation;
 public:
-	ClvCompile();
+	ClvCompile():Invocation(new ClpAction{CondReady,CondSearch,SearchMsg});
 	void* PchCode(const char* CodeName,void* P,int Len);
 	bool ParseCode(const char* CodeName,void* P,int Len,void* Pch=nullptr);
 	bool ParseCodeError(){

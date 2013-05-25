@@ -1,6 +1,5 @@
 #include <iostream>
 #include "clthread.h"
-#include "clangparse.h"
 
 using namespace std;
 ClvCompile::ClvCompile(){}
@@ -13,7 +12,6 @@ bool ClvCompile::ParseCode(const char* CodeName,void* P,int Len,void* Pch){
 	//cout<<"ClvCompile"<<(int)&CondReady<<endl;
 	CompileThread = thread{
 		[=]{
-			ClpInvocation Invocation{new ClpAction{CondReady,CondSearch,SearchMsg}};
 			Invocation.RunCode(CodeName,static_cast<char*>(P),Len,vector<string>{"-std=c++11","-c"});
 		}
 	};
