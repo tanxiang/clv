@@ -1,6 +1,5 @@
 #include "clthread.h"
 #include "clangparse.h"
-#include <clang/Frontend/CompilerInstance.h>
 #include <clang/Frontend/FrontendDiagnostic.h>
 #include <clang/Sema/CodeCompleteConsumer.h>
 //#include <clang/Frontend/TextDiagnosticPrinter.h>
@@ -299,7 +298,7 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 	auto CC1Args = Cmd->getArguments();
 	//need check cc1args
 
-	IntrusiveRefCntPtr<CompilerInvocation> Invocation=new CompilerInvocation{};
+	IntrusiveRefCntPtr<CompilerInvocation> Invocation{new CompilerInvocation{}};
 	clang::CompilerInvocation::CreateFromArgs(
 		*Invocation, CC1Args.data() + 1, CC1Args.data() + CC1Args.size(),
 		*Diagnostics);
@@ -313,7 +312,6 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 }
 
 bool ClpInvocation::RunInvocation(const char* Name,char* Code,int Length,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args){
-	clang::CompilerInstance Compiler;
 	Compiler.setInvocation(&Invocation);
 
 	Compiler.createDiagnostics(CC1Args.size(),const_cast<char**>(CC1Args.data()));

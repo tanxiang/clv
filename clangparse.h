@@ -1,6 +1,7 @@
 #ifndef _CLANGPARSE_H
 #define _CLANGPARSE_H
 #include <clang/Frontend/FrontendActions.h>
+#include <clang/Frontend/CompilerInstance.h>
 #include <clang/Frontend/CompilerInvocation.h>
 #include <clang/AST/ASTConsumer.h>
 #include <clang/AST/ASTContext.h>
@@ -119,6 +120,7 @@ public:
 class ClpInvocation{
 	//std::vector<std::string> CommandLine;
 	std::unique_ptr<FrontendAction> Action;
+	CompilerInstance Compiler;
 protected:
 	bool RunInvocation(const char* Name,char* Code,int Length,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args);
 public:
