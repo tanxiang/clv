@@ -128,7 +128,7 @@ protected:
 public:
 	ClpInvocation(FrontendAction *Action):Action{Action},Compiler{new CompilerInstance{}}
 	{}
-	~ClpInvocation(){delete Compiler;}
+
 	bool RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine);
 };
 
