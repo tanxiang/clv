@@ -120,12 +120,15 @@ public:
 class ClpInvocation{
 	//std::vector<std::string> CommandLine;
 	std::unique_ptr<FrontendAction> Action;
-	CompilerInstance Compiler;
+	//FIXME: dconstruct call a purge virtual func when unique_ptr delete the CompilerInstance??
+	CompilerInstance* Compiler;
+	//std::unique_ptr<CompilerInstance> Compiler;
 protected:
 	bool RunInvocation(const char* Name,char* Code,int Length,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args);
 public:
-	ClpInvocation(FrontendAction *Action):Action{Action}{
-	}
+	ClpInvocation(FrontendAction *Action):Action{Action},Compiler{new CompilerInstance{}}
+	{}
+	~ClpInvocation(){delete Compiler;}
 	bool RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine);
 };
 

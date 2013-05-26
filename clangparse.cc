@@ -312,17 +312,18 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 }
 
 bool ClpInvocation::RunInvocation(const char* Name,char* Code,int Length,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args){
-	Compiler.setInvocation(&Invocation);
+	
+	Compiler->setInvocation(&Invocation);
 
-	Compiler.createDiagnostics(CC1Args.size(),const_cast<char**>(CC1Args.data()));
-	if (!Compiler.hasDiagnostics())
+	Compiler->createDiagnostics(CC1Args.size(),const_cast<char**>(CC1Args.data()));
+	if (!Compiler->hasDiagnostics())
 		return false;
 	
-	Compiler.createFileManager();
-	Compiler.createSourceManager(Compiler.getFileManager());
-	CodeToCompilerInstance(Name,Code,Length,Compiler);
-	const bool Success = Compiler.ExecuteAction(*Action);
-	Compiler.resetAndLeakFileManager();
+	Compiler->createFileManager();
+	Compiler->createSourceManager(Compiler->getFileManager());
+	CodeToCompilerInstance(Name,Code,Length,*Compiler);
+	const bool Success = Compiler->ExecuteAction(*Action);
+	Compiler->resetAndLeakFileManager();
 	return Success;
 }
 
