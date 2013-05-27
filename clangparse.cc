@@ -12,10 +12,18 @@
 using namespace std;
 using namespace clang::tooling;
 
+struct AllocatedCXCodeCompleteResults : public CXCodeCompleteResults {
+	IntrusiveRefCntPtr<clang::GlobalCodeCompletionAllocator> CodeCompletionAllocator;
+};
+
 class ClvCodeCompleteConsumer : public CodeCompleteConsumer {
 	uint64_t NormalContexts;
+	AllocatedCXCodeCompleteResults AllocatedResults;
+	CodeCompletionTUInfo CCTUInfo;
 public:
-	ClvCodeCompleteConsumer(const CodeCompleteOptions &CodeCompleteOpts):CodeCompleteConsumer{CodeCompleteOpts,true}{
+	ClvCodeCompleteConsumer(const CodeCompleteOptions &CodeCompleteOpts):
+		CodeCompleteConsumer{CodeCompleteOpts,true},
+		CCTUInfo{new clang::GlobalCodeCompletionAllocator}{
 		NormalContexts = (1LL << CodeCompletionContext::CCC_TopLevel) | 
 			(1LL << CodeCompletionContext::CCC_ObjCInterface) |
 			(1LL << CodeCompletionContext::CCC_ObjCImplementation) |
@@ -44,15 +52,15 @@ public:
 		unsigned NumCandidates) { 
 		Next.ProcessOverloadCandidates(S, CurrentArg, Candidates, NumCandidates);
 	}
-  
+*/
 	virtual CodeCompletionAllocator &getAllocator() {
-		return Next.getAllocator();
+		return *AllocatedResults.CodeCompletionAllocator;
 	}
  
 	virtual CodeCompletionTUInfo &getCodeCompletionTUInfo() {
-		return Next.getCodeCompletionTUInfo();
+		return CCTUInfo;
 	}
-*/
+
 };
 
 void ClvCodeCompleteConsumer::ProcessCodeCompleteResults(Sema &S,
@@ -60,6 +68,8 @@ void ClvCodeCompleteConsumer::ProcessCodeCompleteResults(Sema &S,
 					CodeCompletionResult *Results,
 					unsigned NumResults) {
 	cout<<__PRETTY_FUNCTION__<<endl;
+	for (unsigned I = 0; I != NumResults; ++I) {
+	}
 	return;
 }
 /*
@@ -351,11 +361,19 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 		*Invocation, CC1Args.data() + 1, CC1Args.data() + CC1Args.size(),
 		*Diagnostics);
 	Invocation->getFrontendOpts().DisableFree = false;
-	//if("-v"){
-	//	Compilation.PrintJob(llvm::errs(), Compilation.getJobs(), "\n", true);
-	//	llvm::errs() << "\n";
-	//}
-	Compiler->setInvocation(&*Invocation);
+
+	auto &FrontendOpts = Invocation->getFrontendOpts();
+	auto &CodeCompleteOpts = FrontendOpts.CodeCompleteOpts;
+	auto &PreprocessorOpts = Invocation->getPreprocessorOpts();
+
+	//FrontendOpts.CodeCompletionAt.FileName = File;
+	FrontendOpts.CodeCompletionAt.Line = 10;
+	FrontendOpts.CodeCompletionAt.Column = 3;
+
+	ClvCodeCompleteConsumer *ClvCompleteConsumer = new ClvCodeCompleteConsumer(CodeCompleteOpts);
+
+	Compiler->setInvocation(Invocation.getPtr());
+	Compiler->setCodeCompletionConsumer(ClvCompleteConsumer);
 	Compiler->createDiagnostics(CC1Args.size(),const_cast<char**>(CC1Args.data()));
 	if (!Compiler->hasDiagnostics())
 		return false;
@@ -365,6 +383,7 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 	CodeToCompilerInstance(Name,Code,Length,*Compiler);
 	const bool Success = Compiler->ExecuteAction(*Action);
 	Compiler->resetAndLeakFileManager();
+
 	return Success;
 }
 /*

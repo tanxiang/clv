@@ -126,8 +126,7 @@ class ClpInvocation{
 protected:
 	//bool RunInvocation(const char* Name,char* Code,int Length);
 public:
-	ClpInvocation(FrontendAction *Action):Action{Action},Compiler{new CompilerInstance{}}
-	{}
+	ClpInvocation(FrontendAction *Action):Action{Action},Compiler{new CompilerInstance{}}{}
 
 	bool RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine);
 };
