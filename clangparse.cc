@@ -60,6 +60,7 @@ void ClvCodeCompleteConsumer::ProcessCodeCompleteResults(Sema &S,
 					CodeCompletionResult *Results,
 					unsigned NumResults) {
 	cout<<__PRETTY_FUNCTION__<<endl;
+	return;
 }
 /*
 #define DISPATCH(NAME, CLASS, VAR) \
@@ -354,17 +355,15 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 	//	Compilation.PrintJob(llvm::errs(), Compilation.getJobs(), "\n", true);
 	//	llvm::errs() << "\n";
 	//}
-
-	return RunInvocation(Name,Code,Length,*Invocation,CC1Args);
-}
-
-bool ClpInvocation::RunInvocation(const char* Name,char* Code,int Length,CompilerInvocation &Invocation,driver::ArgStringList &CC1Args){
-	
-	Compiler->setInvocation(&Invocation);
-
+	Compiler->setInvocation(&*Invocation);
 	Compiler->createDiagnostics(CC1Args.size(),const_cast<char**>(CC1Args.data()));
 	if (!Compiler->hasDiagnostics())
 		return false;
+
+	return RunInvocation(Name,Code,Length);
+}
+
+bool ClpInvocation::RunInvocation(const char* Name,char* Code,int Length){
 	
 	Compiler->createFileManager();
 	Compiler->createSourceManager(Compiler->getFileManager());
