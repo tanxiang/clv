@@ -124,7 +124,7 @@ class ClpInvocation{
 	CompilerInstance* Compiler;
 	//std::unique_ptr<CompilerInstance> Compiler;
 protected:
-	bool RunInvocation(const char* Name,char* Code,int Length);
+	//bool RunInvocation(const char* Name,char* Code,int Length);
 public:
 	ClpInvocation(FrontendAction *Action):Action{Action},Compiler{new CompilerInstance{}}
 	{}

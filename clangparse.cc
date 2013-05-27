@@ -360,11 +360,6 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 	if (!Compiler->hasDiagnostics())
 		return false;
 
-	return RunInvocation(Name,Code,Length);
-}
-
-bool ClpInvocation::RunInvocation(const char* Name,char* Code,int Length){
-	
 	Compiler->createFileManager();
 	Compiler->createSourceManager(Compiler->getFileManager());
 	CodeToCompilerInstance(Name,Code,Length,*Compiler);
@@ -372,7 +367,11 @@ bool ClpInvocation::RunInvocation(const char* Name,char* Code,int Length){
 	Compiler->resetAndLeakFileManager();
 	return Success;
 }
-
+/*
+bool ClpInvocation::RunInvocation(const char* Name,char* Code,int Length){
+	return false;
+}
+*/
 void CodeToCompilerInstance(const char* Name,char* Code,int Length,CompilerInstance &Compiler){
 	const llvm::MemoryBuffer *Input = llvm::MemoryBuffer::getMemBuffer(Code);
 	const FileEntry *FromFile = Compiler.getFileManager().getVirtualFile(Name,Length, 0);
