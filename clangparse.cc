@@ -12,8 +12,55 @@
 using namespace std;
 using namespace clang::tooling;
 
-class ClvCodeCompleteConsumer : public CodeCompleteConsumer {};
+class ClvCodeCompleteConsumer : public CodeCompleteConsumer {
+	uint64_t NormalContexts;
+public:
+	ClvCodeCompleteConsumer(const CodeCompleteOptions &CodeCompleteOpts):CodeCompleteConsumer{CodeCompleteOpts,true}{
+		NormalContexts = (1LL << CodeCompletionContext::CCC_TopLevel) | 
+			(1LL << CodeCompletionContext::CCC_ObjCInterface) |
+			(1LL << CodeCompletionContext::CCC_ObjCImplementation) |
+			(1LL << CodeCompletionContext::CCC_ObjCIvarList) |
+			(1LL << CodeCompletionContext::CCC_Statement) |
+			(1LL << CodeCompletionContext::CCC_Expression) |
+			(1LL << CodeCompletionContext::CCC_ObjCMessageReceiver) |
+			(1LL << CodeCompletionContext::CCC_DotMemberAccess) |
+			(1LL << CodeCompletionContext::CCC_ArrowMemberAccess) |
+			(1LL << CodeCompletionContext::CCC_ObjCPropertyAccess) |
+			(1LL << CodeCompletionContext::CCC_ObjCProtocolName) |
+			(1LL << CodeCompletionContext::CCC_ParenthesizedExpression) |
+			(1LL << CodeCompletionContext::CCC_Recovery);
+		NormalContexts|= (1LL << CodeCompletionContext::CCC_EnumTag) |
+			(1LL << CodeCompletionContext::CCC_UnionTag) |
+			(1LL << CodeCompletionContext::CCC_ClassOrStructTag);
+	}
 
+	virtual void ProcessCodeCompleteResults(Sema &S, 
+		CodeCompletionContext Context,
+		CodeCompletionResult *Results,
+		unsigned NumResults);
+/*
+	virtual void ProcessOverloadCandidates(Sema &S, unsigned CurrentArg,
+		OverloadCandidate *Candidates,
+		unsigned NumCandidates) { 
+		Next.ProcessOverloadCandidates(S, CurrentArg, Candidates, NumCandidates);
+	}
+  
+	virtual CodeCompletionAllocator &getAllocator() {
+		return Next.getAllocator();
+	}
+ 
+	virtual CodeCompletionTUInfo &getCodeCompletionTUInfo() {
+		return Next.getCodeCompletionTUInfo();
+	}
+*/
+};
+
+void ClvCodeCompleteConsumer::ProcessCodeCompleteResults(Sema &S,
+					CodeCompletionContext Context,
+					CodeCompletionResult *Results,
+					unsigned NumResults) {
+	cout<<__PRETTY_FUNCTION__<<endl;
+}
 /*
 #define DISPATCH(NAME, CLASS, VAR) \
   return getDerived().Traverse##NAME(static_cast<CLASS*>(VAR))
