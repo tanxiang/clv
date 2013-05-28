@@ -333,30 +333,32 @@ bool ClpConsumer::VisitTypeLoc(TypeLoc TL){
 
 static bool EnableCodeCompletion(CompilerInvocation &Invocation,
 		CompilerInstance &Compiler,
-		std::string Filename,
+		const char* Filename,
 		unsigned Line,
 		unsigned Column) {
+	cout<<"start"<<__PRETTY_FUNCTION__<<endl;
 	// Tell the source manager to chop off the given file at a specific
 	// line and column.
 	auto &FrontendOpts = Invocation.getFrontendOpts();
 	auto &CodeCompleteOpts = FrontendOpts.CodeCompleteOpts;
 	auto &PreprocessorOpts = Invocation.getPreprocessorOpts();
-
-	//FrontendOpts.CodeCompletionAt.FileName = File;
-	FrontendOpts.CodeCompletionAt.Line = 10;
-	FrontendOpts.CodeCompletionAt.Column = 3;
+	
+	const FileEntry *Entry = Compiler.getPreprocessor().getFileManager().getFile(Filename);
+	FrontendOpts.CodeCompletionAt.FileName = Filename;
+	FrontendOpts.CodeCompletionAt.Line = Line;
+	FrontendOpts.CodeCompletionAt.Column = Column;
 
 	ClvCodeCompleteConsumer *ClvCompleteConsumer = new ClvCodeCompleteConsumer(CodeCompleteOpts);
 
 	Compiler.setCodeCompletionConsumer(ClvCompleteConsumer);
 
-	const FileEntry *Entry = Compiler.getPreprocessor().getFileManager().getFile(Filename);
 	if (!Entry) {
 		cout<<"error"<<__PRETTY_FUNCTION__<<endl;
 		return true;
 	}
 	// Truncate the named file at the given line/column.
 	Compiler.getPreprocessor().SetCodeCompletionPoint(Entry, Line, Column);
+	cout<<"done"<<__PRETTY_FUNCTION__<<endl;
 	return false;
 }
 
@@ -369,12 +371,14 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 	Commands.push_back(Name);
 	for (int I = 0, E = Commands.size(); I != E; ++I)
 		Argv.push_back(Commands[I].c_str());
-
+	//Recover resources if we crash before exiting this method.
+	//llvm::CrashRecoveryContextCleanupRegistrar<CompilerInstance> CICleanup(Compiler->get());
 	IntrusiveRefCntPtr<DiagnosticOptions> DiagOpts = new DiagnosticOptions();
 	//TextDiagnosticPrinter DiagnosticPrinter(llvm::errs(), &*DiagOpts);
 	IntrusiveRefCntPtr<DiagnosticsEngine> Diagnostics = new DiagnosticsEngine{
 		IntrusiveRefCntPtr<clang::DiagnosticIDs>{new DiagnosticIDs{}},
 		&*DiagOpts,nullptr,false};
+	//FIXME  clang::ProcessWarningOptions & use Diagnostics
 
 	driver::Driver Driver{"clang-tool",llvm::sys::getDefaultTargetTriple(),"a.out",false,*Diagnostics};
 	Driver.setCheckInputsExist(false);
@@ -393,17 +397,21 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 		*Invocation, CC1Args.data() + 1, CC1Args.data() + CC1Args.size(),
 		*Diagnostics);
 	Invocation->getFrontendOpts().DisableFree = false;
-
+	auto LangOpts = Invocation->getLangOpts();
 	Compiler->setInvocation(Invocation.getPtr());
 	
-	EnableCodeCompletion(*Invocation,*Compiler,Name,10,3);
 	Compiler->createDiagnostics(CC1Args.size(),const_cast<char**>(CC1Args.data()));
 	if (!Compiler->hasDiagnostics())
 		return false;
 
 	Compiler->createFileManager();
 	Compiler->createSourceManager(Compiler->getFileManager());
+cout<<"createPreprocessor"<<__PRETTY_FUNCTION__<<endl;
+	Compiler->createPreprocessor();
+cout<<"createPreprocessor end "<<__PRETTY_FUNCTION__<<endl;
 	CodeToCompilerInstance(Name,Code,Length,*Compiler);
+	EnableCodeCompletion(*Invocation,*Compiler,Name,10,3);
+
 	const bool Success = Compiler->ExecuteAction(*Action);
 	Compiler->resetAndLeakFileManager();
 
