@@ -1,6 +1,7 @@
 #include "clthread.h"
 #include "clangparse.h"
 #include <clang/Frontend/FrontendDiagnostic.h>
+#include <clang/Lex/Preprocessor.h>
 #include <clang/Sema/CodeCompleteConsumer.h>
 //#include <clang/Frontend/TextDiagnosticPrinter.h>
 #include <clang/Tooling/CommonOptionsParser.h>
@@ -54,10 +55,12 @@ public:
 	}
 */
 	virtual CodeCompletionAllocator &getAllocator() {
+		cout<<__PRETTY_FUNCTION__<<endl;
 		return *AllocatedResults.CodeCompletionAllocator;
 	}
  
 	virtual CodeCompletionTUInfo &getCodeCompletionTUInfo() {
+		cout<<__PRETTY_FUNCTION__<<endl;
 		return CCTUInfo;
 	}
 
@@ -328,6 +331,35 @@ bool ClpConsumer::VisitTypeLoc(TypeLoc TL){
 	return true;
 }
 
+static bool EnableCodeCompletion(CompilerInvocation &Invocation,
+		CompilerInstance &Compiler,
+		std::string Filename,
+		unsigned Line,
+		unsigned Column) {
+	// Tell the source manager to chop off the given file at a specific
+	// line and column.
+	auto &FrontendOpts = Invocation.getFrontendOpts();
+	auto &CodeCompleteOpts = FrontendOpts.CodeCompleteOpts;
+	auto &PreprocessorOpts = Invocation.getPreprocessorOpts();
+
+	//FrontendOpts.CodeCompletionAt.FileName = File;
+	FrontendOpts.CodeCompletionAt.Line = 10;
+	FrontendOpts.CodeCompletionAt.Column = 3;
+
+	ClvCodeCompleteConsumer *ClvCompleteConsumer = new ClvCodeCompleteConsumer(CodeCompleteOpts);
+
+	Compiler.setCodeCompletionConsumer(ClvCompleteConsumer);
+
+	const FileEntry *Entry = Compiler.getPreprocessor().getFileManager().getFile(Filename);
+	if (!Entry) {
+		cout<<"error"<<__PRETTY_FUNCTION__<<endl;
+		return true;
+	}
+	// Truncate the named file at the given line/column.
+	Compiler.getPreprocessor().SetCodeCompletionPoint(Entry, Line, Column);
+	return false;
+}
+
 bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine){
 	vector<string> Commands;
 	vector<const char*> Argv;
@@ -362,18 +394,9 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 		*Diagnostics);
 	Invocation->getFrontendOpts().DisableFree = false;
 
-	auto &FrontendOpts = Invocation->getFrontendOpts();
-	auto &CodeCompleteOpts = FrontendOpts.CodeCompleteOpts;
-	auto &PreprocessorOpts = Invocation->getPreprocessorOpts();
-
-	//FrontendOpts.CodeCompletionAt.FileName = File;
-	FrontendOpts.CodeCompletionAt.Line = 10;
-	FrontendOpts.CodeCompletionAt.Column = 3;
-
-	ClvCodeCompleteConsumer *ClvCompleteConsumer = new ClvCodeCompleteConsumer(CodeCompleteOpts);
-
 	Compiler->setInvocation(Invocation.getPtr());
-	Compiler->setCodeCompletionConsumer(ClvCompleteConsumer);
+	
+	EnableCodeCompletion(*Invocation,*Compiler,Name,10,3);
 	Compiler->createDiagnostics(CC1Args.size(),const_cast<char**>(CC1Args.data()));
 	if (!Compiler->hasDiagnostics())
 		return false;
