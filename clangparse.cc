@@ -343,7 +343,7 @@ static bool EnableCodeCompletion(CompilerInvocation &Invocation,
 	auto &CodeCompleteOpts = FrontendOpts.CodeCompleteOpts;
 	auto &PreprocessorOpts = Invocation.getPreprocessorOpts();
 	
-	const FileEntry *Entry = Compiler.getPreprocessor().getFileManager().getFile(Filename);
+	//const FileEntry *Entry = Compiler.getPreprocessor().getFileManager().getFile(Filename);
 	FrontendOpts.CodeCompletionAt.FileName = Filename;
 	FrontendOpts.CodeCompletionAt.Line = Line;
 	FrontendOpts.CodeCompletionAt.Column = Column;
@@ -352,12 +352,12 @@ static bool EnableCodeCompletion(CompilerInvocation &Invocation,
 
 	Compiler.setCodeCompletionConsumer(ClvCompleteConsumer);
 
-	if (!Entry) {
-		cout<<"error"<<__PRETTY_FUNCTION__<<endl;
-		return true;
-	}
+	//if (!Entry) {
+	//	cout<<"error"<<__PRETTY_FUNCTION__<<endl;
+	//	return true;
+	//}
 	// Truncate the named file at the given line/column.
-	Compiler.getPreprocessor().SetCodeCompletionPoint(Entry, Line, Column);
+	//Compiler.getPreprocessor().SetCodeCompletionPoint(Entry, Line, Column);
 	cout<<"done"<<__PRETTY_FUNCTION__<<endl;
 	return false;
 }
@@ -406,9 +406,9 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 
 	Compiler->createFileManager();
 	Compiler->createSourceManager(Compiler->getFileManager());
-cout<<"createPreprocessor"<<__PRETTY_FUNCTION__<<endl;
-	Compiler->createPreprocessor();
-cout<<"createPreprocessor end "<<__PRETTY_FUNCTION__<<endl;
+//cout<<"createPreprocessor"<<__PRETTY_FUNCTION__<<endl;
+	//Compiler->createPreprocessor();
+//cout<<"createPreprocessor end "<<__PRETTY_FUNCTION__<<endl;
 	CodeToCompilerInstance(Name,Code,Length,*Compiler);
 	EnableCodeCompletion(*Invocation,*Compiler,Name,10,3);
 
