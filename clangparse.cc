@@ -72,6 +72,24 @@ void ClvCodeCompleteConsumer::ProcessCodeCompleteResults(Sema &S,
 					unsigned NumResults) {
 	cout<<__PRETTY_FUNCTION__<<endl;
 	for (unsigned I = 0; I != NumResults; ++I) {
+		cout << "COMPLETION: ";
+		switch (Results[I].Kind){
+		case CodeCompletionResult::RK_Keyword:
+			cout <<"K:"<< Results[I].Keyword << '\n';
+			break;
+		case CodeCompletionResult::RK_Declaration:
+			cout <<"D:";//<< *Results[I].Declaration;
+			break;
+		case CodeCompletionResult::RK_Macro:
+			cout <<"M:"<< Results[I].Macro->getNameStart();
+			break;
+		case CodeCompletionResult::RK_Pattern:
+			cout <<"P:"<<Results[I].Pattern->getAsString();
+			//for(auto R:*Results[I].Pattern)
+			//	;
+			cout<<endl;
+			break;
+		};
 	}
 	return;
 }
@@ -336,14 +354,21 @@ static bool EnableCodeCompletion(CompilerInvocation &Invocation,
 		const char* Filename,
 		unsigned Line,
 		unsigned Column) {
-	cout<<"start"<<__PRETTY_FUNCTION__<<endl;
+	//cout<<"start"<<__PRETTY_FUNCTION__<<endl;
 	// Tell the source manager to chop off the given file at a specific
 	// line and column.
 	auto &FrontendOpts = Invocation.getFrontendOpts();
 	auto &CodeCompleteOpts = FrontendOpts.CodeCompleteOpts;
-	auto &PreprocessorOpts = Invocation.getPreprocessorOpts();
-	
+	//FIXME need set Preprocessor Completion support
+	//auto &PreprocessorOpts = Invocation.getPreprocessorOpts();
 	//const FileEntry *Entry = Compiler.getPreprocessor().getFileManager().getFile(Filename);
+	//if (!Entry) {
+	//	cout<<"error"<<__PRETTY_FUNCTION__<<endl;
+	//	return true;
+	//}
+	// Truncate the named file at the given line/column.
+	//Compiler.getPreprocessor().SetCodeCompletionPoint(Entry, Line, Column);
+
 	FrontendOpts.CodeCompletionAt.FileName = Filename;
 	FrontendOpts.CodeCompletionAt.Line = Line;
 	FrontendOpts.CodeCompletionAt.Column = Column;
@@ -352,13 +377,7 @@ static bool EnableCodeCompletion(CompilerInvocation &Invocation,
 
 	Compiler.setCodeCompletionConsumer(ClvCompleteConsumer);
 
-	//if (!Entry) {
-	//	cout<<"error"<<__PRETTY_FUNCTION__<<endl;
-	//	return true;
-	//}
-	// Truncate the named file at the given line/column.
-	//Compiler.getPreprocessor().SetCodeCompletionPoint(Entry, Line, Column);
-	cout<<"done"<<__PRETTY_FUNCTION__<<endl;
+	//cout<<"done"<<__PRETTY_FUNCTION__<<endl;
 	return false;
 }
 
@@ -410,7 +429,7 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 	//Compiler->createPreprocessor();
 //cout<<"createPreprocessor end "<<__PRETTY_FUNCTION__<<endl;
 	CodeToCompilerInstance(Name,Code,Length,*Compiler);
-	EnableCodeCompletion(*Invocation,*Compiler,Name,10,3);
+	EnableCodeCompletion(*Invocation,*Compiler,Name,31,2);
 
 	const bool Success = Compiler->ExecuteAction(*Action);
 	Compiler->resetAndLeakFileManager();
