@@ -429,7 +429,7 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 	//Compiler->createPreprocessor();
 //cout<<"createPreprocessor end "<<__PRETTY_FUNCTION__<<endl;
 	CodeToCompilerInstance(Name,Code,Length,*Compiler);
-	EnableCodeCompletion(*Invocation,*Compiler,Name,31,2);
+	EnableCodeCompletion(*Invocation,*Compiler,Name,31,3);
 
 	const bool Success = Compiler->ExecuteAction(*Action);
 	Compiler->resetAndLeakFileManager();
