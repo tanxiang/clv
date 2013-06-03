@@ -72,7 +72,7 @@ void ClvCodeCompleteConsumer::ProcessCodeCompleteResults(Sema &S,
 					unsigned NumResults) {
 	cout<<__PRETTY_FUNCTION__<<endl;
 	for (unsigned I = 0; I != NumResults; ++I) {
-		cout << "COMPLETION: ";
+		cout << "COMPLETION:\t";
 		switch (Results[I].Kind){
 		case CodeCompletionResult::RK_Keyword:
 			cout <<"K:"<< Results[I].Keyword << '\n';
@@ -429,7 +429,7 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 	//Compiler->createPreprocessor();
 //cout<<"createPreprocessor end "<<__PRETTY_FUNCTION__<<endl;
 	CodeToCompilerInstance(Name,Code,Length,*Compiler);
-	EnableCodeCompletion(*Invocation,*Compiler,Name,31,3);
+	EnableCodeCompletion(*Invocation,*Compiler,Name,30,4);
 
 	const bool Success = Compiler->ExecuteAction(*Action);
 	Compiler->resetAndLeakFileManager();
