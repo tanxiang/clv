@@ -107,7 +107,8 @@ protected:
 		//std::cout<<"cASTConsumer"<<std::endl;
 		return new ClpConsumer{CondReady,CondSearch,SearchMsg};
 		//return nullptr;
-	} 
+	}
+	void ExecuteAction();
 public:
 	ClpAction(std::condition_variable& CondReady,std::condition_variable& CondSearch,MsgBox& SearchMsg)
 	:CondReady(CondReady),CondSearch(CondSearch),SearchMsg(SearchMsg){}
@@ -131,5 +132,5 @@ public:
 	bool RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine);
 };
 
-void CodeToCompilerInstance(const char* Name,char* Code,int Length,CompilerInstance &Compiler);
+//void CodeToCompilerInstance(const char* Name,char* Code,int Length,CompilerInstance &Compiler);
 #endif

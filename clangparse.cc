@@ -256,8 +256,8 @@ bool ClpConsumer::VisitLinkageSpecDecl(LinkageSpecDecl *Declaration){
 }
 
 bool ClpConsumer::VisitTemplateDecl(TemplateDecl *Declaration){
-	cout<<__PRETTY_FUNCTION__<<endl;
-	IsInDecl(Declaration);
+	//cout<<__PRETTY_FUNCTION__<<endl;
+	//IsInDecl(Declaration);
 	return true;
 }
 
@@ -289,7 +289,7 @@ bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *Declaration){
 }
 
 bool ClpConsumer::VisitCallExpr(CallExpr *expr){
-	cout<<__PRETTY_FUNCTION__<<endl;
+	//cout<<__PRETTY_FUNCTION__<<endl;
 	//IsInDecl(expr);
 	return true;
 }
@@ -332,7 +332,7 @@ bool ClpConsumer::VisitDeclStmt(DeclStmt *Statement){
 }
 
 bool ClpConsumer::VisitMemberExpr(MemberExpr *Expression){
-	cout<<__PRETTY_FUNCTION__<<Expression->getMemberDecl()->getNameAsString()<<endl;
+	//cout<<__PRETTY_FUNCTION__<<Expression->getMemberDecl()->getNameAsString()<<endl;
 	
 	return true;
 }
@@ -379,6 +379,12 @@ static bool EnableCodeCompletion(CompilerInvocation &Invocation,
 
 	//cout<<"done"<<__PRETTY_FUNCTION__<<endl;
 	return false;
+}
+
+void CodeToCompilerInstance(const char* Name,char* Code,int Length,CompilerInstance &Compiler){
+	const llvm::MemoryBuffer *Input = llvm::MemoryBuffer::getMemBuffer(Code);
+	const FileEntry *FromFile = Compiler.getFileManager().getVirtualFile(Name,Length, 0);
+	Compiler.getSourceManager().overrideFileContents(FromFile,Input);
 }
 
 bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine){
@@ -441,9 +447,41 @@ bool ClpInvocation::RunInvocation(const char* Name,char* Code,int Length){
 	return false;
 }
 */
-void CodeToCompilerInstance(const char* Name,char* Code,int Length,CompilerInstance &Compiler){
-	const llvm::MemoryBuffer *Input = llvm::MemoryBuffer::getMemBuffer(Code);
-	const FileEntry *FromFile = Compiler.getFileManager().getVirtualFile(Name,Length, 0);
-	Compiler.getSourceManager().overrideFileContents(FromFile,Input);
-}
 
+
+#include <clang/Parse/ParseAST.h>
+void ClpAction::ExecuteAction() {
+	cout<<__PRETTY_FUNCTION__<<" start"<<endl;
+	CompilerInstance &CI = getCompilerInstance();
+
+	// FIXME: Move the truncation aspect of this into Sema, we delayed this till
+	// here so the source manager would be initialized.
+	if (hasCodeCompletionSupport() &&
+		!CI.getFrontendOpts().CodeCompletionAt.FileName.empty() &&
+		!CI.hasCodeCompletionConsumer()){
+		CI.createCodeCompletionConsumer();
+		cout<<"CI.createCodeCompletionConsumer"<<endl;
+	}
+	else{
+		auto const &Loc = CI.getFrontendOpts().CodeCompletionAt;
+		auto &PP = CI.getPreprocessor();
+		PP.SetCodeCompletionPoint( PP.getFileManager().getFile(Loc.FileName), Loc.Line, Loc.Column);
+	}
+
+	// Use a code completion consumer?
+	CodeCompleteConsumer *CompletionConsumer = 0;
+	if (CI.hasCodeCompletionConsumer())
+		CompletionConsumer = &CI.getCodeCompletionConsumer();
+
+	if (!CI.hasSema()){
+		CI.createSema(getTranslationUnitKind(), CompletionConsumer);
+		cout<<"CI.createSema"<<endl;
+	}
+
+	if(getTranslationUnitKind()== TU_Complete)
+		cout<<"TU_Complete"<<endl;
+
+	ParseAST(CI.getSema(), CI.getFrontendOpts().ShowStats,
+		CI.getFrontendOpts().SkipFunctionBodies);
+	cout<<__PRETTY_FUNCTION__<<" done"<<endl;
+}
