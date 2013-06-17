@@ -405,7 +405,7 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 		&*DiagOpts,nullptr,false};
 	//FIXME  clang::ProcessWarningOptions & use Diagnostics
 
-	driver::Driver Driver{"clang-tool",llvm::sys::getDefaultTargetTriple(),"a.out",false,*Diagnostics};
+	driver::Driver Driver{"clang-tool",llvm::sys::getDefaultTargetTriple(),"a.out",*Diagnostics};
 	Driver.setCheckInputsExist(false);
 
 	driver::Compilation Compilation{*Driver.BuildCompilation(llvm::makeArrayRef(Argv))};
@@ -425,7 +425,7 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 	auto LangOpts = Invocation->getLangOpts();
 	Compiler->setInvocation(Invocation.getPtr());
 	
-	Compiler->createDiagnostics(CC1Args.size(),const_cast<char**>(CC1Args.data()));
+	Compiler->createDiagnostics();
 	if (!Compiler->hasDiagnostics())
 		return false;
 
@@ -473,8 +473,7 @@ cout<<__FUNCTION__<<" start"<<endl;
                                        SkipFunctionBodies));
   Parser &P = *ParseOP.get();
 
-  PrettyStackTraceParserEntry CrashInfo(P);
-
+  //PrettyStackTraceParserEntry CrashInfo(P);
   // Recover resources if we crash before exiting this method.
   llvm::CrashRecoveryContextCleanupRegistrar<Parser>
     CleanupParser(ParseOP.get());
