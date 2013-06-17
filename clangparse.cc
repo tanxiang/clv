@@ -442,11 +442,6 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 
 	return Success;
 }
-/*
-bool ClpInvocation::RunInvocation(const char* Name,char* Code,int Length){
-	return false;
-}
-*/
 
 
 #include "clang/Parse/ParseAST.h"
