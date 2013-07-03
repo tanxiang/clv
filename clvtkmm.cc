@@ -2,8 +2,7 @@
 #include <pangomm.h>
 #include <iostream>
 
-bool ClvArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
-{
+bool ClvArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
   Gtk::Allocation allocation = get_allocation();
   const int width = allocation.get_width();
   const int height = allocation.get_height();
@@ -42,22 +41,18 @@ bool ClvArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 }
 
 void ClvArea::draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr,
-                            int width, int height)
-{
+                            int width, int height){
   cr->rectangle(0, 0, width, height);
   cr->fill();
 }
 
 void ClvArea::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
-                       int rectangle_width, int rectangle_height)
-{
-  // http://developer.gnome.org/pangomm/unstable/classPango_1_1FontDescription.html
+                       int rectangle_width, int rectangle_height){
   Pango::FontDescription font;
-
-  font.set_family("Monospace");
+  //FIXME need conf
+  font.set_family("Source Code Pro");
   font.set_weight(Pango::WEIGHT_BOLD);
 
-  // http://developer.gnome.org/pangomm/unstable/classPango_1_1Layout.html
   Glib::RefPtr<Pango::Layout> layout = create_pango_layout("Hi there!");
 
   layout->set_font_description(font);
