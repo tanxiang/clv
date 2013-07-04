@@ -13,19 +13,21 @@ public:
 	virtual ~ClvArea(){};
 protected:
 	//Override default signal handler:
-	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
+	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 private:
 	void draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
 	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int rectangle_width, int rectangle_height);
 };
 
 
-class clvtkwindow : public Gtk::Window
+class ClvtkWindow : public Gtk::Window
 {
-
+	Gtk::VBox main_box;
+	Gtk::Notebook flist_notebook;
+	Gtk::HBox fview_box;
 public:
-	clvtkwindow(){};
-	virtual ~clvtkwindow(){}
+	ClvtkWindow();
+	virtual ~ClvtkWindow(){}
 protected:
 	//void build_main_menu();
 	//void print_or_preview(Gtk::PrintOperationAction print_action);
@@ -41,4 +43,4 @@ protected:
 	//Gtk::Button m_button;
 };
 
-#endif // GTKMM_EXAMPLE_HELLOWORLD_H
+#endif // _CLVTKMM_H
