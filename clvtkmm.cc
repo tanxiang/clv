@@ -2,7 +2,8 @@
 #include <pangomm.h>
 #include <iostream>
 
-bool ClvArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
+
+bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	Gtk::Allocation allocation = get_allocation();
 	const int width = allocation.get_width();
 	const int height = allocation.get_height();
@@ -15,7 +16,7 @@ bool ClvArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	return true;
 }
 
-void ClvArea::draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr,
+void ClvFileArea::draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr,
                             int width, int height){
   //FIXME color conf
 	cr->set_source_rgb(0.0, 0.0, 0.0);
@@ -23,7 +24,7 @@ void ClvArea::draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr,
 	cr->fill();
 }
 
-void ClvArea::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
+void ClvFileArea::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
                        int rectangle_width, int rectangle_height){
 	//FIXME need conf
 	cr->set_source_rgb(1.0, 1.0, 1.0);
@@ -45,12 +46,26 @@ void ClvArea::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 	layout->show_in_cairo_context(cr);
 }
 
+ClvFViewBox::ClvFViewBox(Glib::ustring fs):filename(fs){
+	pack_start(lineview);
+	lineview.show();
+	pack_start(fileview);
+	fileview.show();
+	pack_start(thumview);
+	thumview.show();
+}
+
+ClvFViewBox::~ClvFViewBox(){
+		std::cout<<"free box"<<std::endl;
+}
+
 ClvtkWindow::ClvtkWindow(){
 	add(main_box);
 	main_box.pack_start(flist_notebook);
-	flist_notebook.prepend_page(fview_box);
-	
-	fview_box.show();
+	fview_boxs.push_back(std::unique_ptr<ClvFViewBox>{new ClvFViewBox{}});
+	flist_notebook.prepend_page (*fview_boxs[0], "*UnSaved");
+
+	fview_boxs[0]->show();
 	flist_notebook.show();
 	main_box.show();
 };

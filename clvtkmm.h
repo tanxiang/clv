@@ -3,28 +3,49 @@
 #include <gtkmm.h>
 #include <gtkmm/button.h>
 #include <gtkmm/window.h>
-
+#include <glibmm/ustring.h>
 #include <gtkmm/drawingarea.h>
+#include <vector>
+#include <memory>
 
-class ClvArea : public Gtk::DrawingArea
-{
+class ClvLineArea : public Gtk::DrawingArea{
 public:
-	ClvArea(){};
-	virtual ~ClvArea(){};
+protected:
+};
+
+class ClvFileArea : public Gtk::DrawingArea
+{
+
+	void draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
+	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int rectangle_width, int rectangle_height);
+public:
+	ClvFileArea(){};
+	virtual ~ClvFileArea(){};
 protected:
 	//Override default signal handler:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
-private:
-	void draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
-	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int rectangle_width, int rectangle_height);
 };
 
+class ClvThumArea : public Gtk::DrawingArea{
+public:
+protected:
+};
+
+class ClvFViewBox : public Gtk::HBox{
+	Glib::ustring filename;
+	ClvLineArea lineview;
+	ClvFileArea fileview;
+	ClvThumArea thumview;
+public:
+	ClvFViewBox(Glib::ustring fs="");
+	virtual ~ClvFViewBox();
+};
 
 class ClvtkWindow : public Gtk::Window
 {
 	Gtk::VBox main_box;
 	Gtk::Notebook flist_notebook;
-	Gtk::HBox fview_box;
+	std::vector<std::unique_ptr<ClvFViewBox> > fview_boxs;
 public:
 	ClvtkWindow();
 	virtual ~ClvtkWindow(){}
