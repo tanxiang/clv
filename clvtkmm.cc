@@ -76,13 +76,15 @@ ClvFViewBox::~ClvFViewBox(){
 		std::cout<<"free vbox"<<std::endl;
 }
 
-ClvToolBox::ClvToolBox():tab_size("4",true),file_mode("c++",true),search("search",true){
+ClvToolBox::ClvToolBox():tab_size("4",true),file_mode("c++",true),
+	search("search",true),options("options",true){
 	pack_start(search,Gtk::PACK_SHRINK);
 	pack_start(file_mode,Gtk::PACK_SHRINK);
 	pack_start(tab_size,Gtk::PACK_SHRINK);
+	pack_start(options,Gtk::PACK_SHRINK);
 }
 
-ClvtkWindow::ClvtkWindow():main_box(Gtk::ORIENTATION_VERTICAL,3){
+ClvtkWindow::ClvtkWindow():main_box(Gtk::ORIENTATION_VERTICAL,2){
 	set_size_request(500,400);
 	add(main_box);
 	main_box.pack_start(flist_notebook);
