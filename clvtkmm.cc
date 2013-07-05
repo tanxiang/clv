@@ -71,10 +71,10 @@ ClvFViewBox::ClvFViewBox(Glib::ustring fs):filename(fs){
 	pack_start(thumview,Gtk::PACK_SHRINK);
 
 }
-
+/*
 ClvFViewBox::~ClvFViewBox(){
 	std::cout<<"free vbox"<<std::endl;
-}
+}*/
 
 ClvToolBox::ClvToolBox():file_mode("c++",true),
 	search("search",true),options("options",true){
@@ -87,13 +87,18 @@ ClvToolBox::ClvToolBox():file_mode("c++",true),
 	pack_start(options,Gtk::PACK_SHRINK);
 }
 
-ClvtkWindow::ClvtkWindow():main_box(Gtk::ORIENTATION_VERTICAL,2){
+ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
+	view(fs){
+	pack_start(view);
+	pack_end(tool_bar,Gtk::PACK_SHRINK);
+}
+
+ClvtkWindow::ClvtkWindow(){
 	set_size_request(500,400);
-	add(main_box);
-	main_box.pack_start(flist_notebook);
-	fview_boxs.push_back(std::unique_ptr<ClvFViewBox>{new ClvFViewBox{}});
-	flist_notebook.prepend_page(*fview_boxs[0], "*UnSaved");
-	main_box.pack_end(tool_box,Gtk::PACK_SHRINK);
-	main_box.set_spacing(3);
+	add(flist_notebook);
+	f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{}});
+	flist_notebook.prepend_page(*f_boxs[0], "*UnSaved");
+	//main_box.pack_end(tool_box,Gtk::PACK_SHRINK);
+	//main_box.set_spacing(3);
 	show_all_children();
 };

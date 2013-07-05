@@ -34,6 +34,17 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
+class ClvFViewBox : public Gtk::Box{
+	Glib::ustring &filename;
+	ClvLineArea lineview;
+	ClvFileArea fileview;
+	ClvThumArea thumview;
+public:
+	ClvFViewBox(Glib::ustring fs);
+	virtual ~ClvFViewBox(){};
+};
+
+
 class ClvToolBox : public Gtk::Box{
 	Gtk::ComboBoxText tab_size;
 	Gtk::Button file_mode;
@@ -44,22 +55,19 @@ public:
 	virtual ~ClvToolBox(){};
 };
 
-class ClvFViewBox : public Gtk::Box{
+class ClvFileBox : public Gtk::Box{
+	ClvFViewBox view;
+	ClvToolBox tool_bar;
 	Glib::ustring filename;
-	ClvLineArea lineview;
-	ClvFileArea fileview;
-	ClvThumArea thumview;
 public:
-	ClvFViewBox(Glib::ustring fs="");
-	virtual ~ClvFViewBox();
+	ClvFileBox(Glib::ustring fs="");
+	virtual ~ClvFileBox(){};
 };
 
 class ClvtkWindow : public Gtk::Window
 {
-	Gtk::Box main_box;
 	Gtk::Notebook flist_notebook;
-	ClvToolBox tool_box;
-	std::vector<std::unique_ptr<ClvFViewBox> > fview_boxs;
+	std::vector<std::unique_ptr<ClvFileBox> > f_boxs;
 public:
 	ClvtkWindow();
 	virtual ~ClvtkWindow(){}
