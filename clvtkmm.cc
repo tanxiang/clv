@@ -14,7 +14,7 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	Gtk::Allocation allocation = get_allocation();
 	const int width = allocation.get_width();
 	const int height = allocation.get_height();
-	//draw_rectangle(cr, width, height);
+	draw_rectangle(cr, width, height);
 	return true;
 }
 
@@ -54,7 +54,7 @@ bool ClvThumArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	Gtk::Allocation allocation = get_allocation();
 	const int width = allocation.get_width();
 	const int height = allocation.get_height();
-	//draw_rectangle(cr, width, height);
+	draw_rectangle(cr, width, height);
 	return true;
 }
 
@@ -62,7 +62,6 @@ ClvFViewBox::ClvFViewBox(Glib::ustring fs):filename(fs){
 	//set_homogeneous(false);
 	//lineview.queue_draw_area(0,0,30,30);
 	//FIXME:reconfig w,h by font w,h
-	set_size_request(500,400);
 	lineview.set_size_request(50);
 	pack_start(lineview,Gtk::PACK_SHRINK);
 
@@ -77,13 +76,19 @@ ClvFViewBox::~ClvFViewBox(){
 		std::cout<<"free vbox"<<std::endl;
 }
 
-ClvtkWindow::ClvtkWindow(){
+ClvToolBox::ClvToolBox():tab_size("4",true),file_mode("c++",true),search("search",true){
+	pack_start(search,Gtk::PACK_SHRINK);
+	pack_start(file_mode,Gtk::PACK_SHRINK);
+	pack_start(tab_size,Gtk::PACK_SHRINK);
+}
+
+ClvtkWindow::ClvtkWindow():main_box(Gtk::ORIENTATION_VERTICAL,3){
+	set_size_request(500,400);
 	add(main_box);
 	main_box.pack_start(flist_notebook);
 	fview_boxs.push_back(std::unique_ptr<ClvFViewBox>{new ClvFViewBox{}});
 	flist_notebook.prepend_page(*fview_boxs[0], "*UnSaved");
-
-	//fview_boxs[0]->show();
-	//flist_notebook.show();
+	main_box.pack_end(tool_box,Gtk::PACK_SHRINK);
+	main_box.set_spacing(3);
 	show_all_children();
 };

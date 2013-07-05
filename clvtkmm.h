@@ -34,6 +34,15 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
+class ClvToolBox : public Gtk::Box{
+	Gtk::Button tab_size;
+	Gtk::Button file_mode;
+	Gtk::Button search;
+public:
+	ClvToolBox();
+	virtual ~ClvToolBox(){};
+};
+
 class ClvFViewBox : public Gtk::Box{
 	Glib::ustring filename;
 	ClvLineArea lineview;
@@ -46,8 +55,9 @@ public:
 
 class ClvtkWindow : public Gtk::Window
 {
-	Gtk::VBox main_box;
+	Gtk::Box main_box;
 	Gtk::Notebook flist_notebook;
+	ClvToolBox tool_box;
 	std::vector<std::unique_ptr<ClvFViewBox> > fview_boxs;
 public:
 	ClvtkWindow();
