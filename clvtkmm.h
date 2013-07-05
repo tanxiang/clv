@@ -35,7 +35,7 @@ protected:
 };
 
 class ClvToolBox : public Gtk::Box{
-	Gtk::Button tab_size;
+	Gtk::ComboBoxText tab_size;
 	Gtk::Button file_mode;
 	Gtk::Button search;
 	Gtk::Button options;
