@@ -12,38 +12,38 @@ template<typename LineRef>
 FileMap<LineRef>::FileMap(const char* FilePath){
 	FD = -1;
 	if(FilePath){
-		file_name=FilePath;
-		FD=open(FilePath,O_RDWR);
-		if(FD == -1){
+		//file_name=FilePath;
+		if ((FD = open(FilePath, O_RDWR, 0)) == -1)
 			throw;
-		}
 		struct stat sb;
 		if(fstat(FD,&sb) == -1){
 			close(FD);
 			throw;
 		}
 		Len=sb.st_size;
-		P = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_SHARED,FD,0);
+		P = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_FILE|MAP_SHARED,FD,0);
+		//static_cast<char*>(P)[Len]='\n';
+		start.Line.Set(P,Len);
+		//auto l=Len;
+		finish=start;
+		//l-=finish->Length();
+		while(finish->AllLength()){
+			//std::cout<<finish->Length()<<':'<<l<<'-'<<std::endl;
+			//l-=finish->Length();
+			++finish;
+		}
 	}
 	else{
-		Len=1024;
-		P = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_SHARED,FD,0);
+		Len=getpagesize();
+		//P = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_ANON|MAP_SHARED,FD,0);
+		if ((FD = open("/dev/zero", O_RDWR, 0)) == -1)
+			throw;
+		P = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_FILE|MAP_SHARED,FD,0);
 	}
 	if(P == MAP_FAILED){
 		close(FD);
+		//perror("map alloc failed");
 		throw;
-	}
-
-	//static_cast<char*>(P)[Len]='\n';
-	start.Line.Set(P,Len);
-	//auto l=Len;
-	finish=start;
-	//l-=finish->Length();
-
-	while(finish->AllLength()){
-		//std::cout<<finish->Length()<<':'<<l<<'-'<<std::endl;
-		//l-=finish->Length();
-		++finish;
 	}
 }
 

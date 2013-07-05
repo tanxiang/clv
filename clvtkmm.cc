@@ -35,7 +35,7 @@ void ClvFileArea::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 	Pango::FontDescription font;
 	font.set_family("Source Code Pro");
 	font.set_weight(Pango::WEIGHT_BOLD);
-	Glib::RefPtr<Pango::Layout> layout = create_pango_layout("Hi there!");
+	auto layout = create_pango_layout("Hi there!");
 
 	layout->set_font_description(font);
 

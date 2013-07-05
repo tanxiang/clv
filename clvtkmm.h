@@ -7,6 +7,7 @@
 #include <gtkmm/drawingarea.h>
 #include <vector>
 #include <memory>
+#include "filemap.h"
 
 class ClvLineArea : public Gtk::DrawingArea{
 public:
@@ -59,6 +60,7 @@ class ClvFileBox : public Gtk::Box{
 	ClvFViewBox view;
 	ClvToolBox tool_bar;
 	Glib::ustring filename;
+	FileMap<MBLineRef<CharRef> > file;
 public:
 	ClvFileBox(Glib::ustring fs="");
 	virtual ~ClvFileBox(){};

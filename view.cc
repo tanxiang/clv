@@ -92,7 +92,7 @@ bool ClvWindow::onHandleChar(SkUnichar uni) {//input
 	int dy = 0xFF;
 	switch (uni) {
 	case 'p':
-		clast.ParseCode(file.Name(),file.Get(),file.Length());
+		clast.ParseCode("test.cc",file.Get(),file.Length());
 		break;
 	case 'q':
 		clast.SearchAST("x");

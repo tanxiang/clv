@@ -187,12 +187,12 @@ private:
 template<typename LineRef>
 class FileMap{
 	void *P;
-	const char *file_name;
+	//const char *file_name;
 	int Len;
 	int FD;
 protected:
 public:
-	FileMap(const char* FilePath);
+	FileMap(const char* FilePath=nullptr);
 	~FileMap();
 
 	struct iterator_traits {
@@ -217,7 +217,7 @@ public:
 		//iterator(){}
 	};
 	//low level getdata
-	const char* Name(){return file_name;}
+	//const char* Name(){return file_name;}
 	void* Get(){return P;}
 	int Length(){return Len;}
 	int Merge();
