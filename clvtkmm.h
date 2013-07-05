@@ -11,12 +11,13 @@
 class ClvLineArea : public Gtk::DrawingArea{
 public:
 protected:
+	//Override default signal handler:
+	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
 class ClvFileArea : public Gtk::DrawingArea
 {
-
-	void draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
+	//void draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
 	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int rectangle_width, int rectangle_height);
 public:
 	ClvFileArea(){};
@@ -29,9 +30,11 @@ protected:
 class ClvThumArea : public Gtk::DrawingArea{
 public:
 protected:
+	//Override default signal handler:
+	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
-class ClvFViewBox : public Gtk::HBox{
+class ClvFViewBox : public Gtk::Box{
 	Glib::ustring filename;
 	ClvLineArea lineview;
 	ClvFileArea fileview;
