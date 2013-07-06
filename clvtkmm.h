@@ -16,20 +16,20 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
-class ClvFileArea : public Gtk::DrawingArea
-{
+class ClvFileArea : public Gtk::DrawingArea{
 	//void draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
 	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int rectangle_width, int rectangle_height);
 public:
 	ClvFileArea(){};
 	virtual ~ClvFileArea(){};
+	void set_buffer();
 	/** Sets the default tab stops for paragraphs in @a text_view.
 	* Tags in the buffer may override the default.
 	* @param tabs Tabs as a Pango::TabArray.
 	*/
 	void set_tabs(Pango::TabArray& tabs);
 	Pango::TabArray get_tabs() const;
-	
+	bool im_context_filter_keypress (GdkEventKey* event);
 protected:
 	//Override default signal handler:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
@@ -43,7 +43,7 @@ protected:
 };
 
 class ClvFViewBox : public Gtk::Box,
-   public Gtk::Scrollable{
+	public Gtk::Scrollable{
 	Glib::ustring &filename;
 	ClvLineArea lineview;
 	ClvFileArea fileview;
@@ -52,7 +52,6 @@ public:
 	ClvFViewBox(Glib::ustring fs);
 	virtual ~ClvFViewBox(){};
 };
-
 
 class ClvToolBox : public Gtk::Box{
 	Gtk::ComboBoxText tab_size;
@@ -74,12 +73,17 @@ public:
 	virtual ~ClvFileBox(){};
 };
 
-class ClvtkWindow : public Gtk::Window
-{
-	Gtk::Notebook flist_notebook;
+class ClvNotebook : public Gtk::Notebook{
 	std::vector<std::unique_ptr<ClvFileBox> > f_boxs;
 public:
-	ClvtkWindow();
+	ClvNotebook(std::vector<std::string> fn);
+	virtual ~ClvNotebook(){};
+};
+
+class ClvtkWindow : public Gtk::Window{
+	ClvNotebook flist_notebook;
+public:
+	ClvtkWindow(std::vector<std::string> fn = std::vector<std::string>{});
 	virtual ~ClvtkWindow(){}
 protected:
 	//void build_main_menu();

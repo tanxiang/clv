@@ -95,11 +95,24 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	pack_end(tool_bar,Gtk::PACK_SHRINK);
 }
 
-ClvtkWindow::ClvtkWindow(){
+ClvNotebook::ClvNotebook(std::vector<std::string> fn){
+	if(fn.size()){
+		for(auto &fname : fn){
+			f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{fname}});
+			prepend_page(*f_boxs.back(),fname.c_str());
+		}
+	}
+	else{
+		f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{}});
+		prepend_page(*f_boxs[0], "*UnSaved");
+	}
+}
+
+ClvtkWindow::ClvtkWindow(std::vector<std::string> fn):flist_notebook(fn){
 	set_size_request(500,400);
 	add(flist_notebook);
-	f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{}});
-	flist_notebook.prepend_page(*f_boxs[0], "*UnSaved");
+	//f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{}});
+	//flist_notebook.prepend_page(*f_boxs[0], "*UnSaved");
 	//main_box.pack_end(tool_box,Gtk::PACK_SHRINK);
 	//main_box.set_spacing(3);
 	show_all_children();
