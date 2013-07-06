@@ -35,6 +35,9 @@ void ClvFileArea::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 	Pango::FontDescription font;
 	font.set_family("Source Code Pro");
 	font.set_weight(Pango::WEIGHT_BOLD);
+	for(auto &Line : file){
+		;
+	}
 	auto pgcontext = get_pango_context();
 	auto layout = create_pango_layout("Hi there!");
 
@@ -59,7 +62,8 @@ bool ClvThumArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	return true;
 }
 
-ClvFViewBox::ClvFViewBox(Glib::ustring fs):filename(fs){
+ClvFViewBox::ClvFViewBox(FileMap<MBLineRef<CharRef> > &file_ref):
+	file(file_ref),fileview(file){
 	//set_homogeneous(false);
 	//lineview.queue_draw_area(0,0,30,30);
 	//FIXME:reconfig w,h by font w,h
@@ -70,7 +74,6 @@ ClvFViewBox::ClvFViewBox(Glib::ustring fs):filename(fs){
 
 	thumview.set_size_request(100);
 	pack_start(thumview,Gtk::PACK_SHRINK);
-
 }
 /*
 ClvFViewBox::~ClvFViewBox(){
@@ -89,7 +92,7 @@ ClvToolBox::ClvToolBox():file_mode("c++",true),
 }
 
 ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
-	view(fs){
+	filename(fs),file(filename.c_str()),view(file){
 	pack_start(view);
 	pack_end(tool_bar,Gtk::PACK_SHRINK);
 }

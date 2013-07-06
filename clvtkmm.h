@@ -17,10 +17,11 @@ protected:
 };
 
 class ClvFileArea : public Gtk::DrawingArea{
+	FileMap<MBLineRef<CharRef> > &file;
 	//void draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
 	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int rectangle_width, int rectangle_height);
 public:
-	ClvFileArea(){};
+	ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref):file(file_ref){};
 	virtual ~ClvFileArea(){};
 	void set_buffer();
 	/** Sets the default tab stops for paragraphs in @a text_view.
@@ -44,12 +45,12 @@ protected:
 
 class ClvFViewBox : public Gtk::Box,
 	public Gtk::Scrollable{
-	Glib::ustring &filename;
+	FileMap<MBLineRef<CharRef> > &file;
 	ClvLineArea lineview;
 	ClvFileArea fileview;
 	ClvThumArea thumview;
 public:
-	ClvFViewBox(Glib::ustring fs);
+	ClvFViewBox(FileMap<MBLineRef<CharRef> > &file_ref);
 	virtual ~ClvFViewBox(){};
 };
 
@@ -74,7 +75,6 @@ public:
 };
 
 class ClvNotebook : public Gtk::Notebook{
-	
 	std::vector<std::unique_ptr<ClvFileBox> > f_boxs;
 public:
 	ClvNotebook(std::vector<std::string> fn);
