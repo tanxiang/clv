@@ -4,7 +4,7 @@
 
 void draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr,
                             int width, int height){
-  //FIXME color conf
+ 	//FIXME color conf
 	cr->set_source_rgb(0.0, 0.0, 0.0);
 	cr->rectangle(0, 0, width, height);
 	cr->fill();
@@ -35,7 +35,9 @@ void ClvFileArea::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 	Pango::FontDescription font;
 	font.set_family("Source Code Pro");
 	font.set_weight(Pango::WEIGHT_BOLD);
+	auto pgcontext = get_pango_context();
 	auto layout = create_pango_layout("Hi there!");
+	//auto layout = create_pango_layout("Hi there!");
 
 	layout->set_font_description(font);
 

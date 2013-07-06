@@ -23,6 +23,13 @@ class ClvFileArea : public Gtk::DrawingArea
 public:
 	ClvFileArea(){};
 	virtual ~ClvFileArea(){};
+	/** Sets the default tab stops for paragraphs in @a text_view.
+	* Tags in the buffer may override the default.
+	* @param tabs Tabs as a Pango::TabArray.
+	*/
+	void set_tabs(Pango::TabArray& tabs);
+	Pango::TabArray get_tabs() const;
+	
 protected:
 	//Override default signal handler:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
@@ -35,7 +42,8 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
-class ClvFViewBox : public Gtk::Box{
+class ClvFViewBox : public Gtk::Box,
+   public Gtk::Scrollable{
 	Glib::ustring &filename;
 	ClvLineArea lineview;
 	ClvFileArea fileview;
