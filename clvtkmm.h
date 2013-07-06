@@ -74,6 +74,7 @@ public:
 };
 
 class ClvNotebook : public Gtk::Notebook{
+	
 	std::vector<std::unique_ptr<ClvFileBox> > f_boxs;
 public:
 	ClvNotebook(std::vector<std::string> fn);

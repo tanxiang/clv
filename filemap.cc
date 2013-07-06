@@ -50,7 +50,7 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 
 template<typename LineRef>
 FileMap<LineRef>::~FileMap(){
-	munmap(P,Len+1);
+	munmap(P,Len);
 	close(FD);
 }
 
