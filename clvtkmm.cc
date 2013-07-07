@@ -44,7 +44,7 @@ void ClvFileArea::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 	//layout->set_tabs();
 	//auto layoutiter = layout->get_iter();
 	int nline = layout->get_line_count();
-	int i=0;
+	int i=0,x=0;
 	while(i<nline){
 		auto line = layout->get_line(i++);
 		cr->move_to(0,i*16);
