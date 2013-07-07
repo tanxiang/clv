@@ -36,10 +36,10 @@ void ClvFileArea::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 	font.set_family("Source Code Pro");
 	font.set_weight(Pango::WEIGHT_BOLD);
 	for(auto &Line : file){
-		;
+		//std::cout<<"asdasd";
 	}
 	auto pgcontext = get_pango_context();
-	auto layout = create_pango_layout("Hi there!");
+	auto layout = create_pango_layout(static_cast<char*>(file.Get()));
 
 	layout->set_font_description(font);
 
@@ -49,7 +49,7 @@ void ClvFileArea::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 	layout->get_pixel_size(text_width, text_height);
 
 	// Position the text in the middle
-	cr->move_to((rectangle_width-text_width)/2, (rectangle_height-text_height)/2);
+	//cr->move_to((rectangle_width-text_width)/2, (rectangle_height-text_height)/2);
 
 	layout->show_in_cairo_context(cr);
 }
