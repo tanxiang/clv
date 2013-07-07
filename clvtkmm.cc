@@ -34,24 +34,29 @@ void ClvFileArea::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 	cr->set_source_rgb(1.0, 1.0, 1.0);
 	Pango::FontDescription font;
 	font.set_family("Source Code Pro");
-	font.set_weight(Pango::WEIGHT_BOLD);
-	for(auto &Line : file){
+	font.set_weight(Pango::WEIGHT_NORMAL);
+	//for(auto &Line : file){
 		//std::cout<<"asdasd";
-	}
+	//}
 	auto pgcontext = get_pango_context();
 	auto layout = create_pango_layout(static_cast<char*>(file.Get()));
-
 	layout->set_font_description(font);
+	//layout->set_tabs();
+	//auto layoutiter = layout->get_iter();
+	int nline = layout->get_line_count();
+	int i=0;
+	while(i<nline){
+		auto line = layout->get_line(i++);
+		cr->move_to(0,i*16);
+		line->show_in_cairo_context(cr);
+	}
 
-	int text_width, text_height;
-
+	//int text_width, text_height;
 	//get the text dimensions (it updates the variables -- by reference)
-	layout->get_pixel_size(text_width, text_height);
+	//layout->get_pixel_size(text_width, text_height);
 
 	// Position the text in the middle
 	//cr->move_to((rectangle_width-text_width)/2, (rectangle_height-text_height)/2);
-
-	layout->show_in_cairo_context(cr);
 }
 
 bool ClvThumArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
