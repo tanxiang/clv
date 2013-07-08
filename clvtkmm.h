@@ -9,6 +9,14 @@
 #include <memory>
 #include "filemap.h"
 
+
+class ClvBuffer : public Gtk::TextBuffer{
+	ClvBuffer(const ClvBuffer&) = delete;
+	ClvBuffer& operator=(const ClvBuffer&) = delete;
+public:
+	virtual ~ClvBuffer();
+};
+
 class ClvLineArea : public Gtk::DrawingArea{
 public:
 protected:
@@ -16,24 +24,25 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
-class ClvFileArea : public Gtk::DrawingArea{
+class ClvFileArea : public Gtk::TextView{
 	FileMap<MBLineRef<CharRef> > &file;
+	//Glib::RefPtr<Gtk::TextBuffer> buffer;
 	//void draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
-	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int rectangle_width, int rectangle_height);
+	//void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int rectangle_width, int rectangle_height);
 public:
-	ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref):file(file_ref){};
+	ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref);
 	virtual ~ClvFileArea(){};
-	void set_buffer();
+	
 	/** Sets the default tab stops for paragraphs in @a text_view.
 	* Tags in the buffer may override the default.
 	* @param tabs Tabs as a Pango::TabArray.
 	*/
-	void set_tabs(Pango::TabArray& tabs);
-	Pango::TabArray get_tabs() const;
-	bool im_context_filter_keypress (GdkEventKey* event);
+	//void set_tabs(Pango::TabArray& tabs);
+	//Pango::TabArray get_tabs() const;
+	//bool im_context_filter_keypress (GdkEventKey* event);
 protected:
 	//Override default signal handler:
-	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+	//bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
 class ClvThumArea : public Gtk::DrawingArea{
@@ -65,10 +74,10 @@ public:
 };
 
 class ClvFileBox : public Gtk::Box{
-	ClvFViewBox view;
-	ClvToolBox tool_bar;
 	Glib::ustring filename;
 	FileMap<MBLineRef<CharRef> > file;
+	ClvFViewBox view;
+	ClvToolBox tool_bar;
 public:
 	ClvFileBox(Glib::ustring fs="");
 	virtual ~ClvFileBox(){};

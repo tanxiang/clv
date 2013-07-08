@@ -18,6 +18,11 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	return true;
 }
 
+ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref):file(file_ref){
+		//std::cout<<static_cast<char*>(file.Get());
+		get_buffer()->set_text(static_cast<char*>(file.Get()));
+}
+/*
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	Gtk::Allocation allocation = get_allocation();
 	const int width = allocation.get_width();
@@ -41,7 +46,8 @@ void ClvFileArea::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 	auto pgcontext = get_pango_context();
 	auto layout = create_pango_layout(static_cast<char*>(file.Get()));
 	layout->set_font_description(font);
-	//layout->set_tabs();
+	Pango::TabArray tab{4};
+	layout->set_tabs(tab);
 	//auto layoutiter = layout->get_iter();
 	int nline = layout->get_line_count();
 	int i=0,x=0;
@@ -58,7 +64,7 @@ void ClvFileArea::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 	// Position the text in the middle
 	//cr->move_to((rectangle_width-text_width)/2, (rectangle_height-text_height)/2);
 }
-
+*/
 bool ClvThumArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	Gtk::Allocation allocation = get_allocation();
 	const int width = allocation.get_width();
