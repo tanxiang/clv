@@ -19,8 +19,8 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 }
 
 ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref):file(file_ref){
-		//std::cout<<static_cast<char*>(file.Get());
-		get_buffer()->set_text(static_cast<char*>(file.Get()));
+	//std::cout<<static_cast<char*>(file.Get());
+	get_buffer()->set_text(static_cast<char*>(file.Get()));
 }
 /*
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
@@ -104,7 +104,8 @@ ClvToolBox::ClvToolBox():file_mode("c++",true),
 
 ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	filename(fs),file(filename.c_str()),view(file){
-	pack_start(view);
+	pack_start(scrolledview);
+	scrolledview.add(view);
 	pack_end(tool_bar,Gtk::PACK_SHRINK);
 }
 

@@ -78,6 +78,7 @@ class ClvFileBox : public Gtk::Box{
 	FileMap<MBLineRef<CharRef> > file;
 	ClvFViewBox view;
 	ClvToolBox tool_bar;
+	Gtk::ScrolledWindow scrolledview;
 public:
 	ClvFileBox(Glib::ustring fs="");
 	virtual ~ClvFileBox(){};
