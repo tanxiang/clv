@@ -81,7 +81,7 @@ ClvFViewBox::ClvFViewBox(FileMap<MBLineRef<CharRef> > &file_ref):
 	lineview.set_size_request(50);
 	pack_start(lineview,Gtk::PACK_SHRINK);
 
-	pack_start(scrolledview;);
+	pack_start(scrolledview);
 	scrolledview.add(fileview);
 	thumview.set_size_request(100);
 	pack_start(thumview,Gtk::PACK_SHRINK);
