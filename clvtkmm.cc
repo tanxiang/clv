@@ -81,8 +81,8 @@ ClvFViewBox::ClvFViewBox(FileMap<MBLineRef<CharRef> > &file_ref):
 	lineview.set_size_request(50);
 	pack_start(lineview,Gtk::PACK_SHRINK);
 
-	pack_start(fileview);
-
+	pack_start(scrolledview;);
+	scrolledview.add(fileview);
 	thumview.set_size_request(100);
 	pack_start(thumview,Gtk::PACK_SHRINK);
 }
@@ -104,8 +104,7 @@ ClvToolBox::ClvToolBox():file_mode("c++",true),
 
 ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	filename(fs),file(filename.c_str()),view(file){
-	pack_start(scrolledview);
-	scrolledview.add(view);
+	pack_start(view);
 	pack_end(tool_bar,Gtk::PACK_SHRINK);
 }
 
