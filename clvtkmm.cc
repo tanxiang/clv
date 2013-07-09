@@ -103,9 +103,11 @@ ClvToolBox::ClvToolBox():file_mode("c++",true),
 }
 
 ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
-	filename(fs),file(filename.c_str()),view(file),bt_close(filename),tab_label(filename){
-	//tab_box.pack_start(tab_label);
-	tab_box.pack_start(bt_close);
+	filename(fs),file(filename.c_str()),view(file),bt_close(Gtk::Stock::CLOSE),tab_label(filename){
+	//bt_close.set_image ()
+	tab_box.pack_start(tab_label,Gtk::PACK_SHRINK);
+	tab_box.pack_start(bt_close,Gtk::PACK_SHRINK);
+	tab_box.show_all_children();
 	pack_start(view);
 	pack_end(tool_bar,Gtk::PACK_SHRINK);
 }

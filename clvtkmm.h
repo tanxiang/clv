@@ -89,7 +89,7 @@ public:
 	ClvFileBox(Glib::ustring fs="");
 	virtual ~ClvFileBox(){};
 	Gtk::Widget& get_tab_box(){
-		return tab_label;
+		return tab_box;
 	}
 };
 
