@@ -2,6 +2,8 @@
 #include <pangomm.h>
 #include <iostream>
 
+//Gtk::Image image_close{Gtk::Stock::CLOSE,Gtk::IconSize{}};
+
 void draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr,
                             int width, int height){
  	//FIXME color conf
@@ -103,8 +105,8 @@ ClvToolBox::ClvToolBox():file_mode("c++",true),
 }
 
 ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
-	filename(fs),file(filename.c_str()),view(file),bt_close(Gtk::Stock::CLOSE),tab_label(filename){
-	//bt_close.set_image ()
+	filename(fs),file(filename.c_str()),view(file),tab_label(filename){
+	//bt_close.set_image (image_close);
 	tab_box.pack_start(tab_label,Gtk::PACK_SHRINK);
 	tab_box.pack_start(bt_close,Gtk::PACK_SHRINK);
 	tab_box.show_all_children();
