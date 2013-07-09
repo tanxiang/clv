@@ -75,20 +75,33 @@ public:
 };
 
 class ClvFileBox : public Gtk::Box{
+
 	Glib::ustring filename;
 	FileMap<MBLineRef<CharRef> > file;
 	ClvFViewBox view;
 	ClvToolBox tool_bar;
+
+	Gtk::Button bt_close;
+	Gtk::Label tab_label;
+	Gtk::Box tab_box;
+	//Gtk::Button save;
 public:
 	ClvFileBox(Glib::ustring fs="");
 	virtual ~ClvFileBox(){};
+	Gtk::Widget& get_tab_box(){
+		return tab_label;
+	}
 };
 
 class ClvNotebook : public Gtk::Notebook{
 	std::vector<std::unique_ptr<ClvFileBox> > f_boxs;
 public:
 	ClvNotebook(std::vector<std::string> fn);
-	virtual ~ClvNotebook(){};
+	virtual ~ClvNotebook(){
+		while(get_n_pages()){
+			remove_page();
+		}
+	};
 };
 
 class ClvtkWindow : public Gtk::Window{

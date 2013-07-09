@@ -103,21 +103,24 @@ ClvToolBox::ClvToolBox():file_mode("c++",true),
 }
 
 ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
-	filename(fs),file(filename.c_str()),view(file){
+	filename(fs),file(filename.c_str()),view(file),bt_close(filename),tab_label(filename){
+	//tab_box.pack_start(tab_label);
+	tab_box.pack_start(bt_close);
 	pack_start(view);
 	pack_end(tool_bar,Gtk::PACK_SHRINK);
 }
 
 ClvNotebook::ClvNotebook(std::vector<std::string> fn){
-	if(fn.size()){
-		for(auto &fname : fn){
-			f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{fname}});
-			prepend_page(*f_boxs.back(),fname.c_str());
-		}
-	}
-	else{
+	if(fn.empty()){
 		f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{}});
 		prepend_page(*f_boxs[0], "*UnSaved");
+	}
+	else{
+		for(auto &fname : fn){
+			f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{fname}});
+			//prepend_page(*f_boxs.back(),fname.c_str());
+			prepend_page(*f_boxs.back(),f_boxs.back()->get_tab_box());
+		}
 	}
 }
 
