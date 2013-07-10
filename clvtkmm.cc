@@ -2,7 +2,7 @@
 #include <pangomm.h>
 #include <iostream>
 
-//Gtk::Image image_close{Gtk::Stock::CLOSE,Gtk::IconSize{}};
+//Gtk::Image image_close{Gtk::Stock::CLOSE,Gtk::IconSize::MENU};
 
 void draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr,
                             int width, int height){
@@ -103,10 +103,22 @@ ClvToolBox::ClvToolBox():file_mode("c++",true),
 	pack_start(tab_size,Gtk::PACK_SHRINK);
 	pack_start(options,Gtk::PACK_SHRINK);
 }
+/*
+Gtk::Image ClvFileBox::close_icon=[]{
+		Gtk::Image img;
+		img.set_from_icon_name("window-close-symbolic",Gtk::ICON_SIZE_MENU);
+		return img;
+	}
+*/
+
+//void ClvFileBox::setup_icons(){
+	//close_icon.set_from_icon_name("window-close-symbolic",Gtk::ICON_SIZE_MENU);
+//}
 
 ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	filename(fs),file(filename.c_str()),view(file),tab_label(filename){
-	//bt_close.set_image (image_close);
+	close_icon.set_from_icon_name("window-close-symbolic",Gtk::ICON_SIZE_MENU);
+	bt_close.set_image (close_icon);
 	tab_box.pack_start(tab_label,Gtk::PACK_SHRINK);
 	tab_box.pack_start(bt_close,Gtk::PACK_SHRINK);
 	tab_box.show_all_children();

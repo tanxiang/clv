@@ -75,7 +75,7 @@ public:
 };
 
 class ClvFileBox : public Gtk::Box{
-
+	Gtk::Image close_icon;
 	Glib::ustring filename;
 	FileMap<MBLineRef<CharRef> > file;
 	ClvFViewBox view;
@@ -91,10 +91,15 @@ public:
 	Gtk::Widget& get_tab_box(){
 		return tab_box;
 	}
+	//static void setup_icons();
 };
 
 class ClvNotebook : public Gtk::Notebook{
 	std::vector<std::unique_ptr<ClvFileBox> > f_boxs;
+
+	//Gtk::Image cpp_icon;
+	//Gtk::Image c_icon;
+	//Gtk::Image h_icon;
 public:
 	ClvNotebook(std::vector<std::string> fn);
 	virtual ~ClvNotebook(){
