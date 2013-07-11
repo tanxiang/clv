@@ -135,17 +135,18 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	bt_save.set_relief(Gtk::RELIEF_NONE);
 	save_icon.set_from_icon_name("gtk-save",Gtk::ICON_SIZE_MENU);
 	bt_save.set_image (save_icon);
-	bt_save.get_style_context()->add_provider(css,0);
+	bt_save.get_style_context()->add_provider(css,600);
 
 	bt_close.set_relief(Gtk::RELIEF_NONE);
 	close_icon.set_from_icon_name("window-close-symbolic",Gtk::ICON_SIZE_MENU);
 	bt_close.set_image (close_icon);
-	bt_close.get_style_context()->add_provider(css,0);
+	bt_close.get_style_context()->add_provider(css,600);
 	//auto style = tab_box.get_style_context();
 	//style->add_provider(css,0);
 	//style->add_class(GTK_STYLE_CLASS_RAISED);
 	//style->add_class(GTK_STYLE_CLASS_LINKED);
-	tab_box.pack_start(tab_label);
+	tab_box.set_spacing(0);
+	tab_box.pack_start(tab_label,true, true, 0);
 	tab_box.pack_start(bt_save,false,false,0);
 	tab_box.pack_start(bt_close,false,false,0);
 	tab_box.show_all_children();
