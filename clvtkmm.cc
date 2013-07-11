@@ -126,17 +126,28 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 		  "-GtkWidget-focus-padding : 0;\n"
 		  "padding: 0;\n"
 		"}";
+	auto css = Gtk::CssProvider::create();
+	//auto style = Gtk::StyleContext::create();
+	css->load_from_data( button_style);
+	//style->add_provider(css, 0);
 	
+	//style->set_path(bt_save.get_path());
+	bt_save.set_relief(Gtk::RELIEF_NONE);
 	save_icon.set_from_icon_name("gtk-save",Gtk::ICON_SIZE_MENU);
 	bt_save.set_image (save_icon);
+	bt_save.get_style_context()->add_provider(css,0);
+
+	bt_close.set_relief(Gtk::RELIEF_NONE);
 	close_icon.set_from_icon_name("window-close-symbolic",Gtk::ICON_SIZE_MENU);
 	bt_close.set_image (close_icon);
-	auto style = tab_box.get_style_context();
-	style->add_class(GTK_STYLE_CLASS_RAISED);
+	bt_close.get_style_context()->add_provider(css,0);
+	//auto style = tab_box.get_style_context();
+	//style->add_provider(css,0);
+	//style->add_class(GTK_STYLE_CLASS_RAISED);
 	//style->add_class(GTK_STYLE_CLASS_LINKED);
 	tab_box.pack_start(tab_label);
-	tab_box.pack_start(bt_save);
-	tab_box.pack_start(bt_close);
+	tab_box.pack_start(bt_save,false,false,0);
+	tab_box.pack_start(bt_close,false,false,0);
 	tab_box.show_all_children();
 	pack_start(view);
 	pack_end(tool_bar,Gtk::PACK_SHRINK);
