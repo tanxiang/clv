@@ -117,10 +117,26 @@ Gtk::Image ClvFileBox::close_icon=[]{
 
 ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	filename(fs),file(filename.c_str()),view(file),tab_label(filename){
+	static const gchar button_style[] =
+		"* {\n"
+		  "-GtkButton-default-border : 0;\n"
+		  "-GtkButton-default-outside-border : 0;\n"
+		  "-GtkButton-inner-border: 0;\n"
+		  "-GtkWidget-focus-line-width : 0;\n"
+		  "-GtkWidget-focus-padding : 0;\n"
+		  "padding: 0;\n"
+		"}";
+	
+	save_icon.set_from_icon_name("gtk-save",Gtk::ICON_SIZE_MENU);
+	bt_save.set_image (save_icon);
 	close_icon.set_from_icon_name("window-close-symbolic",Gtk::ICON_SIZE_MENU);
 	bt_close.set_image (close_icon);
-	tab_box.pack_start(tab_label,Gtk::PACK_SHRINK);
-	tab_box.pack_start(bt_close,Gtk::PACK_SHRINK);
+	auto style = tab_box.get_style_context();
+	style->add_class(GTK_STYLE_CLASS_RAISED);
+	//style->add_class(GTK_STYLE_CLASS_LINKED);
+	tab_box.pack_start(tab_label);
+	tab_box.pack_start(bt_save);
+	tab_box.pack_start(bt_close);
 	tab_box.show_all_children();
 	pack_start(view);
 	pack_end(tool_bar,Gtk::PACK_SHRINK);

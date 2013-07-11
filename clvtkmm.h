@@ -75,16 +75,16 @@ public:
 };
 
 class ClvFileBox : public Gtk::Box{
-	Gtk::Image close_icon;
 	Glib::ustring filename;
 	FileMap<MBLineRef<CharRef> > file;
 	ClvFViewBox view;
 	ClvToolBox tool_bar;
-
+	Gtk::Image save_icon;
+	Gtk::Button bt_save;
+	Gtk::Image close_icon;
 	Gtk::Button bt_close;
 	Gtk::Label tab_label;
 	Gtk::Box tab_box;
-	//Gtk::Button save;
 public:
 	ClvFileBox(Glib::ustring fs="");
 	virtual ~ClvFileBox(){};
