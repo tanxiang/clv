@@ -26,9 +26,13 @@ protected:
 
 class ClvFileArea : public Gtk::TextView{
 	FileMap<MBLineRef<CharRef> > &file;
-	//Glib::RefPtr<Gtk::TextBuffer> buffer;
-	//void draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
-	//void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int rectangle_width, int rectangle_height);
+
+	Pango::FontDescription get_gnome_document_font_description();
+ 	void on_font_setting_changed (const Glib::ustring & key);
+ 	void update_custom_font_setting();
+ 	void modify_font_from_string (const std::string & fontString);
+ 	bool key_pressed (GdkEventKey * ev);
+ 	bool button_pressed (GdkEventButton * ev);
 public:
 	ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref);
 	virtual ~ClvFileArea(){};
@@ -41,8 +45,14 @@ public:
 	//Pango::TabArray get_tabs() const;
 	//bool im_context_filter_keypress (GdkEventKey* event);
 protected:
+
+	/*
+	virtual void on_drag_data_received (Glib::RefPtr<Gdk::DragContext> & context,
+	int x, int y,
+	const Gtk::SelectionData & selection_data,
+	guint info,  guint time);
+	*/
 	//Override default signal handler:
-	//bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
 class ClvThumArea : public Gtk::DrawingArea{
