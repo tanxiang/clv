@@ -24,6 +24,7 @@ ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref):file(file_ref){
 	//std::cout<<static_cast<char*>(file.Get());
 	get_buffer()->set_text(static_cast<char*>(file.Get()));
 	get_buffer()->create_tag()->property_background_gdk() =Gdk::Color{"black"};
+	get_buffer()->create_tag()->property_family() = "Source Code Pro";
 }
 /*
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
