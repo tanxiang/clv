@@ -21,14 +21,15 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	return true;
 }
 
-ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref):file(file_ref){
+ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref,const Glib::RefPtr<Gtk::TextBuffer> buffer):
+	file(file_ref),Gtk::TextView(buffer){
 	//std::cout<<static_cast<char*>(file.Get());
-	auto buffer = get_buffer();
+	auto pbuffer = get_buffer();
 	buffer->set_text(static_cast<char*>(file.Get()));
-	auto tag = buffer->create_tag("normal");
+	auto tag = pbuffer->create_tag("normal");
 	//tag ->property_background_gdk() =Gdk::Color{"black"};
 	tag ->property_family() = "Source Code Pro";
-	buffer->apply_tag_by_name("normal",buffer->begin(),buffer->end());
+	pbuffer->apply_tag_by_name("normal",pbuffer->begin(),pbuffer->end());
 }
 /*
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
@@ -82,7 +83,7 @@ bool ClvThumArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 }
 
 ClvFViewBox::ClvFViewBox(FileMap<MBLineRef<CharRef> > &file_ref):
-	file(file_ref),fileview(file){
+	file(file_ref),fileview(file,Glib::RefPtr<Gtk::TextBuffer>{new ClvBuffer{}}){
 	//set_homogeneous(false);
 	//lineview.queue_draw_area(0,0,30,30);
 	//FIXME:reconfig w,h by font w,h

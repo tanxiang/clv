@@ -27,7 +27,7 @@ class ClvFileArea : public Gtk::TextView{
  	bool key_pressed (GdkEventKey * ev);
  	bool button_pressed (GdkEventButton * ev);
 public:
-	ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref);
+	ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref,const Glib::RefPtr<Gtk::TextBuffer> buffer);
 	virtual ~ClvFileArea(){};
 	
 	/** Sets the default tab stops for paragraphs in @a text_view.

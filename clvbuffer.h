@@ -5,7 +5,7 @@ class ClvBuffer : public Gtk::TextBuffer{
 	ClvBuffer(const ClvBuffer&) = delete;
 	ClvBuffer& operator=(const ClvBuffer&) = delete;
 public:
-	virtual ~ClvBuffer();
+	virtual ~ClvBuffer(){};
 	ClvBuffer();
 };
 #endif

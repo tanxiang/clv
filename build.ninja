@@ -36,6 +36,6 @@ rule link_gtkmm
     command = $cxx $in $cxxflags $linkflags_gtkmm -o $out
 
 #build clv: link view.o clthread.o clangparse.o filemap.o
-build clvtk: link_gtkmm clvtkmm.o gtk_window.o filemap.o
+build clvtk: link_gtkmm clvtkmm.o clvbuffer.o gtk_window.o filemap.o
 
 #build sk: link_skia view.o filemap.o
