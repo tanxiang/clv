@@ -1,4 +1,5 @@
 #include "clvtkmm.h"
+#include "clvbuffer.h"
 #include <pangomm.h>
 #include <iostream>
 

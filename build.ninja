@@ -27,6 +27,7 @@ build filemap.o: cxx filemap.cc
 build view.o: cxx_skia view.cc
 build gtk_window.o: cxx_gtkmm gtk_window.cc
 build clvtkmm.o: cxx_gtkmm clvtkmm.cc
+build clvbuffer.o: cxx_gtkmm clvbuffer.cc
 
 rule link
     command = $cxx $in $cxxflags $linkflags_clang $linkflags_skia -pthread -o $out
