@@ -26,9 +26,9 @@ ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref,const Glib::RefP
 	//std::cout<<static_cast<char*>(file.Get());
 	auto pbuffer = get_buffer();
 	buffer->set_text(static_cast<char*>(file.Get()));
-	auto tag = pbuffer->create_tag("normal");
+	//auto tag = pbuffer->create_tag("normal");
 	//tag ->property_background_gdk() =Gdk::Color{"black"};
-	tag ->property_family() = "Source Code Pro";
+	//tag ->property_family() = "Source Code Pro";
 	pbuffer->apply_tag_by_name("normal",pbuffer->begin(),pbuffer->end());
 }
 /*
