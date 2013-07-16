@@ -10,13 +10,6 @@
 #include "filemap.h"
 
 
-class ClvBuffer : public Gtk::TextBuffer{
-	ClvBuffer(const ClvBuffer&) = delete;
-	ClvBuffer& operator=(const ClvBuffer&) = delete;
-public:
-	virtual ~ClvBuffer();
-};
-
 class ClvLineArea : public Gtk::DrawingArea{
 public:
 protected:

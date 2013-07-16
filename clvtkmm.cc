@@ -22,9 +22,12 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 
 ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref):file(file_ref){
 	//std::cout<<static_cast<char*>(file.Get());
-	get_buffer()->set_text(static_cast<char*>(file.Get()));
-	get_buffer()->create_tag()->property_background_gdk() =Gdk::Color{"black"};
-	get_buffer()->create_tag()->property_family() = "Source Code Pro";
+	auto buffer = get_buffer();
+	buffer->set_text(static_cast<char*>(file.Get()));
+	auto tag = buffer->create_tag("normal");
+	//tag ->property_background_gdk() =Gdk::Color{"black"};
+	tag ->property_family() = "Source Code Pro";
+	buffer->apply_tag_by_name("normal",buffer->begin(),buffer->end());
 }
 /*
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
