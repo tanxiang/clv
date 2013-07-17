@@ -25,11 +25,12 @@ ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref,const Glib::RefP
 	file(file_ref),Gtk::TextView(buffer){
 	//std::cout<<static_cast<char*>(file.Get());
 	auto pbuffer = get_buffer();
-	buffer->set_text(static_cast<char*>(file.Get()));
+	pbuffer->set_text(static_cast<char*>(file.Get()));
 	//auto tag = pbuffer->create_tag("normal");
 	//tag ->property_background_gdk() =Gdk::Color{"black"};
 	//tag ->property_family() = "Source Code Pro";
 	pbuffer->apply_tag_by_name("normal",pbuffer->begin(),pbuffer->end());
+	//pbuffer->apply_tag_by_name("keyword",pbuffer->begin(),pbuffer->end());
 }
 /*
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
