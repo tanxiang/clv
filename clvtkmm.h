@@ -55,8 +55,7 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
-class ClvFViewBox : public Gtk::Box,
-	public Gtk::Scrollable{
+class ClvFViewBox : public Gtk::Box{
 	FileMap<MBLineRef<CharRef> > &file;
 	ClvLineArea lineview;
 	ClvFileArea fileview;
@@ -65,6 +64,8 @@ class ClvFViewBox : public Gtk::Box,
 public:
 	ClvFViewBox(FileMap<MBLineRef<CharRef> > &file_ref);
 	virtual ~ClvFViewBox(){};
+	void save();
+	void close();
 };
 
 class ClvToolBox : public Gtk::Box{

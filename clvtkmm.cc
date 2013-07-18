@@ -24,13 +24,12 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref,const Glib::RefPtr<Gtk::TextBuffer> buffer):
 	file(file_ref),Gtk::TextView(buffer){
 	//std::cout<<static_cast<char*>(file.Get());
+	override_background_color(Gdk::RGBA{"black"});
 	auto pbuffer = get_buffer();
 	pbuffer->set_text(static_cast<char*>(file.Get()));
-	//auto tag = pbuffer->create_tag("normal");
-	//tag ->property_background_gdk() =Gdk::Color{"black"};
-	//tag ->property_family() = "Source Code Pro";
+
 	pbuffer->apply_tag_by_name("normal",pbuffer->begin(),pbuffer->end());
-	//pbuffer->apply_tag_by_name("keyword",pbuffer->begin(),pbuffer->end());
+	//pbuffer->apply_tag_by_name("var:composite",pbuffer->begin(),pbuffer->end());
 }
 /*
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
@@ -96,6 +95,15 @@ ClvFViewBox::ClvFViewBox(FileMap<MBLineRef<CharRef> > &file_ref):
 	thumview.set_size_request(100);
 	pack_start(thumview,Gtk::PACK_SHRINK);
 }
+
+void ClvFViewBox::save(){
+	//std::cout<<"save:"<<reinterpret_cast<unsigned int>(this)<<std::endl;
+	std::cout<<"save:"<<this<<std::endl;
+}
+
+void ClvFViewBox::close(){
+	std::cout<<"close:"<<this<<std::endl;
+}
 /*
 ClvFViewBox::~ClvFViewBox(){
 	std::cout<<"free vbox"<<std::endl;
@@ -144,11 +152,14 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	save_icon.set_from_icon_name("gtk-save",Gtk::ICON_SIZE_MENU);
 	bt_save.set_image (save_icon);
 	bt_save.get_style_context()->add_provider(css,400);
+	bt_save.signal_clicked().connect(sigc::mem_fun(view,&ClvFViewBox::save));
 
 	bt_close.set_relief(Gtk::RELIEF_NONE);
 	close_icon.set_from_icon_name("window-close-symbolic",Gtk::ICON_SIZE_MENU);
 	bt_close.set_image (close_icon);
 	bt_close.get_style_context()->add_provider(css,400);
+	bt_close.signal_clicked().connect(sigc::mem_fun(view,&ClvFViewBox::close));
+
 	//auto style = tab_box.get_style_context();
 	//style->add_provider(css,0);
 	//style->add_class(GTK_STYLE_CLASS_RAISED);
