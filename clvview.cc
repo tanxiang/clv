@@ -19,6 +19,7 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref,const Glib::RefPtr<Gtk::TextBuffer> buffer):
 	file(file_ref),Gtk::TextView(buffer){
 	//std::cout<<static_cast<char*>(file.Get());
+	get_style_context();
 	override_background_color(Gdk::RGBA{"black"});
 	auto pbuffer = get_buffer();
 	pbuffer->set_text(static_cast<char*>(file.Get()));
