@@ -20,6 +20,8 @@ ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref,const Glib::RefP
 	file(file_ref),Gtk::TextView(buffer){
 	//std::cout<<static_cast<char*>(file.Get());
 	get_style_context();
+	//property_background_rgba() ;
+	override_color(Gdk::RGBA{"yellow"});
 	override_background_color(Gdk::RGBA{"black"});
 	auto pbuffer = get_buffer();
 	pbuffer->set_text(static_cast<char*>(file.Get()));

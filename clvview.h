@@ -12,6 +12,7 @@ protected:
 
 class ClvFileArea : public Gtk::TextView{
 	FileMap<MBLineRef<CharRef> > &file;
+	Pango::TabArray tab_width;
 
 	Pango::FontDescription get_gnome_document_font_description();
  	void on_font_setting_changed (const Glib::ustring & key);
