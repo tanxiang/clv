@@ -41,11 +41,15 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		int top_itr_start=0,top_itr_end=0;
 		get_visible_rect(visible_rect);
 		get_line_at_y(text_itr_start,visible_rect.get_y(),top_itr_start);
+		text_itr_start.backward_line();
 		get_line_at_y(text_itr_end,visible_rect.get_y()+visible_rect.get_height(),top_itr_end);
-
+		text_itr_end.forward_line();
 		std::cerr<<"ClvFileArea draw "<<visible_rect.get_y()<<"+"<<visible_rect.get_height()<<"\n";
 		std::cerr<<"ClvFileArea line"<<text_itr_start.get_line()<<"to"<<text_itr_end.get_line()<<"\n";
-
+		//FIXME call textbuffer
+		if(is_sensitive()){
+			//hilight current line
+		}
 	}
 	return Gtk::TextView::on_draw(cr);
 }
