@@ -36,13 +36,15 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	cr->save();
 	transform_cairo_context_to_window(cr,window);
 	if(should_draw_window(cr,window)){
-		std::cerr<<"should_draw_window\n";
 		Gdk::Rectangle visible_rect;
 		Gtk::TextBuffer::iterator text_itr_start,text_itr_end;
 		int top_itr_start=0,top_itr_end=0;
 		get_visible_rect(visible_rect);
 		get_line_at_y(text_itr_start,visible_rect.get_y(),top_itr_start);
 		get_line_at_y(text_itr_end,visible_rect.get_y()+visible_rect.get_height(),top_itr_end);
+
+		std::cerr<<"ClvFileArea draw "<<visible_rect.get_y()<<"+"<<visible_rect.get_height()<<"\n";
+		std::cerr<<"ClvFileArea line"<<text_itr_start.get_line()<<"to"<<text_itr_end.get_line()<<"\n";
 
 	}
 	return Gtk::TextView::on_draw(cr);
