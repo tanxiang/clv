@@ -25,6 +25,7 @@ public:
 	virtual ~ClvFileArea(){};
 	
 protected:
+	bool on_draw(const ::Cairo::RefPtr< ::Cairo::Context>& cr) override;
 };
 
 class ClvThumArea : public Gtk::DrawingArea{
