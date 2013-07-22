@@ -49,6 +49,8 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		//FIXME call textbuffer
 		if(is_sensitive()){
 			//hilight current line
+			auto text_itr_current = get_buffer()->get_iter_at_mark(get_buffer()->get_insert());
+			//paint a hilight @ text_itr_current
 		}
 	}
 	return Gtk::TextView::on_draw(cr);
