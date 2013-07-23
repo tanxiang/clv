@@ -26,6 +26,7 @@ public:
 	
 protected:
 	bool on_draw(const ::Cairo::RefPtr< ::Cairo::Context>& cr) override;
+	bool my_draw(const ::Cairo::RefPtr< ::Cairo::Context>& cr);
 };
 
 class ClvThumArea : public Gtk::DrawingArea{

@@ -5,7 +5,7 @@ ClvBuffer::ClvBuffer(){
 	auto tag = create_tag("normal");
 	tag->property_family() = "Source Code Pro";
 	//tag->property_background () = "green";
-	tag->property_foreground_gdk() = Gdk::Color{"white"};
+	tag->property_foreground_gdk() = Gdk::Color{"red"};
 
 	tag = create_tag("keyword");
 	tag->property_weight() = PANGO_WEIGHT_BOLD;
