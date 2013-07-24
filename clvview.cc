@@ -1,18 +1,8 @@
 #include "clvview.h"
 
-void draw_rectangle(const Cairo::RefPtr<Cairo::Context>& cr,
-                            int width, int height){
- 	//FIXME color conf
-	cr->set_source_rgb(0.0, 0.0, 0.0);
-	cr->rectangle(0, 0, width, height);
-	cr->fill();
-}
-
 bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
-	Gtk::Allocation allocation = get_allocation();
-	const int width = allocation.get_width();
-	const int height = allocation.get_height();
-	draw_rectangle(cr, width, height);
+	cr->set_source_rgb(0.0, 0.0, 0.0);
+	cr->paint();
 	return true;
 }
 
@@ -64,7 +54,15 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		//cr->translate(0.5, 0.5);
 		//cr->rectangle(visible_rect.get_x(), visible_rect.get_y(), visible_rect.get_width(), visible_rect.get_height());
 		cr->paint();
-		cr->stroke();
+		//cr->stroke();
+#ifdef DEBUG
+		std::vector<Cairo::Rectangle> clip_rects;
+		cr->copy_clip_rectangle_list(clip_rects);
+		std::cerr<<"num rect = "<<clip_rects.size()<<std::endl;
+		for(auto& clip_rect:clip_rects){
+			std::cerr<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
+		}
+#endif
 		//cr->clip();
 		//buffer_to_window_coords(Gtk::TEXT_WINDOW_TEXT, , , , );
 		//buffer_to_window_coords(Gtk::TEXT_WINDOW_TEXT,3 , , , );
@@ -74,9 +72,5 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 
 
 bool ClvThumArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
-	Gtk::Allocation allocation = get_allocation();
-	const int width = allocation.get_width();
-	const int height = allocation.get_height();
-	draw_rectangle(cr, width, height);
 	return true;
 }
