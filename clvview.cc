@@ -62,10 +62,9 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		cr->set_source_rgb(0, 0, 0);
 		//cr->set_line_width(0.8);
 		//cr->translate(0.5, 0.5);
-		cr->rectangle(visible_rect.get_x(), visible_rect.get_y(), visible_rect.get_width(), visible_rect.get_height());
-		cr->fill();
+		//cr->rectangle(visible_rect.get_x(), visible_rect.get_y(), visible_rect.get_width(), visible_rect.get_height());
+		cr->paint();
 		cr->stroke();
-		//draw backcolor
 		//cr->clip();
 		//buffer_to_window_coords(Gtk::TEXT_WINDOW_TEXT, , , , );
 		//buffer_to_window_coords(Gtk::TEXT_WINDOW_TEXT,3 , , , );
