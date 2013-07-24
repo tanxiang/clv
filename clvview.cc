@@ -20,14 +20,16 @@ ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref,const Glib::RefP
 	file(file_ref),Gtk::TextView(buffer){
 	//std::cout<<static_cast<char*>(file.Get());
 	get_style_context();
-	override_color(Gdk::RGBA{"yellow"});
 	//override_background_color(Gdk::RGBA{"black"});
 	override_cursor(Gdk::RGBA{"green"},Gdk::RGBA{"blue"});
 	auto pbuffer = get_buffer();
 	pbuffer->set_text(static_cast<char*>(file.Get()));
 
 	pbuffer->apply_tag_by_name("normal",pbuffer->begin(),pbuffer->end());
-	this->signal_draw().connect(sigc::mem_fun(this,&ClvFileArea::my_draw));
+#ifndef GLIBMM_DEFAULT_SIGNAL_HANDLERS_ENABLED
+	override_color(Gdk::RGBA{"yellow"});
+	this->signal_draw().connect(sigc::mem_fun(*this,&ClvFileArea::on_draw));
+#endif
 	//pbuffer->apply_tag_by_name("var:composite",pbuffer->begin(),pbuffer->end());
 }
 
