@@ -1,16 +1,18 @@
 #include "clvview.h"
 
 bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
-	cr->set_source_rgb(0.0, 0.0, 0.0);
-	cr->paint();
+	if(should_draw_window(cr,get_window())){
+		cr->set_source_rgb(0.0, 0.0, 0.0);
+		cr->paint();
+	}
 	return true;
 }
 
 ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref,const Glib::RefPtr<Gtk::TextBuffer> buffer):
 	file(file_ref),Gtk::TextView(buffer){
-	//std::cout<<static_cast<char*>(file.Get());
-	get_style_context();
-	//override_background_color(Gdk::RGBA{"black"});
+	auto style = get_style_context();
+	//style->set_background();
+	//style->render_background(cr, 0, 0, 0, 0)
 	override_cursor(Gdk::RGBA{"green"},Gdk::RGBA{"blue"});
 	auto pbuffer = get_buffer();
 	pbuffer->set_text(static_cast<char*>(file.Get()));
@@ -24,10 +26,6 @@ ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref,const Glib::RefP
 }
 
 #include <iostream>
-bool ClvFileArea::my_draw(const Cairo::RefPtr<Cairo::Context>& cr){
-	std::cerr<<"my_draw"<<std::endl;
-	return true;
-}
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	auto window = get_window(Gtk::TEXT_WINDOW_TEXT);
 	cr->save();

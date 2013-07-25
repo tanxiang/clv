@@ -9,7 +9,7 @@ ClvFViewBox::ClvFViewBox(FileMap<MBLineRef<CharRef> > &file_ref):
 	//set_homogeneous(false);
 	//lineview.queue_draw_area(0,0,30,30);
 	//FIXME:reconfig w,h by font w,h
-	lineview.set_size_request(50);
+	//lineview.set_size_request(10);
 	pack_start(lineview,Gtk::PACK_SHRINK);
 
 	pack_start(scrolledview);
@@ -66,7 +66,7 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 		"}";
 	auto css = Gtk::CssProvider::create();
 	//auto style = Gtk::StyleContext::create();
-	css->load_from_data( button_style);
+	css->load_from_data(button_style);
 	//style->add_provider(css, 0);
 	
 	//style->set_path(bt_save.get_path());
