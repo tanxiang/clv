@@ -13,7 +13,7 @@ ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref,const Glib::RefP
 	auto style = get_style_context();
 	//style->set_background();
 	//style->render_background(cr, 0, 0, 0, 0)
-	override_cursor(Gdk::RGBA{"green"},Gdk::RGBA{"blue"});
+	//override_cursor(Gdk::RGBA{"green"},Gdk::RGBA{"blue"});
 	auto pbuffer = get_buffer();
 	pbuffer->set_text(static_cast<char*>(file.Get()));
 

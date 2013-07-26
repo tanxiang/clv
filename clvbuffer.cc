@@ -1,4 +1,3 @@
-#include <gtkmm.h>
 #include "clvbuffer.h"
 #include "clvparser.h"
 
@@ -29,3 +28,21 @@ ClvBuffer::ClvBuffer(){
 
 	tag = create_tag("operator");
 }
+#include <iostream>
+void ClvBuffer::on_insert(const TextBuffer::iterator& pos, const Glib::ustring& text, int bytes){
+	TextBuffer::on_insert(pos,text,bytes);
+	if(bytes==1){
+		switch(text[0]){
+		case '>':
+			if((----TextBuffer::iterator{pos}).get_char()=='-') 
+				std::cout<<"complete ->\n";
+			break;
+		case ':':
+			if((----TextBuffer::iterator{pos}).get_char()==':') 
+				std::cout<<"complete ::\n";
+			break;
+		case '.':
+			std::cout<<"complete .\n";
+		}
+	}
+} 
