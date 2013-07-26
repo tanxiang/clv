@@ -1,5 +1,6 @@
 #include <gtkmm.h>
 #include "clvbuffer.h"
+#include "clvparser.h"
 
 ClvBuffer::ClvBuffer(){
 	auto tag = create_tag("normal");
