@@ -63,6 +63,18 @@ class unorder_tree{
 				parent = &*new_root;
 				*hander=std::move(new_root);
 			}
+			void dump(int level){
+				if(left) left->dump(level+1);
+				int c=level;
+				while(c--)
+					std::cerr<<' ';
+				std::cerr<<level<<'\t'<<color<<'\t';
+				if(ptr)
+					std::cerr<<*ptr<<std::endl;
+				else
+					std::cerr<<std::endl;
+				if(right) right->dump(level+1);
+			}
 		};
 		struct iterator_traits {
 			typedef std::bidirectional_iterator_tag iterator_category;
@@ -126,7 +138,6 @@ class unorder_tree{
 		}
 
 		void rb(node* pnode){
-//			std::cerr<<"rb\n";
 			pnode->color = node::red;
 			//rb case
 			do{
@@ -163,7 +174,8 @@ class unorder_tree{
 						}
 					}
 				}
-			}while(false);
+				break;
+			}while(true);
 	}
 
 	iterator insert(iterator itr, const T& val){
@@ -197,6 +209,9 @@ class unorder_tree{
 		finish.point = &*root;
 		root->color=node::black;
 	}
+	void dump(){
+		root->dump(0);
+	}
 private:
 	node_ptr root;
 	//iterator start;
@@ -222,6 +237,7 @@ int main(){
 	//copy(texts.begin(),texts.end(),ostream_iterator<line>{cout});
 	for(auto& l:texts)
 		cout<<l<<endl;
+	texts.dump();
 	//texts.push_back(line{"test"});
 
 }
