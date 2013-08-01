@@ -26,6 +26,11 @@ class unorder_tree{
 				else
 					return &*grandparent()->left;
 			}
+			node* sibling(){
+				if(this==&*parent->left)
+					return &*parent->right;
+				return &*parent->left;
+			}
 			void rotate_left(node_ptr& root_ptr){
 				if(!right)
 					std::cerr<<"error rotate_left right==null\n";
@@ -123,7 +128,6 @@ class unorder_tree{
 			bool operator !=(iterator it){return point!=it.point;}
 			T& operator *(){return *point->ptr;}
 			T* operator -> (){return &*point->ptr;}
-			node* get_node(){return point;}
 		};
 
 		iterator begin(){
@@ -176,57 +180,129 @@ class unorder_tree{
 				}
 				break;
 			}while(true);
-	}
+		}
 
-	iterator insert(iterator itr, const T& val){
-		node* search_point = itr.get_node();
-		if(!search_point->left){
-			search_point->left =node_ptr{new node{search_point,new T{val}}};
-			rb(&*search_point->left);
+		iterator insert(iterator itr, const T& val){
+			node* search_point = itr.point;
+			if(!search_point->left){
+				search_point->left =node_ptr{new node{search_point,new T{val}}};
+				rb(&*search_point->left);
+			}
+			else{
+				search_point=&*search_point->left;
+				while(search_point->right)
+					search_point=&*search_point->right;
+				search_point->right =node_ptr{new node{search_point,new T{val}}};
+				rb(&*search_point->right);
+			}
+			return --itr;
 		}
-		else{
-			search_point=&*search_point->left;
-			while(search_point->right)
+
+		void drb(node_ptr* child_ptr_point,node* parent_point){
+			do{
+				if(*child_ptr_point && *child_ptr_point->color){//replace a red node to black
+					*child_ptr_point->color=node::black;
+					break;
+				}
+				else if(parent_point){//case black black
+					node* sibling_point = *child_ptr_point->sibling();//FIXME null child ptr
+					if((!sibling_point->left||sibling_point->left->color==node::black)
+							&& (!sibling_point->right||sibling_point->right->color==node::black) ){
+						if(parent_point->color){//case 4
+							if(sibling_point && sibling_point->color==node::black){
+								parent_point->color = node::black;
+								sibling_point->color = node::red;
+								break;
+							}
+						}
+						else{//case 2 3
+							if(sibling_point && sibling_point->color==node::red
+									&& (!sibling_point->left||sibling_point->left->color==node::black)
+									&& (!sibling_point->right||sibling_point->right->color==node::black) ){
+								parent_point->color = node::red;
+								sibling_point->color = node::black;
+								if(*child_ptr_point==parent_point->left)
+									parent_point->rotate_left(root);
+								else
+									parent_point->rotate_right(root);
+								continue;
+							}
+							if(sibling_point && sibling_point->color==node::black
+									&& (!sibling_point->left||sibling_point->left->color==node::black)
+									&& (!sibling_point->right||sibling_point->right->color==node::black) ){
+								sibling_point->color = node::red;
+								//*child_ptr_point = parent_point;
+								continue;
+							}
+						}
+					}
+				}
+				else
+					break;
+			}while(true);
+		}
+		void remove(iterator itr){
+			node* search_point = itr.point;
+			if(search_point->left && search_point->right){
 				search_point=&*search_point->right;
-			search_point->right =node_ptr{new node{search_point,new T{val}}};
-			rb(&*search_point->right);
-		}
-		return --itr;
-	}
-	void push_back(const T& val){
-		insert(finish,val);
-	}
-	template<typename InputIterator,typename = std::_RequireInputIter<InputIterator>>
-		unorder_tree(InputIterator first,InputIterator last):unorder_tree(){
-			while(first!=last){
-				push_back(*first);
-				++first;
+				while(search_point->left)
+					search_point=&*search_point->left;
+				itr.point->ptr = std::move(search_point->ptr);
+			}
+			node_ptr pick_ptr = search_point->right ? std::move(search_point->right) :
+				search_point->left ? std::move(search_point->left) : nullptr;
+
+			if(pick_ptr)
+				pick_ptr->parent = search_point->parent;//nullptr if root
+			node* parent_point = search_point->parent;
+			search_point = &*pick_ptr;//may be nullptr
+			node_ptr* child_ptr_point;
+			if(!parent_point)
+				child_ptr_point=&root;
+			else if(search_point==&*parent_point->left)
+				child_ptr_point = &parent_point->left;
+			else
+				child_ptr_point = &parent_point->right;
+			std::swap(pick_ptr,*child_ptr_point);
+			if(pick_ptr->color==node::black){//delete a black node need fix b
+				drb(child_ptr_point,parent_point);
 			}
 		}
 
-	unorder_tree():root(new node{nullptr}){
-		//start.point = &*root;
-		finish.point = &*root;
-		root->color=node::black;
-	}
-	void dump(){
-		root->dump(0);
-	}
-private:
-	node_ptr root;
-	//iterator start;
-	iterator finish;
+		void push_back(const T& val){
+			insert(finish,val);
+		}
+		template<typename InputIterator,typename = std::_RequireInputIter<InputIterator>>
+			unorder_tree(InputIterator first,InputIterator last):unorder_tree(){
+				while(first!=last){
+					push_back(*first);
+					++first;
+				}
+			}
+
+		unorder_tree():root(new node{nullptr}){
+			//start.point = &*root;
+			finish.point = &*root;
+			root->color=node::black;
+		}
+		void dump(){
+			root->dump(0);
+		}
+	private:
+		node_ptr root;
+		//iterator start;
+		iterator finish;
 };
 
 class line :public std::string 
 {
-public:
-	friend std::istream & operator>>(std::istream & is, line& l){
-		return std::getline(is, l);
-	}
-	virtual ~line(){
-		//std::cerr<<"line free\n";
-	}
+	public:
+		friend std::istream & operator>>(std::istream & is, line& l){
+			return std::getline(is, l);
+		}
+		virtual ~line(){
+			//std::cerr<<"line free\n";
+		}
 };
 
 #include <iterator>     // std::istream_iterator
