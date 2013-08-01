@@ -126,6 +126,7 @@ class unorder_tree{
 				return *this;
 			}
 			bool operator !=(iterator it){return point!=it.point;}
+			bool operator ==(iterator it){return point==it.point;}
 			T& operator *(){return *point->ptr;}
 			T* operator -> (){return &*point->ptr;}
 		};
@@ -160,6 +161,8 @@ class unorder_tree{
 
 
 		void remove(iterator itr){
+			if(itr==finish)
+				return;
 			node* search_point = itr.point;
 			if(search_point->left && search_point->right){
 				search_point=&*search_point->right;
@@ -173,8 +176,8 @@ class unorder_tree{
 			if(pick_ptr)
 				pick_ptr->parent = search_point->parent;//nullptr if root
 			node* parent_point = search_point->parent;
-			search_point = &*pick_ptr;//may be nullptr
 			node_ptr* child_ptr_point;
+//std::cerr<<&**child_ptr_point<<";"<<search_point<<":"<<parent_point<<":"<<&*parent_point->left<<"\n";
 			if(!parent_point)
 				child_ptr_point=&root;
 			else if(search_point==&*parent_point->left)
@@ -259,15 +262,17 @@ void unorder_tree<T>::rb(node* pnode){
 template<typename T>
 void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 	do{
-		if(*child_ptr_point && *child_ptr_point->color){//replace a red node to black
-			*child_ptr_point->color=node::black;
+		if(*child_ptr_point && (*child_ptr_point)->color){//replace a red node to black
+			(*child_ptr_point)->color=node::black;
 			break;
 		}
-		else if(parent_point){//case black black
+		else if(parent_point){
 			node_ptr* sibling_ptr_point = parent_point->sibling(child_ptr_point);
+std::cerr<<"case run\n";
 			if((!(*sibling_ptr_point)->left||(*sibling_ptr_point)->left->color==node::black)//FIXME *sibling_ptr_point will be null unique_ptr??
 					&& (!(*sibling_ptr_point)->right||(*sibling_ptr_point)->right->color==node::black) ){
 				if(parent_point->color){//case 4
+std::cerr<<"case 4\n";
 					if((*sibling_ptr_point)->color==node::black){
 						parent_point->color = node::black;
 						(*sibling_ptr_point)->color = node::red;
@@ -276,6 +281,7 @@ void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 				}
 				else{
 					if((*sibling_ptr_point)->color ){//case 2
+std::cerr<<"case 2\n";
 						parent_point->color = node::red;
 						(*sibling_ptr_point)->color = node::black;
 						if(*child_ptr_point==parent_point->left)
@@ -285,6 +291,7 @@ void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 						continue;
 					}
 					if((*sibling_ptr_point)->color==node::black ){//case 3
+std::cerr<<"case 3\n";
 						(*sibling_ptr_point)->color = node::red;
 						if(!parent_point->parent)//parent_point is root down
 							break;
@@ -292,35 +299,40 @@ void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 							child_ptr_point = &parent_point->parent->left;
 						else
 							child_ptr_point = &parent_point->parent->right;
-						parent_point=parent_point->parent;
+						parent_point = parent_point->parent;
 						continue;
 					}
 				}
 			}
 			if(child_ptr_point==&parent_point->left){
 				if(!(*sibling_ptr_point)->right || (*sibling_ptr_point)->right->color==node::black){//(*sibling_ptr_point)->left will be red case 5
+std::cerr<<"case l5>\n";
 					(*sibling_ptr_point)->left->color=node::black;
 					(*sibling_ptr_point)->color=node::red;
 					node_ptr* root_ptr_point = &(*sibling_ptr_point)->left;
 					(*sibling_ptr_point)->rotate_right(root);
 					sibling_ptr_point = root_ptr_point;
 				}
+std::cerr<<"case l6\n";
 				(*sibling_ptr_point)->color = parent_point->color;
 				parent_point->color = node::black;
 				parent_point->rotate_left(root);
 			}
 			else{
 				if(!(*sibling_ptr_point)->left || (*sibling_ptr_point)->left->color==node::black){//(*sibling_ptr_point)->right will be red case 5
+std::cerr<<"case l5>\n";
 					(*sibling_ptr_point)->right->color=node::black;
 					(*sibling_ptr_point)->color=node::red;
 					node_ptr* root_ptr_point = &(*sibling_ptr_point)->right;
 					(*sibling_ptr_point)->rotate_left(root);
 					sibling_ptr_point = root_ptr_point;
 				}
+std::cerr<<"case r6\n";
 				(*sibling_ptr_point)->color = parent_point->color;
 				parent_point->color = node::black;
 				parent_point->rotate_right(root);
 			}
+			break;
 		}
 		else
 			break;
@@ -345,8 +357,15 @@ using namespace std;
 int main(){
 	unorder_tree<line> texts{istream_iterator<line>{cin},istream_iterator<line>{}};
 	//copy(texts.begin(),texts.end(),ostream_iterator<line>{cout});
-	for(auto& l:texts)
-		cout<<l<<endl;
+	//for(auto& l:texts)
+		//cout<<l<<endl;
+	texts.dump();
+	cout<<"---------------------------\n";
+	int i=6;
+	while(--i){
+		auto itr = texts.begin();
+		texts.remove(itr);
+	}
 	texts.dump();
 	//texts.push_back(line{"test"});
 
