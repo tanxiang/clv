@@ -1,221 +1,106 @@
+#include "unorder_tree.h"
 #include <iostream>
-#include <memory>
 template<typename T>
-class unorder_tree{
-	protected:
-	public:
-		struct node;
-		typedef std::unique_ptr<node> node_ptr;
+void unorder_tree<T>::node::dump(int level){
+	if(left) left->dump(level+1);
+	int c=level;
+	while(c--)
+	std::cout<<' ';
+	std::cout<<level<<'\t'<<color<<'\t';
+	if(ptr)
+		std::cout<<*ptr<<std::endl;
+	else
+		std::cout<<std::endl;
+	if(right) right->dump(level+1);
+}
 
-		struct node{
-			typedef std::unique_ptr<T> segment_ptr;
-			enum {
-				black=0,
-				red=1
-			} color;
-			node_ptr left,right;
-			node* parent;
-			segment_ptr ptr;
-			node(node* pa,T* p = nullptr):parent(pa),ptr(p){ }
-			node* grandparent(){
-				return parent->parent;
-			}
-			node* uncle(){
-				if(parent==&*grandparent()->left)
-					return &*grandparent()->right;
-				else
-					return &*grandparent()->left;
-			}
-			node_ptr* sibling(node_ptr* child_ptr_point){
-				if(child_ptr_point==&left)
-					return &right;
-				return &left;
-			}
-			void rotate_left(node_ptr& root_ptr){
-				if(!right)
-					std::cerr<<"error rotate_left right==null\n";
-				node_ptr new_root = std::move(right);
-				if(new_root->left){
-					right = std::move(new_root->left);				
-					right->parent = this;
-				}
-				node_ptr* hander;
-				if(parent)
-					hander = this == &*parent->left ? &parent->left : &parent->right;
-				else
-					hander = &root_ptr;
-				new_root->parent = parent;
-				new_root->left = std::move(*hander);
-				parent = &*new_root;
-				*hander=std::move(new_root);
-			}
+template<typename T>
+void unorder_tree<T>::node::rotate_left(node_ptr& root_ptr){
+	if(!right)
+		std::cerr<<"error rotate_left right==null\n";
+	node_ptr new_root = std::move(right);
+	if(new_root->left){
+		right = std::move(new_root->left);				
+		right->parent = this;
+	}
+	node_ptr* hander;
+	if(parent)
+		hander = this == &*parent->left ? &parent->left : &parent->right;
+	else
+		hander = &root_ptr;
+	new_root->parent = parent;
+	new_root->left = std::move(*hander);
+	parent = &*new_root;
+	*hander=std::move(new_root);
+}
 
-			void rotate_right(node_ptr& root_ptr){
-				if(!left)
-					std::cerr<<"error rotate_right left==null\n";
-				node_ptr new_root = std::move(left);
-				if(new_root->right){
-					left = std::move(new_root->right);
-					left->parent = this;
-				}
-				node_ptr* hander;
-				if(parent)
-					hander = this == &*parent->left ? &parent->left : &parent->right;
-				else
-					hander = &root_ptr;
-				new_root->parent = parent;
-				new_root->right = std::move(*hander);
-				parent = &*new_root;
-				*hander=std::move(new_root);
-			}
-			void dump(int level){
-				if(left) left->dump(level+1);
-				int c=level;
-				while(c--)
-					std::cerr<<' ';
-				std::cerr<<level<<'\t'<<color<<'\t';
-				if(ptr)
-					std::cerr<<*ptr<<std::endl;
-				else
-					std::cerr<<std::endl;
-				if(right) right->dump(level+1);
-			}
-		};
-		struct iterator_traits {
-			typedef std::bidirectional_iterator_tag iterator_category;
-			typedef T			value_type;
-			typedef std::ptrdiff_t		difference_type;
-			typedef T*		pointer;
-			typedef T&		reference;
-		};
-		struct iterator:public iterator_traits{
-			node* point;
-			iterator operator ++ (){
-				node* search_point = point;
-				if(search_point->right){
-					search_point = &*search_point->right;
-					while(search_point->left)
-						search_point = &*search_point->left;
-					point = search_point;
-				}
-				else while(search_point->parent){
-					if(&*search_point->parent->left==search_point){
-						point = search_point->parent;
-						break;
-					}
-					search_point = search_point->parent;
-				}
-				return *this;
-			}
+template<typename T>
+void  unorder_tree<T>::node::rotate_right(node_ptr& root_ptr){
+	if(!left)
+		std::cerr<<"error rotate_right left==null\n";
+	node_ptr new_root = std::move(left);
+	if(new_root->right){
+		left = std::move(new_root->right);
+		left->parent = this;
+	}
+	node_ptr* hander;
+	if(parent)
+		hander = this == &*parent->left ? &parent->left : &parent->right;
+	else
+		hander = &root_ptr;
+	new_root->parent = parent;
+	new_root->right = std::move(*hander);
+	parent = &*new_root;
+	*hander=std::move(new_root);
+}
 
-			iterator operator -- (){
-				node* search_point = point;
-				if(search_point->left){
-					search_point = &*search_point->left;
-					while(search_point->right)
-						search_point = &*search_point->right;
-					point = search_point;
-				}
-				else while(search_point->parent){
-					if(&*search_point->parent->right==search_point){
-						point = search_point->parent;
-						break;
-					}
-					search_point = search_point->parent;
-				}
-				return *this;
-			}
-			bool operator !=(iterator it){return point!=it.point;}
-			bool operator ==(iterator it){return point==it.point;}
-			T& operator *(){return *point->ptr;}
-			T* operator -> (){return &*point->ptr;}
-		};
+template<typename T>
+typename unorder_tree<T>::iterator unorder_tree<T>::insert(iterator itr, const T& val){
+	node* search_point = itr.point;
+	if(!search_point->left){
+		search_point->left =node_ptr{new node{search_point,new T{val}}};
+		rb(&*search_point->left);
+	}
+	else{
+		search_point=&*search_point->left;
+		while(search_point->right)
+			search_point=&*search_point->right;
+		search_point->right =node_ptr{new node{search_point,new T{val}}};
+		rb(&*search_point->right);
+	}
+	return --itr;
+}
 
-		iterator begin(){
-			iterator itr;
-			itr.point=&*root;
-			while(itr.point->left)
-				itr.point=&*itr.point->left;
-			return itr;
-		}
-		iterator end(){
-			return finish;
-		}
+template<typename T>
+void unorder_tree<T>::remove(iterator itr){
+	if(itr==finish)
+		return;
+	node* search_point = itr.point;
+	if(search_point->left && search_point->right){
+		search_point=&*search_point->right;
+		while(search_point->left)
+			search_point=&*search_point->left;
+		itr.point->ptr = std::move(search_point->ptr);
+	}
+	node_ptr pick_ptr = search_point->right ? std::move(search_point->right) :
+		search_point->left ? std::move(search_point->left) : nullptr;
 
-
-		iterator insert(iterator itr, const T& val){
-			node* search_point = itr.point;
-			if(!search_point->left){
-				search_point->left =node_ptr{new node{search_point,new T{val}}};
-				rb(&*search_point->left);
-			}
-			else{
-				search_point=&*search_point->left;
-				while(search_point->right)
-					search_point=&*search_point->right;
-				search_point->right =node_ptr{new node{search_point,new T{val}}};
-				rb(&*search_point->right);
-			}
-			return --itr;
-		}
-
-
-		void remove(iterator itr){
-			if(itr==finish)
-				return;
-			node* search_point = itr.point;
-			if(search_point->left && search_point->right){
-				search_point=&*search_point->right;
-				while(search_point->left)
-					search_point=&*search_point->left;
-				itr.point->ptr = std::move(search_point->ptr);
-			}
-			node_ptr pick_ptr = search_point->right ? std::move(search_point->right) :
-				search_point->left ? std::move(search_point->left) : nullptr;
-
-			if(pick_ptr)
-				pick_ptr->parent = search_point->parent;//nullptr if root
-			node* parent_point = search_point->parent;
-			node_ptr* child_ptr_point;
-//std::cerr<<&**child_ptr_point<<";"<<search_point<<":"<<parent_point<<":"<<&*parent_point->left<<"\n";
-			if(!parent_point)
-				child_ptr_point=&root;
-			else if(search_point==&*parent_point->left)
-				child_ptr_point = &parent_point->left;
-			else
-				child_ptr_point = &parent_point->right;
-			std::swap(pick_ptr,*child_ptr_point);
-			if(pick_ptr->color==node::black){//delete a black node need fix b
-				drb(child_ptr_point,parent_point);
-			}
-		}
-
-		void push_back(const T& val){
-			insert(finish,val);
-		}
-		template<typename InputIterator,typename = std::_RequireInputIter<InputIterator>>
-			unorder_tree(InputIterator first,InputIterator last):unorder_tree(){
-				while(first!=last){
-					push_back(*first);
-					++first;
-				}
-			}
-
-		unorder_tree():root(new node{nullptr}){
-			//start.point = &*root;
-			finish.point = &*root;
-			root->color=node::black;
-		}
-		void dump(){
-			root->dump(0);
-		}
-	private:
-		void rb(node* pnode);
-		void drb(node_ptr* child_ptr_point,node* parent_point);
-		node_ptr root;
-		//iterator start;
-		iterator finish;
-};
+	if(pick_ptr)
+		pick_ptr->parent = search_point->parent;//nullptr if root
+	node* parent_point = search_point->parent;
+	node_ptr* child_ptr_point;
+	//std::cerr<<&**child_ptr_point<<";"<<search_point<<":"<<parent_point<<":"<<&*parent_point->left<<"\n";
+	if(!parent_point)
+		child_ptr_point=&root;
+	else if(search_point==&*parent_point->left)
+		child_ptr_point = &parent_point->left;
+	else
+		child_ptr_point = &parent_point->right;
+	std::swap(pick_ptr,*child_ptr_point);
+	if(pick_ptr->color==node::black){//delete a black node need fix b
+		drb(child_ptr_point,parent_point);
+	}
+}
 
 template<typename T>
 void unorder_tree<T>::rb(node* pnode){
@@ -268,11 +153,11 @@ void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 		}
 		else if(parent_point){
 			node_ptr* sibling_ptr_point = parent_point->sibling(child_ptr_point);
-std::cerr<<"case run\n";
+			std::cerr<<"case run\n";
 			if((!(*sibling_ptr_point)->left||(*sibling_ptr_point)->left->color==node::black)//FIXME *sibling_ptr_point will be null unique_ptr??
 					&& (!(*sibling_ptr_point)->right||(*sibling_ptr_point)->right->color==node::black) ){
 				if(parent_point->color){//case 4
-std::cerr<<"case 4\n";
+					std::cerr<<"case 4\n";
 					if((*sibling_ptr_point)->color==node::black){
 						parent_point->color = node::black;
 						(*sibling_ptr_point)->color = node::red;
@@ -281,7 +166,7 @@ std::cerr<<"case 4\n";
 				}
 				else{
 					if((*sibling_ptr_point)->color ){//case 2
-std::cerr<<"case 2\n";
+						std::cerr<<"case 2\n";
 						parent_point->color = node::red;
 						(*sibling_ptr_point)->color = node::black;
 						if(*child_ptr_point==parent_point->left)
@@ -291,7 +176,7 @@ std::cerr<<"case 2\n";
 						continue;
 					}
 					if((*sibling_ptr_point)->color==node::black ){//case 3
-std::cerr<<"case 3\n";
+						std::cerr<<"case 3\n";
 						(*sibling_ptr_point)->color = node::red;
 						if(!parent_point->parent)//parent_point is root down
 							break;
@@ -306,28 +191,28 @@ std::cerr<<"case 3\n";
 			}
 			if(child_ptr_point==&parent_point->left){
 				if(!(*sibling_ptr_point)->right || (*sibling_ptr_point)->right->color==node::black){//(*sibling_ptr_point)->left will be red case 5
-std::cerr<<"case l5>\n";
+					std::cerr<<"case l5>\n";
 					(*sibling_ptr_point)->left->color=node::black;
 					(*sibling_ptr_point)->color=node::red;
 					node_ptr* root_ptr_point = &(*sibling_ptr_point)->left;
 					(*sibling_ptr_point)->rotate_right(root);
 					sibling_ptr_point = root_ptr_point;
 				}
-std::cerr<<"case l6\n";
+				std::cerr<<"case l6\n";
 				(*sibling_ptr_point)->color = parent_point->color;
 				parent_point->color = node::black;
 				parent_point->rotate_left(root);
 			}
 			else{
 				if(!(*sibling_ptr_point)->left || (*sibling_ptr_point)->left->color==node::black){//(*sibling_ptr_point)->right will be red case 5
-std::cerr<<"case l5>\n";
+					std::cerr<<"case l5>\n";
 					(*sibling_ptr_point)->right->color=node::black;
 					(*sibling_ptr_point)->color=node::red;
 					node_ptr* root_ptr_point = &(*sibling_ptr_point)->right;
 					(*sibling_ptr_point)->rotate_left(root);
 					sibling_ptr_point = root_ptr_point;
 				}
-std::cerr<<"case r6\n";
+				std::cerr<<"case r6\n";
 				(*sibling_ptr_point)->color = parent_point->color;
 				parent_point->color = node::black;
 				parent_point->rotate_right(root);
@@ -358,7 +243,7 @@ int main(){
 	unorder_tree<line> texts{istream_iterator<line>{cin},istream_iterator<line>{}};
 	//copy(texts.begin(),texts.end(),ostream_iterator<line>{cout});
 	//for(auto& l:texts)
-		//cout<<l<<endl;
+	//cout<<l<<endl;
 	texts.dump();
 	cout<<"---------------------------\n";
 	int i=6;
