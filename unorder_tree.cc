@@ -26,10 +26,10 @@ class unorder_tree{
 				else
 					return &*grandparent()->left;
 			}
-			node* sibling(){
-				if(this==&*parent->left)
-					return &*parent->right;
-				return &*parent->left;
+			node_ptr* sibling(node_ptr* child_ptr_point){
+				if(child_ptr_point==&left)
+					return &right;
+				return &left;
 			}
 			void rotate_left(node_ptr& root_ptr){
 				if(!right)
@@ -141,46 +141,6 @@ class unorder_tree{
 			return finish;
 		}
 
-		void rb(node* pnode){
-			pnode->color = node::red;
-			//rb case
-			do{
-				if(!pnode->parent){
-					pnode->color = node::black;
-					break;
-				}
-				if(pnode->parent->color){
-					node* uncle = pnode->uncle();
-					if(uncle && uncle->color){//case 3
-						pnode->parent->color = node::black;
-						uncle->color=node::black;
-						pnode->grandparent()->color = node::red;
-						pnode = pnode->grandparent();
-						continue;
-					}
-					else{//case 4,5
-						if(pnode == &*pnode->parent->left && pnode->parent == &*pnode->grandparent()->right){
-							pnode->parent->rotate_right(root);
-							pnode = &*pnode->right;
-						}
-						else if(pnode == &*pnode->parent->right && pnode->parent == &*pnode->grandparent()->left){
-							pnode->parent->rotate_left(root);
-							pnode = &*pnode->left;
-						}
-						if(pnode == &*pnode->parent->right){
-							pnode->grandparent()->rotate_left(root);
-							pnode->parent->color = node::black;
-							pnode->parent->left->color = node::red;
-						}else{
-							pnode->grandparent()->rotate_right(root);
-							pnode->parent->color = node::black;
-							pnode->parent->right->color = node::red;
-						}
-					}
-				}
-				break;
-			}while(true);
-		}
 
 		iterator insert(iterator itr, const T& val){
 			node* search_point = itr.point;
@@ -198,49 +158,7 @@ class unorder_tree{
 			return --itr;
 		}
 
-		void drb(node_ptr* child_ptr_point,node* parent_point){
-			do{
-				if(*child_ptr_point && *child_ptr_point->color){//replace a red node to black
-					*child_ptr_point->color=node::black;
-					break;
-				}
-				else if(parent_point){//case black black
-					node* sibling_point = *child_ptr_point->sibling();//FIXME null child ptr
-					if((!sibling_point->left||sibling_point->left->color==node::black)
-							&& (!sibling_point->right||sibling_point->right->color==node::black) ){
-						if(parent_point->color){//case 4
-							if(sibling_point && sibling_point->color==node::black){
-								parent_point->color = node::black;
-								sibling_point->color = node::red;
-								break;
-							}
-						}
-						else{//case 2 3
-							if(sibling_point && sibling_point->color==node::red
-									&& (!sibling_point->left||sibling_point->left->color==node::black)
-									&& (!sibling_point->right||sibling_point->right->color==node::black) ){
-								parent_point->color = node::red;
-								sibling_point->color = node::black;
-								if(*child_ptr_point==parent_point->left)
-									parent_point->rotate_left(root);
-								else
-									parent_point->rotate_right(root);
-								continue;
-							}
-							if(sibling_point && sibling_point->color==node::black
-									&& (!sibling_point->left||sibling_point->left->color==node::black)
-									&& (!sibling_point->right||sibling_point->right->color==node::black) ){
-								sibling_point->color = node::red;
-								//*child_ptr_point = parent_point;
-								continue;
-							}
-						}
-					}
-				}
-				else
-					break;
-			}while(true);
-		}
+
 		void remove(iterator itr){
 			node* search_point = itr.point;
 			if(search_point->left && search_point->right){
@@ -289,10 +207,96 @@ class unorder_tree{
 			root->dump(0);
 		}
 	private:
+		void rb(node* pnode);
+		void drb(node_ptr* child_ptr_point,node* parent_point);
 		node_ptr root;
 		//iterator start;
 		iterator finish;
 };
+
+template<typename T>
+void unorder_tree<T>::rb(node* pnode){
+	pnode->color = node::red;
+	//rb case
+	do{
+		if(!pnode->parent){
+			pnode->color = node::black;
+			break;
+		}
+		if(pnode->parent->color){
+			node* uncle = pnode->uncle();
+			if(uncle && uncle->color){//case 3
+				pnode->parent->color = node::black;
+				uncle->color=node::black;
+				pnode->grandparent()->color = node::red;
+				pnode = pnode->grandparent();
+				continue;
+			}
+			else{//case 4,5
+				if(pnode == &*pnode->parent->left && pnode->parent == &*pnode->grandparent()->right){
+					pnode->parent->rotate_right(root);
+					pnode = &*pnode->right;
+				}
+				else if(pnode == &*pnode->parent->right && pnode->parent == &*pnode->grandparent()->left){
+					pnode->parent->rotate_left(root);
+					pnode = &*pnode->left;
+				}
+				if(pnode == &*pnode->parent->right){
+					pnode->grandparent()->rotate_left(root);
+					pnode->parent->color = node::black;
+					pnode->parent->left->color = node::red;
+				}else{
+					pnode->grandparent()->rotate_right(root);
+					pnode->parent->color = node::black;
+					pnode->parent->right->color = node::red;
+				}
+			}
+		}
+		break;
+	}while(true);
+}
+
+template<typename T>
+void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
+	do{
+		if(*child_ptr_point && *child_ptr_point->color){//replace a red node to black
+			*child_ptr_point->color=node::black;
+			break;
+		}
+		else if(parent_point){//case black black
+			node_ptr* sibling_ptr_point = parent_point->sibling(child_ptr_point);//FIXME null child ptr
+			if(*sibling_ptr_point && (!*sibling_ptr_point->left||*sibling_ptr_point->left->color==node::black)
+					&& (!*sibling_ptr_point->right||*sibling_ptr_point->right->color==node::black) ){
+				if(parent_point->color){//case 4
+					if(*sibling_ptr_point->color==node::black){
+						parent_point->color = node::black;
+						*sibling_ptr_point->color = node::red;
+						break;
+					}
+				}
+				else{//case 2 3
+					if(*sibling_ptr_point->color ){
+						parent_point->color = node::red;
+						*sibling_ptr_point->color = node::black;
+						if(*child_ptr_point==parent_point->left)
+							parent_point->rotate_left(root);
+						else
+							parent_point->rotate_right(root);
+						continue;
+					}
+					if(*sibling_ptr_point->color==node::black ){
+						*sibling_ptr_point->color = node::red;
+						//*child_ptr_point = parent_point;
+						continue;
+					}
+				}
+			}
+		}
+		else
+			break;
+	}while(true);
+}
+
 
 class line :public std::string 
 {
