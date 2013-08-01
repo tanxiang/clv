@@ -264,32 +264,62 @@ void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 			break;
 		}
 		else if(parent_point){//case black black
-			node_ptr* sibling_ptr_point = parent_point->sibling(child_ptr_point);//FIXME null child ptr
-			if(*sibling_ptr_point && (!*sibling_ptr_point->left||*sibling_ptr_point->left->color==node::black)
-					&& (!*sibling_ptr_point->right||*sibling_ptr_point->right->color==node::black) ){
+			node_ptr* sibling_ptr_point = parent_point->sibling(child_ptr_point);
+			if((!(*sibling_ptr_point)->left||(*sibling_ptr_point)->left->color==node::black)//FIXME *sibling_ptr_point will be null unique_ptr??
+					&& (!(*sibling_ptr_point)->right||(*sibling_ptr_point)->right->color==node::black) ){
 				if(parent_point->color){//case 4
-					if(*sibling_ptr_point->color==node::black){
+					if((*sibling_ptr_point)->color==node::black){
 						parent_point->color = node::black;
-						*sibling_ptr_point->color = node::red;
+						(*sibling_ptr_point)->color = node::red;
 						break;
 					}
 				}
-				else{//case 2 3
-					if(*sibling_ptr_point->color ){
+				else{
+					if((*sibling_ptr_point)->color ){//case 2
 						parent_point->color = node::red;
-						*sibling_ptr_point->color = node::black;
+						(*sibling_ptr_point)->color = node::black;
 						if(*child_ptr_point==parent_point->left)
 							parent_point->rotate_left(root);
 						else
 							parent_point->rotate_right(root);
 						continue;
 					}
-					if(*sibling_ptr_point->color==node::black ){
-						*sibling_ptr_point->color = node::red;
-						//*child_ptr_point = parent_point;
+					if((*sibling_ptr_point)->color==node::black ){//case 3
+						(*sibling_ptr_point)->color = node::red;
+						if(!parent_point->parent)//parent_point is root down
+							break;
+						if(parent_point==&*parent_point->parent->left)
+							child_ptr_point = &parent_point->parent->left;
+						else
+							child_ptr_point = &parent_point->parent->right;
+						parent_point=parent_point->parent;
 						continue;
 					}
 				}
+			}
+			if(child_ptr_point==&parent_point->left){
+				if(!(*sibling_ptr_point)->right || (*sibling_ptr_point)->right->color==node::black){//(*sibling_ptr_point)->left will be red case 5
+					(*sibling_ptr_point)->left->color=node::black;
+					(*sibling_ptr_point)->color=node::red;
+					node_ptr* root_ptr_point = &(*sibling_ptr_point)->left;
+					(*sibling_ptr_point)->rotate_right(root);
+					sibling_ptr_point = root_ptr_point;
+				}
+				(*sibling_ptr_point)->color = parent_point->color;
+				parent_point->color = node::black;
+				parent_point->rotate_left(root);
+			}
+			else{
+				if(!(*sibling_ptr_point)->left || (*sibling_ptr_point)->left->color==node::black){//(*sibling_ptr_point)->right will be red case 5
+					(*sibling_ptr_point)->right->color=node::black;
+					(*sibling_ptr_point)->color=node::red;
+					node_ptr* root_ptr_point = &(*sibling_ptr_point)->right;
+					(*sibling_ptr_point)->rotate_left(root);
+					sibling_ptr_point = root_ptr_point;
+				}
+				(*sibling_ptr_point)->color = parent_point->color;
+				parent_point->color = node::black;
+				parent_point->rotate_right(root);
 			}
 		}
 		else
