@@ -17,7 +17,29 @@ class unorder_tree{
 			node_ptr left,right;
 			node* parent;
 			segment_ptr ptr;
-			node(node* pa,T* p = nullptr):parent(pa),ptr(p){ }
+			int index_num;
+			void index(){
+				node* parent_point = parent;
+				node* child_point = this;
+				while(parent_point){
+					if(&*parent_point->left == child_point)
+						++parent_point->index_num;
+					child_point=parent_point;
+					parent_point = parent_point->parent;
+				}
+			}
+
+			void un_index(){
+				node* parent_point = parent;
+				node* child_point = this;
+				while(parent_point){
+					if(&*parent_point->left == child_point)
+						--parent_point->index_num;
+					child_point=parent_point;
+					parent_point = parent_point->parent;
+				}
+			}
+			node(node* pa,T* p = nullptr):parent(pa),ptr(p),index_num(0){ }
 			node* grandparent(){
 				return parent->parent;
 			}

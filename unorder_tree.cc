@@ -22,7 +22,8 @@ void unorder_tree<T>::node::rotate_left(node_ptr& root_ptr){
 	if(new_root->left){
 		right = std::move(new_root->left);				
 		right->parent = this;
-	}
+	}	
+	new_root->index_num+=(index_num+1);//add
 	node_ptr* hander;
 	if(parent)
 		hander = this == &*parent->left ? &parent->left : &parent->right;
@@ -43,6 +44,7 @@ void  unorder_tree<T>::node::rotate_right(node_ptr& root_ptr){
 		left = std::move(new_root->right);
 		left->parent = this;
 	}
+	index_num-=(new_root->index_num+1);
 	node_ptr* hander;
 	if(parent)
 		hander = this == &*parent->left ? &parent->left : &parent->right;
@@ -58,14 +60,16 @@ template<typename T>
 typename unorder_tree<T>::iterator unorder_tree<T>::insert(iterator itr, const T& val){
 	node* search_point = itr.point;
 	if(!search_point->left){
-		search_point->left =node_ptr{new node{search_point,new T{val}}};
+		search_point->left = node_ptr{new node{search_point,new T{val}}};
+		search_point->left->index();
 		rb(&*search_point->left);
 	}
 	else{
 		search_point=&*search_point->left;
 		while(search_point->right)
 			search_point=&*search_point->right;
-		search_point->right =node_ptr{new node{search_point,new T{val}}};
+		search_point->right = node_ptr{new node{search_point,new T{val}}};
+		search_point->right->index();
 		rb(&*search_point->right);
 	}
 	return --itr;
@@ -96,6 +100,7 @@ void unorder_tree<T>::remove(iterator itr){
 		child_ptr_point = &parent_point->left;
 	else
 		child_ptr_point = &parent_point->right;
+	(*child_ptr_point)->un_index();
 	std::swap(pick_ptr,*child_ptr_point);
 	if(pick_ptr->color==node::black){//delete a black node need fix b
 		drb(child_ptr_point,parent_point);
