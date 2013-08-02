@@ -251,12 +251,10 @@ int main(){
 	//cout<<l<<endl;
 	texts.dump();
 	cout<<"---------------------------\n";
-	int i=6;
-	while(--i){
-		auto itr = texts.begin();
-		texts.remove(itr);
+	int i=0;
+	while(i<30){
+		cout<<texts[i++]<<endl;
 	}
-	texts.dump();
 	//texts.push_back(line{"test"});
 
 }

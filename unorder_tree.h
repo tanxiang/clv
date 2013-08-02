@@ -7,7 +7,7 @@ class unorder_tree{
 	public:
 		struct node;
 		typedef std::unique_ptr<node> node_ptr;
-
+		typedef size_t size_type;
 		struct node{
 			typedef std::unique_ptr<T> segment_ptr;
 			enum {
@@ -117,6 +117,24 @@ class unorder_tree{
 		}
 		iterator end(){
 			return finish;
+		}
+
+		T& operator [] (size_type n){
+			node* search_point= &*root;
+			do{
+				if(n == search_point->index_num)
+					return *search_point->ptr;
+				if(n < search_point->index_num)
+					search_point = &*search_point->left;
+				else{
+					n -= (1+search_point->index_num);
+					search_point = &*search_point->right;
+				}
+			}while(true);
+		}
+
+		size_type size(){
+			return 0;
 		}
 
 		iterator insert(iterator itr, const T& val);
