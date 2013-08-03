@@ -54,6 +54,11 @@ class unorder_tree{
 					return &right;
 				return &left;
 			}
+			size_type size(int num=0){
+				if(right)
+					return right->size(num+index_num+1);
+				return num+index_num;
+			}
 			void rotate_left(node_ptr& root_ptr);
 			void rotate_right(node_ptr& root_ptr);
 			void dump(int level);
@@ -134,7 +139,7 @@ class unorder_tree{
 		}
 
 		size_type size(){
-			return 0;
+			return root->size();
 		}
 
 		iterator insert(iterator itr, const T& val);

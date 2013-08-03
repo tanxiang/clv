@@ -249,8 +249,8 @@ int main(){
 	//copy(texts.begin(),texts.end(),ostream_iterator<line>{cout});
 	//for(auto& l:texts)
 	//cout<<l<<endl;
-	texts.dump();
-	cout<<"---------------------------\n";
+	
+	cout<<"---------------------------"<<texts.size()<<endl;
 	int i=0;
 	while(i<30){
 		cout<<texts[i++]<<endl;
