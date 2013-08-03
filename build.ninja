@@ -25,6 +25,7 @@ build clthread.o: cxx clthread.cc
 build clvparser.o: cxx clvparser.cc
 build clangparse.o: cxx clangparse.cc
 build filemap.o: cxx filemap.cc
+build unorder_tree.o: cxx unorder_tree.cc
 #build view.o: cxx_skia view.cc
 build gtk_window.o: cxx_gtkmm gtk_window.cc
 build clvtkmm.o: cxx_gtkmm clvtkmm.cc
