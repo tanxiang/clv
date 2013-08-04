@@ -5,7 +5,7 @@
 
 
 ClvFViewBox::ClvFViewBox(FileMap<MBLineRef<CharRef> > &file_ref):
-	file(file_ref),fileview(file,Glib::RefPtr<Gtk::TextBuffer>{new ClvBuffer{}}){
+	file(file_ref),fileview(file){
 	//set_homogeneous(false);
 	//lineview.queue_draw_area(0,0,30,30);
 	//FIXME:reconfig w,h by font w,h

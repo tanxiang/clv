@@ -10,7 +10,7 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
-class ClvFileArea : public Gtk::TextView{
+class ClvFileArea: public Gtk::Container,public Gtk::Scrollable{
 	FileMap<MBLineRef<CharRef> > &file;
 	Pango::TabArray tab_width;
 
@@ -21,16 +21,17 @@ class ClvFileArea : public Gtk::TextView{
  	bool key_pressed (GdkEventKey * ev);
  	bool button_pressed (GdkEventButton * ev);
 public:
-	ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref,const Glib::RefPtr<Gtk::TextBuffer> buffer);
+	ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref);
 	virtual ~ClvFileArea(){};
 	
 protected:
 	bool on_draw(const ::Cairo::RefPtr< ::Cairo::Context>& cr) override;
-	bool my_draw(const ::Cairo::RefPtr< ::Cairo::Context>& cr);
 };
 
 class ClvThumArea : public Gtk::DrawingArea{
 public:
+	ClvThumArea();
+	virtual ~ClvThumArea();
 protected:
 	//Override default signal handler:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
