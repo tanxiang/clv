@@ -18,12 +18,15 @@ class unorder_tree{
 			node* parent;
 			segment_ptr ptr;
 			int index_num;
+			typename T::fill_t filler;
 			void index(){
 				node* parent_point = parent;
 				node* child_point = this;
 				while(parent_point){
-					if(&*parent_point->left == child_point)
-						++parent_point->index_num;
+					if(&*parent_point->left == child_point){
+							++parent_point->index_num;
+							parent_point->filler += ptr->get_fill();
+					}
 					child_point=parent_point;
 					parent_point = parent_point->parent;
 				}
@@ -33,8 +36,10 @@ class unorder_tree{
 				node* parent_point = parent;
 				node* child_point = this;
 				while(parent_point){
-					if(&*parent_point->left == child_point)
+					if(&*parent_point->left == child_point){
 						--parent_point->index_num;
+						parent_point->filler -= ptr->get_fill();
+					}
 					child_point=parent_point;
 					parent_point = parent_point->parent;
 				}
@@ -170,6 +175,24 @@ class unorder_tree{
 		node_ptr root;
 		//iterator start;
 		iterator finish;
+};
+
+#include <string>
+class line :public std::string 
+{
+	int coord_y;
+	int tags;
+	public:
+		typedef int fill_t;
+		friend std::istream & operator>>(std::istream & is, line& l){
+			return std::getline(is, l);
+		}
+		virtual ~line(){
+			//std::cerr<<"line free\n";
+		}
+		fill_t get_fill(){
+			return 12;
+		}
 };
 
 #endif

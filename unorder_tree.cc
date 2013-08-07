@@ -24,6 +24,7 @@ void unorder_tree<T>::node::rotate_left(node_ptr& root_ptr){
 		right->parent = this;
 	}	
 	new_root->index_num+=(index_num+1);//add
+	new_root->filler += (filler + ptr->get_fill());//end node cannot rotate_left, so the ptr is not null
 	node_ptr* hander;
 	if(parent)
 		hander = this == &*parent->left ? &parent->left : &parent->right;
@@ -45,6 +46,7 @@ void  unorder_tree<T>::node::rotate_right(node_ptr& root_ptr){
 		left->parent = this;
 	}
 	index_num-=(new_root->index_num+1);
+	filler -= (new_root->filler + new_root->ptr->get_fill());
 	node_ptr* hander;
 	if(parent)
 		hander = this == &*parent->left ? &parent->left : &parent->right;
@@ -158,11 +160,11 @@ void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 		}
 		else if(parent_point){
 			node_ptr* sibling_ptr_point = parent_point->sibling(child_ptr_point);
-			std::cerr<<"case run\n";
+			//std::cerr<<"case run\n";
 			if((!(*sibling_ptr_point)->left||(*sibling_ptr_point)->left->color==node::black)//FIXME *sibling_ptr_point will be null unique_ptr??
 					&& (!(*sibling_ptr_point)->right||(*sibling_ptr_point)->right->color==node::black) ){
 				if(parent_point->color){//case 4
-					std::cerr<<"case 4\n";
+					//std::cerr<<"case 4\n";
 					if((*sibling_ptr_point)->color==node::black){
 						parent_point->color = node::black;
 						(*sibling_ptr_point)->color = node::red;
@@ -171,7 +173,7 @@ void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 				}
 				else{
 					if((*sibling_ptr_point)->color ){//case 2
-						std::cerr<<"case 2\n";
+						//std::cerr<<"case 2\n";
 						parent_point->color = node::red;
 						(*sibling_ptr_point)->color = node::black;
 						if(*child_ptr_point==parent_point->left)
@@ -181,7 +183,7 @@ void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 						continue;
 					}
 					if((*sibling_ptr_point)->color==node::black ){//case 3
-						std::cerr<<"case 3\n";
+						//std::cerr<<"case 3\n";
 						(*sibling_ptr_point)->color = node::red;
 						if(!parent_point->parent)//parent_point is root down
 							break;
@@ -196,28 +198,28 @@ void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 			}
 			if(child_ptr_point==&parent_point->left){
 				if(!(*sibling_ptr_point)->right || (*sibling_ptr_point)->right->color==node::black){//(*sibling_ptr_point)->left will be red case 5
-					std::cerr<<"case l5>\n";
+					//std::cerr<<"case l5>\n";
 					(*sibling_ptr_point)->left->color=node::black;
 					(*sibling_ptr_point)->color=node::red;
 					node_ptr* root_ptr_point = &(*sibling_ptr_point)->left;
 					(*sibling_ptr_point)->rotate_right(root);
 					sibling_ptr_point = root_ptr_point;
 				}
-				std::cerr<<"case l6\n";
+				//std::cerr<<"case l6\n";
 				(*sibling_ptr_point)->color = parent_point->color;
 				parent_point->color = node::black;
 				parent_point->rotate_left(root);
 			}
 			else{
 				if(!(*sibling_ptr_point)->left || (*sibling_ptr_point)->left->color==node::black){//(*sibling_ptr_point)->right will be red case 5
-					std::cerr<<"case l5>\n";
+					//std::cerr<<"case l5>\n";
 					(*sibling_ptr_point)->right->color=node::black;
 					(*sibling_ptr_point)->color=node::red;
 					node_ptr* root_ptr_point = &(*sibling_ptr_point)->right;
 					(*sibling_ptr_point)->rotate_left(root);
 					sibling_ptr_point = root_ptr_point;
 				}
-				std::cerr<<"case r6\n";
+				//std::cerr<<"case r6\n";
 				(*sibling_ptr_point)->color = parent_point->color;
 				parent_point->color = node::black;
 				parent_point->rotate_right(root);
@@ -229,32 +231,3 @@ void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 	}while(true);
 }
 
-
-class line :public std::string 
-{
-	public:
-		friend std::istream & operator>>(std::istream & is, line& l){
-			return std::getline(is, l);
-		}
-		virtual ~line(){
-			//std::cerr<<"line free\n";
-		}
-};
-
-#include <iterator>     // std::istream_iterator
-#include <algorithm>
-using namespace std;
-int main(){
-	unorder_tree<line> texts{istream_iterator<line>{cin},istream_iterator<line>{}};
-	//copy(texts.begin(),texts.end(),ostream_iterator<line>{cout});
-	//for(auto& l:texts)
-	//cout<<l<<endl;
-	
-	cout<<"---------------------------"<<texts.size()<<endl;
-	int i=0;
-	while(i<30){
-		cout<<texts[i++]<<endl;
-	}
-	//texts.push_back(line{"test"});
-
-}

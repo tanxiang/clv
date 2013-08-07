@@ -28,16 +28,16 @@ ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref):
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	//auto window = get_window(Gtk::TEXT_WINDOW_TEXT);
 	cr->save();
-		cr->set_source_rgb(0, 0, 0);
-		cr->paint();
+	cr->set_source_rgb(0, 0, 0);
+	cr->paint();
 		//cr->stroke();
 #if 1
-		std::vector<Cairo::Rectangle> clip_rects;
-		cr->copy_clip_rectangle_list(clip_rects);
-		std::cerr<<"num rect = "<<clip_rects.size()<<std::endl;
-		for(auto& clip_rect:clip_rects){
-			std::cerr<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
-		}
+	std::vector<Cairo::Rectangle> clip_rects;
+	cr->copy_clip_rectangle_list(clip_rects);
+	std::cerr<<"num rect = "<<clip_rects.size()<<std::endl;
+	for(auto& clip_rect:clip_rects){
+		std::cerr<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
+	}
 #endif
 	return true;//Gtk::TextView::on_draw(cr);
 }

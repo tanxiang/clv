@@ -10,7 +10,7 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
-class ClvFileArea: public Gtk::Container,public Gtk::Scrollable{
+class ClvFileArea: public Gtk::DrawingArea,public Gtk::Scrollable{
 	FileMap<MBLineRef<CharRef> > &file;
 	Pango::TabArray tab_width;
 
