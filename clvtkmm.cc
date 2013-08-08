@@ -52,9 +52,12 @@ Gtk::Image ClvFileBox::close_icon=[]{
 //void ClvFileBox::setup_icons(){
 	//close_icon.set_from_icon_name("window-close-symbolic",Gtk::ICON_SIZE_MENU);
 //}
+#include <iterator>
 
 ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
-	filename(fs),view(file),tab_label(filename){
+	file_name(fs),file_stream(file_name),
+	file_context(std::istream_iterator<line>{file_stream},std::istream_iterator<line>{}),
+	view(file_context),tab_label(file_name){
 	static const gchar button_style[] =
 		"* {\n"
 		  "-GtkButton-default-border : 0;\n"

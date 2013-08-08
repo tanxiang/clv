@@ -231,3 +231,4 @@ void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 	}while(true);
 }
 
+template class unorder_tree<line>;

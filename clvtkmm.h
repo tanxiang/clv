@@ -7,6 +7,7 @@
 #include <gtkmm/drawingarea.h>
 #include <vector>
 #include <memory>
+#include <fstream>
 #include "clvview.h"
 
 class ClvFViewBox : public Gtk::Box{
@@ -33,8 +34,9 @@ public:
 };
 
 class ClvFileBox : public Gtk::Box{
-	Glib::ustring filename;
-	unorder_tree<line> file;
+	Glib::ustring file_name;
+	std::fstream file_stream;
+	unorder_tree<line> file_context;
 	ClvFViewBox view;
 	ClvToolBox tool_bar;
 	Gtk::Image save_icon;
