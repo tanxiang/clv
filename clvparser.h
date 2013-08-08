@@ -1,3 +1,5 @@
+#ifndef _CLVPARSER_H
+#define _CLVPARSER_H
 #include <vector>
 #include <tuple>
 #include <string>
@@ -16,3 +18,4 @@ public:
 	void complete_at_async();
 	void analyze_syntax_async();
 };
+#endif
