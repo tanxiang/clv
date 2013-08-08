@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-ClvFViewBox::ClvFViewBox(FileMap<MBLineRef<CharRef> > &file_ref):
+ClvFViewBox::ClvFViewBox(unorder_tree<line> &file_ref):
 	file(file_ref),fileview(file){
 	//set_homogeneous(false);
 	//lineview.queue_draw_area(0,0,30,30);
@@ -54,7 +54,7 @@ Gtk::Image ClvFileBox::close_icon=[]{
 //}
 
 ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
-	filename(fs),file(filename.c_str()),view(file),tab_label(filename){
+	filename(fs),view(file),tab_label(filename){
 	static const gchar button_style[] =
 		"* {\n"
 		  "-GtkButton-default-border : 0;\n"
@@ -95,7 +95,7 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	pack_end(tool_bar,Gtk::PACK_SHRINK);
 }
 
-ClvNotebook::ClvNotebook(std::vector<std::string> fn){
+ClvNotebook::ClvNotebook(std::vector<std::string> &fn){
 	if(fn.empty()){
 		f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{}});
 		prepend_page(*f_boxs[0], "*UnSaved");

@@ -1,7 +1,8 @@
 #ifndef _CLVVIEW_H
 #define _CLVVIEW_H
 #include <gtkmm.h>
-#include "filemap.h"
+//#include "filemap.h"
+#include "unorder_tree.h"
 
 class ClvLineArea : public Gtk::DrawingArea{
 public:
@@ -11,7 +12,7 @@ protected:
 };
 
 class ClvFileArea: public Gtk::DrawingArea,public Gtk::Scrollable{
-	FileMap<MBLineRef<CharRef> > &file;
+	unorder_tree<line> &file;
 	Pango::TabArray tab_width;
 
 	Pango::FontDescription get_gnome_document_font_description();
@@ -21,7 +22,7 @@ class ClvFileArea: public Gtk::DrawingArea,public Gtk::Scrollable{
  	bool key_pressed (GdkEventKey * ev);
  	bool button_pressed (GdkEventButton * ev);
 public:
-	ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref);
+	ClvFileArea(unorder_tree<line> &file_ref);
 	virtual ~ClvFileArea(){};
 	
 protected:

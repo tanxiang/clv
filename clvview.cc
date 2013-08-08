@@ -8,7 +8,7 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	return true;
 }
 
-ClvFileArea::ClvFileArea(FileMap<MBLineRef<CharRef> > &file_ref):
+ClvFileArea::ClvFileArea(unorder_tree<line> &file_ref):
 	file(file_ref){
 	auto style = get_style_context();
 	//style->set_background();

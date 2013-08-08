@@ -10,13 +10,13 @@
 #include "clvview.h"
 
 class ClvFViewBox : public Gtk::Box{
-	FileMap<MBLineRef<CharRef> > &file;
+	unorder_tree<line> &file;
 	ClvLineArea lineview;
 	ClvFileArea fileview;
 	ClvThumArea thumview;
 	Gtk::ScrolledWindow scrolledview;
 public:
-	ClvFViewBox(FileMap<MBLineRef<CharRef> > &file_ref);
+	ClvFViewBox(unorder_tree<line> &file_ref);
 	virtual ~ClvFViewBox(){};
 	void save();
 	void close();
@@ -34,7 +34,7 @@ public:
 
 class ClvFileBox : public Gtk::Box{
 	Glib::ustring filename;
-	FileMap<MBLineRef<CharRef> > file;
+	unorder_tree<line> file;
 	ClvFViewBox view;
 	ClvToolBox tool_bar;
 	Gtk::Image save_icon;
@@ -56,7 +56,7 @@ class ClvNotebook : public Gtk::Notebook{
 	std::vector<std::unique_ptr<ClvFileBox> > f_boxs;
 
 public:
-	ClvNotebook(std::vector<std::string> fn);
+	ClvNotebook(std::vector<std::string> &fn);
 	virtual ~ClvNotebook(){
 		while(get_n_pages()){
 			remove_page();
