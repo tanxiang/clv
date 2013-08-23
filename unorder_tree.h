@@ -1,6 +1,8 @@
 #ifndef _UNORDER_TREE_H
 #define _UNORDER_TREE_H
 #include <memory>
+#include <iostream>
+
 template<typename T>
 class unorder_tree{
 	protected:
@@ -44,7 +46,7 @@ class unorder_tree{
 					parent_point = parent_point->parent;
 				}
 			}
-			node(node* pa,T* p = nullptr):parent(pa),ptr(p),index_num(0){ }
+			node(node* pa,T* p = nullptr):parent(pa),ptr(p),index_num(0),filler(0){ }
 			node* grandparent(){
 				return parent->parent;
 			}
@@ -59,11 +61,13 @@ class unorder_tree{
 					return &right;
 				return &left;
 			}
+
 			size_type size(int num=0){
 				if(right)
 					return right->size(num+index_num+1);
 				return num+index_num;
 			}
+
 			void rotate_left(node_ptr& root_ptr);
 			void rotate_right(node_ptr& root_ptr);
 			void dump(int level);
@@ -116,6 +120,9 @@ class unorder_tree{
 			bool operator ==(iterator it){return point==it.point;}
 			T& operator *(){return *point->ptr;}
 			T* operator -> (){return &*point->ptr;}
+			typename T::fill_t get_fill_offset();
+			iterator(node* p):point(p){}
+			iterator(){}
 		};
 
 		iterator begin(){
@@ -127,6 +134,21 @@ class unorder_tree{
 		}
 		iterator end(){
 			return finish;
+		}
+
+		iterator get_form_fill(typename T::fill_t filler_offset){
+			node* search_point = &*root;
+			do{
+//std::cerr<<search_point->filler<<*(search_point->ptr)<<std::endl;
+				if(filler_offset<search_point->filler)
+					search_point = &*search_point->left;
+				else if(filler_offset<search_point->filler + search_point->ptr->get_fill())
+					return iterator{search_point};
+				else{
+					search_point = &*search_point->right;
+					filler_offset -= search_point->filler + search_point->ptr->get_fill();
+				}
+			}while(true);
 		}
 
 		T& operator [] (size_type n){

@@ -12,7 +12,7 @@ protected:
 };
 
 class ClvFileArea: public Gtk::DrawingArea,public Gtk::Scrollable{
-	unorder_tree<line> &file;
+	unorder_tree<line> &file_context;
 	Pango::TabArray tab_width;
 
 	Pango::FontDescription get_gnome_document_font_description();
@@ -22,7 +22,8 @@ class ClvFileArea: public Gtk::DrawingArea,public Gtk::Scrollable{
  	bool key_pressed (GdkEventKey * ev);
  	bool button_pressed (GdkEventButton * ev);
 public:
-	ClvFileArea(unorder_tree<line> &file_ref);
+	void draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect);
+	ClvFileArea(unorder_tree<line> &file);
 	virtual ~ClvFileArea(){};
 	
 protected:
