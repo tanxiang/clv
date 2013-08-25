@@ -38,6 +38,12 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 	}while(height<rect.height);
 }
 
+
+#define PANGO_TYPE_CAIRO_RENDERER            (pango_cairo_renderer_get_type())
+extern "C"{
+	GType pango_cairo_renderer_get_type    (void) G_GNUC_CONST;
+}
+
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	//auto window = get_window(Gtk::TEXT_WINDOW_TEXT);
 	cr->save();
@@ -60,19 +66,24 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	attrs.insert_before(attr_family);
 	auto items = pg->itemize("normal size",attrs);
 	std::cerr<<"item size:"<<items.size()<<std::endl;
+	auto font_map = pg->get_font_map();
+	Pango::FontDescription font_desc{"source code pro"};
+	auto font = font_map->load_font(pg,font_desc);
+	g_object_new (PANGO_TYPE_CAIRO_RENDERER, NULL);
 	for(const auto& item:items){
 		auto gl = item.shape("normal");
-		auto font_map = pg->get_font_map();
-		Pango::FontDescription font_desc{"source code pro"};
-		auto font = font_map->load_font(pg,font_desc);
-		if(font->gobj())
-			std::cout<<"get font"<<std::endl;
-		cr->save();
+//		if(font->gobj())
+//			std::cout<<"get font"<<std::endl;
+//		cr->save();
 		cr->set_source_rgb(1, 1, 1);
-		cr->move_to(10, 10);
 		pango_cairo_show_glyph_string(cr->cobj(),font->gobj(),gl.gobj());
-		cr->restore();
+		cr->move_to(10, 10);
+//		cr->restore();
 	}
+	auto ly = Pango::Layout::create(cr);
+	ly->set_text("jkhsdkjh");
+	ly->set_font_description(font_desc);
+	ly->show_in_cairo_context(cr);
 	for(auto& clip_rect:clip_rects){
 		//std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
 		//draw(cr,clip_rect);
