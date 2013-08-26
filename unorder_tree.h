@@ -120,7 +120,18 @@ class unorder_tree{
 			bool operator ==(iterator it){return point==it.point;}
 			T& operator *(){return *point->ptr;}
 			T* operator -> (){return &*point->ptr;}
-			typename T::fill_t get_fill_offset();
+			typename T::fill_t get_fill_offset(){
+				typename T::fill_t offset=point->filler;
+				node* search_point = point;
+				while(search_point->parent){
+					if(search_point == &*search_point->parent->right){
+						offset += search_point->parent->filler;
+						offset += search_point->parent->ptr->get_fill();
+					}
+					search_point = search_point->parent;
+				}
+				return offset;
+			}
 			iterator(node* p):point(p){}
 			iterator(){}
 		};

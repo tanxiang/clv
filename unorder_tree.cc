@@ -23,8 +23,8 @@ void unorder_tree<T>::node::rotate_left(node_ptr& root_ptr){
 		right = std::move(new_root->left);				
 		right->parent = this;
 	}	
-	new_root->index_num+=(index_num+1);//add
-	new_root->filler += (filler + ptr->get_fill());//end node cannot rotate_left, so the ptr is not null
+	new_root->index_num+=(index_num+1);
+	new_root->filler += (filler + ptr->get_fill());
 	node_ptr* hander;
 	if(parent)
 		hander = this == &*parent->left ? &parent->left : &parent->right;
