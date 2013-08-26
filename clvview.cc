@@ -37,12 +37,12 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 	cr->set_font_size(16);
 	do{
 		//std::cout<<*itr<<std::endl;
-		cr->move_to(0,itr.get_fill_offset());
+		cr->move_to(0,itr.get_fill_offset());//y can self-add by loop
 		//std::cout<<"fill offset:"<<itr.get_fill_offset()<<std::endl;
 		cr->show_text(*itr);
 		height += itr->get_fill();
 		++itr;
-	}while(height<rect.height);
+	}while(height<rect.height && itr != file_context.end());
 	cr->restore();
 }
 
