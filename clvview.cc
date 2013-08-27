@@ -32,12 +32,12 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 	cr->set_source_rgb(1,1,1);
 	cr->select_font_face("Source Code Pro",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
 	auto itr = file_context.get_form_fill(rect.y);
-	file_context.dump();
+	//file_context.dump();
 	int height = 0;
 	cr->set_font_size(16);
 	do{
 		//std::cout<<*itr<<std::endl;
-		cr->move_to(0,itr.get_fill_offset());//y can self-add by loop
+		cr->move_to(0,itr.get_fill_offset()+itr->get_fill());//y can self-add by loop
 		//std::cout<<"fill offset:"<<itr.get_fill_offset()<<std::endl;
 		cr->show_text(*itr);
 		height += itr->get_fill();
@@ -58,7 +58,7 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	cr->copy_clip_rectangle_list(clip_rects);
 	//std::cerr<<"num rect = "<<clip_rects.size()<<std::endl;
 	for(auto& clip_rect:clip_rects){
-		//std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
+		std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
 		draw(cr,clip_rect);
 	}
 
