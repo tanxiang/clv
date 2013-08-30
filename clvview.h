@@ -1,9 +1,8 @@
 #ifndef _CLVVIEW_H
 #define _CLVVIEW_H
 #include <gtkmm.h>
-//#include "filemap.h"
 #include "unorder_tree.h"
-
+#include "clvline.h"
 class ClvLineArea : public Gtk::DrawingArea{
 public:
 protected:

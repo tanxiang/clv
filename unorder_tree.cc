@@ -230,5 +230,5 @@ void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 			break;
 	}while(true);
 }
-
+#include "clvline.h"
 template class unorder_tree<line>;

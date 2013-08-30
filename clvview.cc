@@ -1,5 +1,4 @@
 #include "clvview.h"
-#include <pangomm/glyphstring.h>
 
 bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	if(should_draw_window(cr,get_window())){
@@ -11,7 +10,7 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 
 ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 	file_context(file){
-	auto style = get_style_context();
+	//auto style = get_style_context();
 	//style->set_background();
 	//style->render_background(cr, 0, 0, 0, 0)
 	//override_cursor(Gdk::RGBA{"green"},Gdk::RGBA{"blue"});
@@ -35,14 +34,30 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 	//file_context.dump();
 	int height = 0;
 	cr->set_font_size(16);
-	do{
+	auto scaled_font = cr->get_scaled_font();
+	std::vector<Cairo::Glyph> glyphs;
+	std::vector<Cairo::TextCluster> text_clusters;
+	Cairo::TextClusterFlags flags;
+	while(height<rect.height && itr != file_context.end())
+	{
 		//std::cout<<*itr<<std::endl;
-		cr->move_to(0,itr.get_fill_offset()+itr->get_fill());//y can self-add by loop
+		//cr->move_to(0,itr.get_fill_offset()+itr->get_fill());//y can self-add by loop
+		//cr->show_text(*itr);
 		//std::cout<<"fill offset:"<<itr.get_fill_offset()<<std::endl;
-		cr->show_text(*itr);
+		scaled_font->text_to_glyphs(0,itr.get_fill_offset()+itr->get_fill(), *itr, glyphs, text_clusters , flags);
+
+		for(auto& glyph : glyphs){
+			std::cout<<glyph.index<<' ';
+		}
+		std::cout<<'\n';
+		for(auto& cluster:text_clusters)
+			std::cout<<cluster.num_bytes<<':'<<cluster.num_glyphs<<' ';
+		std::cout<<'\n';
+
+		cr->show_glyphs(glyphs);
 		height += itr->get_fill();
 		++itr;
-	}while(height<rect.height && itr != file_context.end());
+	}
 	cr->restore();
 }
 
