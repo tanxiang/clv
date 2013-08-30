@@ -2,8 +2,9 @@
 #define _CLVLINE_H
 #include <vector>
 #include <string>
-//#include <memory>
-#include <gtkmm.h>
+#include <istream>
+#include <cairomm/cairomm.h>
+
 class line :public std::string 
 {
 	std::vector<Cairo::Glyph> glyphs;

@@ -1,10 +1,11 @@
 cxxflags = -std=c++11 -fpic -Os -fno-rtti -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS
 #cxxflags_skia = -I../skia/include/views -I../skia/include/animator -I../skia/include/views/animated -I../skia/include/core -I../skia/include/config -I../skia/include/xml -I../skia/include/gpu -I../skia/include/utils -I../skia/src/gpu
 cxxFlags_gtkmm = `pkg-config --cflags gtkmm-3.0` -std=c++11 -fpic -Os
+cxxFlags_cairomm = `pkg-config --cflags cairomm-1.0` -std=c++11 -fpic -Os -fno-rtti
 linkflags_clang = -L/usr/lib/llvm -lclangTooling -lclangFrontend -lclangDriver -lclangParse -lclangSema -lclangAST -lclangSerialization -lclangBasic -lclangEdit -lclangLex -lclang -lclangAnalysis `llvm-config --libs` -ldl -lpthread
 #linkflags_skia = -L../skia/out/Release -lskia_sfnt -lskia_views -lskia_utils -lskia_xml -lskia_core -lskia_ports -lskia_images -lskia_opts -lskia_opts_ssse3 -lskia_skgr -lskia_effects -lskia_core -lskia_gr -lGL -lglut -lX11 -lpthread -lfreetype -lz -lbz2 -lfontconfig
 linkflags_gtkmm = `pkg-config --libs gtkmm-3.0`
-cxx = clang++
+cxx = g++
 
 rule cxx
     command = $cxx -MMD -MT $out -MF .$out.d $cxxflags -c $in -o $out
@@ -16,6 +17,11 @@ rule cxx_gtkmm
     description = CXX $out
     depfile = .$out.d
 
+rule cxx_cairomm
+    command = $cxx -MMD -MT $out -MF .$out.d $cxxFlags_cairomm -c $in -o $out
+    description = CXX $out
+    depfile = .$out.d
+    
 #rule cxx_skia
 #    command = $cxx -MMD -MT $out -MF .$out.d $cxxflags $cxxflags_skia -c $in -o $out
 #    description = CXX $out
@@ -25,7 +31,8 @@ build clthread.o: cxx clthread.cc
 build clvparser.o: cxx clvparser.cc
 build clangparse.o: cxx clangparse.cc
 build filemap.o: cxx filemap.cc
-build unorder_tree.o: cxx_gtkmm unorder_tree.cc
+build unorder_tree.o: cxx_cairomm unorder_tree.cc
+build clvline.o: cxx_cairomm clvline.cc
 #build view.o: cxx_skia view.cc
 build gtk_window.o: cxx_gtkmm gtk_window.cc
 build clvtkmm.o: cxx_gtkmm clvtkmm.cc
