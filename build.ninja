@@ -4,7 +4,7 @@ cxxFlags_gtkmm = `pkg-config --cflags gtkmm-3.0` -std=c++11 -fpic -Os
 linkflags_clang = -L/usr/lib/llvm -lclangTooling -lclangFrontend -lclangDriver -lclangParse -lclangSema -lclangAST -lclangSerialization -lclangBasic -lclangEdit -lclangLex -lclang -lclangAnalysis `llvm-config --libs` -ldl -lpthread
 #linkflags_skia = -L../skia/out/Release -lskia_sfnt -lskia_views -lskia_utils -lskia_xml -lskia_core -lskia_ports -lskia_images -lskia_opts -lskia_opts_ssse3 -lskia_skgr -lskia_effects -lskia_core -lskia_gr -lGL -lglut -lX11 -lpthread -lfreetype -lz -lbz2 -lfontconfig
 linkflags_gtkmm = `pkg-config --libs gtkmm-3.0`
-cxx = g++
+cxx = clang++
 
 rule cxx
     command = $cxx -MMD -MT $out -MF .$out.d $cxxflags -c $in -o $out
@@ -25,7 +25,7 @@ build clthread.o: cxx clthread.cc
 build clvparser.o: cxx clvparser.cc
 build clangparse.o: cxx clangparse.cc
 build filemap.o: cxx filemap.cc
-build unorder_tree.o: cxx unorder_tree.cc
+build unorder_tree.o: cxx_gtkmm unorder_tree.cc
 #build view.o: cxx_skia view.cc
 build gtk_window.o: cxx_gtkmm gtk_window.cc
 build clvtkmm.o: cxx_gtkmm clvtkmm.cc
