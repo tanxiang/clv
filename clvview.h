@@ -27,6 +27,9 @@ public:
 	
 protected:
 	bool on_draw(const ::Cairo::RefPtr< ::Cairo::Context>& cr) override;
+	bool on_key_press_event(GdkEventKey* event) override;
+	bool on_key_release_event(GdkEventKey* event) override;
+	//bool on_scroll_event(GdkEventScroll* event) override;
 };
 
 class ClvThumArea : public Gtk::DrawingArea{

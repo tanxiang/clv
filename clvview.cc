@@ -80,6 +80,17 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	return true;//Gtk::TextView::on_draw(cr);
 }
 
+bool ClvFileArea::on_key_press_event(GdkEventKey *event){
+	std::cout<<"press"<<event->string<<std::endl;
+	return true;
+}
+
+bool ClvFileArea::on_key_release_event(GdkEventKey *event){
+	std::cout<<"release"<<event->string<<std::endl;
+	return true;
+}
+
+
 ClvThumArea::ClvThumArea(){
 
 }
