@@ -10,17 +10,17 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 
 ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 	file_context(file){
-	//auto style = get_style_context();
-	//style->set_background();
-	//style->render_background(cr, 0, 0, 0, 0)
-	//override_cursor(Gdk::RGBA{"green"},Gdk::RGBA{"blue"});
-	//auto pbuffer = get_buffer();
-	//pbuffer->set_text(static_cast<char*>(file.Get()));
-	//pbuffer->apply_tag_by_name("normal",pbuffer->begin(),pbuffer->end());
+	gtk_widget_add_events (Widget::gobj() , GDK_BUTTON_PRESS_MASK );
+	gtk_widget_add_events (Widget::gobj() , GDK_BUTTON_RELEASE_MASK );
+	property_can_focus() = true;
+	auto style = get_style_context();
+	style->context_save();
+	style->add_class(GTK_STYLE_CLASS_VIEW);
+	style->context_restore();
+	
 #ifndef GLIBMM_DEFAULT_SIGNAL_HANDLERS_ENABLED
 	this->signal_draw().connect(sigc::mem_fun(*this,&ClvFileArea::on_draw));
 #endif
-	//pbuffer->apply_tag_by_name("var:composite",pbuffer->begin(),pbuffer->end());
 }
 
 #include <iostream>
@@ -89,6 +89,20 @@ bool ClvFileArea::on_key_release_event(GdkEventKey *event){
 	return true;
 }
 
+bool ClvFileArea::on_button_press_event(GdkEventButton* event){
+	std::cout<<"press m"<<std::endl;
+	if(gtk_widget_has_focus(Widget::gobj())){
+		std::cout<<"focus"<<std::endl;
+	}
+	else
+		grab_focus();
+	return true;
+}
+
+bool ClvFileArea::on_button_release_event(GdkEventButton* event){
+	std::cout<<"release m"<<std::endl;
+	return true;
+}
 
 ClvThumArea::ClvThumArea(){
 

@@ -112,6 +112,12 @@ ClvNotebook::ClvNotebook(std::vector<std::string> &fn){
 	}
 }
 
+
+bool ClvtkWindow::on_key_release_event(GdkEventKey* event){
+	//std::cout<<"ClvtkWindow\n";
+	return false;
+}
+
 ClvtkWindow::ClvtkWindow(std::vector<std::string> fn):flist_notebook(fn){
 	set_size_request(500,400);
 	add(flist_notebook);

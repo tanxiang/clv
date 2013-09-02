@@ -56,9 +56,6 @@ public:
 
 class ClvNotebook : public Gtk::Notebook{
 	std::vector<std::unique_ptr<ClvFileBox> > f_boxs;
-	bool on_key_release_event(GdkEventKey* event) override{
-		return false;
-	}
 public:
 	ClvNotebook(std::vector<std::string> &fn);
 	virtual ~ClvNotebook(){
@@ -70,9 +67,7 @@ public:
 
 class ClvtkWindow : public Gtk::Window{
 	ClvNotebook flist_notebook;
-	bool on_key_release_event(GdkEventKey* event) override{
-		return false;
-	}
+	bool on_key_release_event(GdkEventKey* event) override;
 public:
 	ClvtkWindow(std::vector<std::string> fn = std::vector<std::string>{});
 	virtual ~ClvtkWindow(){}

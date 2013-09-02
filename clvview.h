@@ -13,7 +13,9 @@ protected:
 class ClvFileArea: public Gtk::DrawingArea,public Gtk::Scrollable{
 	unorder_tree<line> &file_context;
 	Pango::TabArray tab_width;
-
+	
+	GtkIMContext *im_context;
+	
 	Pango::FontDescription get_gnome_document_font_description();
  	void on_font_setting_changed (const Glib::ustring & key);
  	void update_custom_font_setting();
@@ -29,6 +31,8 @@ protected:
 	bool on_draw(const ::Cairo::RefPtr< ::Cairo::Context>& cr) override;
 	bool on_key_press_event(GdkEventKey* event) override;
 	bool on_key_release_event(GdkEventKey* event) override;
+	bool on_button_press_event(GdkEventButton* event) override;
+	bool on_button_release_event(GdkEventButton* event) override;
 	//bool on_scroll_event(GdkEventScroll* event) override;
 };
 
