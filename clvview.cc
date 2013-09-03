@@ -44,7 +44,9 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 		//cr->show_text(*itr);
 		//std::cout<<"fill offset:"<<itr.get_fill_offset()<<std::endl;
 		scaled_font->text_to_glyphs(0,itr.get_fill_offset()+itr->get_fill(), *itr, glyphs, text_clusters , flags);
-
+		cr->show_glyphs(glyphs);
+		
+/*
 		for(auto& glyph : glyphs){
 			std::cout<<glyph.index<<' ';
 		}
@@ -52,8 +54,8 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 		for(auto& cluster:text_clusters)
 			std::cout<<cluster.num_bytes<<':'<<cluster.num_glyphs<<' ';
 		std::cout<<'\n';
-
-		cr->show_glyphs(glyphs);
+*/
+		itr->draw_to_context(cr, itr.get_fill_offset()+itr->get_fill(),rect);
 		height += itr->get_fill();
 		++itr;
 	}
@@ -72,7 +74,7 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	cr->copy_clip_rectangle_list(clip_rects);
 	//std::cerr<<"num rect = "<<clip_rects.size()<<std::endl;
 	for(auto& clip_rect:clip_rects){
-		std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
+		//std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
 		draw(cr,clip_rect);
 	}
 
