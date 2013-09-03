@@ -366,22 +366,37 @@ _cairo_ucs4_to_utf8 (uint32_t  unicode,
 	return bytes;
 }
 
-
 }
+#include <iostream>
 
-void line::sync_glyphs(unsigned int g_index){
+void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned int g_index){
 	if(g_index>glyphs.size())
 		g_index=0;
 	size_t c_index=glyphs_index[g_index];
 	uint32_t ucs4;
-	while(size()>c_index){
-		c_index += _cairo_utf8_get_char_validated(&(this->c_str()[c_index]),&ucs4);	
-		glyphs_index[g_index+1]=c_index;
+	cr->set_source_rgb(1,1,1);
+	cr->select_font_face("Source Code Pro",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
+	cr->set_font_size(16);
+	auto scaled_font = cr->get_scaled_font();
+	auto backend = scaled_font->cobj()->backend;
+	if (backend->text_to_glyphs){
+		std::cout<<"backend has a utf8 entry\n";
 	}
+	//std::cout<<"backend has a ucs4 entry\n";
+	while(size()>c_index){
+		c_index += _cairo_utf8_get_char_validated(&(c_str()[c_index]),&ucs4);	
+		std::cout<<":"<<c_index;
+		glyphs_index[g_index+1]=c_index;
+	//	uint32_t glyph = backend->ucs4_to_index(scaled_font->cobj(),ucs4);
+	//	std::cout<<"gl"<<glyph;
+	}
+	std::cout<<std::endl;
 }
 
 bool line::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr,int y, const Cairo::Rectangle &rect){
 	cr->save();
+	sync_glyphs(cr,y);
+	cr->show_glyphs(glyphs);
 	cr->restore();
 	return true;
 }

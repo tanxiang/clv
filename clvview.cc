@@ -27,24 +27,24 @@ ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 
 void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
 	cr->save();//need RAII mode restore
-	cr->set_source_rgb(1,1,1);
-	cr->select_font_face("Source Code Pro",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
+	//cr->set_source_rgb(1,1,1);
+	//cr->select_font_face("Source Code Pro",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
 	auto itr = file_context.get_form_fill(rect.y);
 	//file_context.dump();
 	int height = 0;
-	cr->set_font_size(16);
-	auto scaled_font = cr->get_scaled_font();
-	std::vector<Cairo::Glyph> glyphs;
-	std::vector<Cairo::TextCluster> text_clusters;
-	Cairo::TextClusterFlags flags;
+	//cr->set_font_size(16);
+	//auto scaled_font = cr->get_scaled_font();
+	//std::vector<Cairo::Glyph> glyphs;
+	//std::vector<Cairo::TextCluster> text_clusters;
+	//Cairo::TextClusterFlags flags;
 	while(height<rect.height && itr != file_context.end())
 	{
 		//std::cout<<*itr<<std::endl;
 		//cr->move_to(0,itr.get_fill_offset()+itr->get_fill());//y can self-add by loop
 		//cr->show_text(*itr);
 		//std::cout<<"fill offset:"<<itr.get_fill_offset()<<std::endl;
-		scaled_font->text_to_glyphs(0,itr.get_fill_offset()+itr->get_fill(), *itr, glyphs, text_clusters , flags);
-		cr->show_glyphs(glyphs);
+	//	scaled_font->text_to_glyphs(0,itr.get_fill_offset()+itr->get_fill(), *itr, glyphs, text_clusters , flags);
+	//	cr->show_glyphs(glyphs);
 		
 /*
 		for(auto& glyph : glyphs){
