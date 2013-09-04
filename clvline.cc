@@ -1,23 +1,6 @@
 #include "clvline.h"
 
 extern "C"{
-struct _cairo_hash_entry {
-	unsigned long hash;
-};
-typedef struct _cairo_hash_entry cairo_hash_entry_t;
-typedef int32_t cairo_atomic_int_t;
-typedef struct {
-	cairo_atomic_int_t ref_count;
-} cairo_reference_count_t;
-
-struct _cairo_array {
-	unsigned int size;
-	unsigned int num_elements;
-	unsigned int element_size;
-	char *elements;
-};
-typedef struct _cairo_array cairo_user_data_array_t;
-
 typedef enum _cairo_lcd_filter {
 	CAIRO_LCD_FILTER_DEFAULT,
 	CAIRO_LCD_FILTER_NONE,
@@ -32,16 +15,6 @@ typedef enum _cairo_round_glyph_positions {
 	CAIRO_ROUND_GLYPH_POS_OFF
 } cairo_round_glyph_positions_t;
 
-struct _cairo_font_options {
-	cairo_antialias_t antialias;
-	cairo_subpixel_order_t subpixel_order;
-	cairo_lcd_filter_t lcd_filter;
-	cairo_hint_style_t hint_style;
-	cairo_hint_metrics_t hint_metrics;
-	cairo_round_glyph_positions_t round_glyph_positions;
-};
-
-typedef int cairo_mutex_t;
 
 typedef struct _cairo_hash_table cairo_hash_table_t;
 
@@ -52,73 +25,7 @@ typedef struct _cairo_list {
 typedef struct _cairo_scaled_font_backend   cairo_scaled_font_backend_t;
 
 struct _cairo_scaled_font {
-	/* For most cairo objects, the rule for multiple threads is that
-	 * the user is responsible for any locking if the same object is
-	 * manipulated from multiple threads simultaneously.
-	 *
-	 * However, with the caching that cairo does for scaled fonts, a
-	 * user can easily end up with the same cairo_scaled_font object
-	 * being manipulated from multiple threads without the user ever
-	 * being aware of this, (and in fact, unable to control it).
-	 *
-	 * So, as a special exception, the cairo implementation takes care
-	 * of all locking needed for cairo_scaled_font_t. Most of what is
-	 * in the scaled font is immutable, (which is what allows for the
-	 * sharing in the first place). The things that are modified and
-	 * the locks protecting them are as follows:
-	 *
-	 * 1. The reference count (scaled_font->ref_count)
-	 *
-	 *    Modifications to the reference count are protected by the
-	 *    _cairo_scaled_font_map_mutex. This is because the reference
-	 *    count of a scaled font is intimately related with the font
-	 *    map itself, (and the magic holdovers array).
-	 *
-	 * 2. The cache of glyphs (scaled_font->glyphs)
-	 * 3. The backend private data (scaled_font->surface_backend,
-	 *				    scaled_font->surface_private)
-	 *
-	 *    Modifications to these fields are protected with locks on
-	 *    scaled_font->mutex in the generic scaled_font code.
-	 */
-
-	cairo_hash_entry_t hash_entry;
-
-	/* useful bits for _cairo_scaled_font_nil */
-	cairo_status_t status;
-	cairo_reference_count_t ref_count;
-	cairo_user_data_array_t user_data;
-
-	cairo_font_face_t *original_font_face; /* may be NULL */
-
-	/* hash key members */
-	cairo_font_face_t *font_face; /* may be NULL */
-	cairo_matrix_t font_matrix;	  /* font space => user space */
-	cairo_matrix_t ctm;	          /* user space => device space */
-	cairo_font_options_t options;
-
-	unsigned int placeholder : 1; /*  protected by fontmap mutex */
-	unsigned int holdover : 1;
-	unsigned int finished : 1;
-
-	/* "live" scaled_font members */
-	cairo_matrix_t scale;	     /* font space => device space */
-	cairo_matrix_t scale_inverse;    /* device space => font space */
-	double max_scale;		     /* maximum x/y expansion of scale */
-	cairo_font_extents_t extents;    /* user space */
-	cairo_font_extents_t fs_extents; /* font space */
-
-	/* The mutex protects modification to all subsequent fields. */
-	cairo_mutex_t mutex;
-
-	cairo_hash_table_t *glyphs;
-	cairo_list_t glyph_pages;
-	cairo_bool_t cache_frozen;
-	cairo_bool_t global_cache_frozen;
-
-	cairo_list_t dev_privates;
-
-	/* font backend managing this scaled font */
+	unsigned char padding[0x18c];
 	const cairo_scaled_font_backend_t *backend;
 	cairo_list_t link;
 };
@@ -379,16 +286,18 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 	cr->set_font_size(16);
 	auto scaled_font = cr->get_scaled_font();
 	auto backend = scaled_font->cobj()->backend;
-	if (backend->text_to_glyphs){
-		std::cout<<"backend has a utf8 entry\n";
-	}
 	//std::cout<<"backend has a ucs4 entry\n";
+#if 0
+	printf(" %08x\n",scaled_font->cobj());
+	printf(": %08x\n",&(scaled_font->cobj()->backend));
+	printf(":: %08x\n",&(backend->text_to_glyphs));
+#endif
 	while(size()>c_index){
 		c_index += _cairo_utf8_get_char_validated(&(c_str()[c_index]),&ucs4);	
 		std::cout<<":"<<c_index;
 		glyphs_index[g_index+1]=c_index;
-	//	uint32_t glyph = backend->ucs4_to_index(scaled_font->cobj(),ucs4);
-	//	std::cout<<"gl"<<glyph;
+		uint32_t glyph = backend->ucs4_to_index(scaled_font->cobj(),ucs4);
+		std::cout<<"gl"<<glyph;
 	}
 	std::cout<<std::endl;
 }
