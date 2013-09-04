@@ -286,20 +286,21 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 	cr->set_font_size(16);
 	auto scaled_font = cr->get_scaled_font();
 	auto backend = scaled_font->cobj()->backend;
-	//std::cout<<"backend has a ucs4 entry\n";
 #if 0
 	printf(" %08x\n",scaled_font->cobj());
 	printf(": %08x\n",&(scaled_font->cobj()->backend));
 	printf(":: %08x\n",&(backend->text_to_glyphs));
 #endif
+	//cairo_scaled_glyph_t glyph_size;
+	int i=0;
 	while(size()>c_index){
 		c_index += _cairo_utf8_get_char_validated(&(c_str()[c_index]),&ucs4);	
-		std::cout<<":"<<c_index;
+		//std::cout<<":"<<c_index;
 		glyphs_index[g_index+1]=c_index;
 		uint32_t glyph = backend->ucs4_to_index(scaled_font->cobj(),ucs4);
-		std::cout<<"gl"<<glyph;
+		glyphs.push_back(Cairo::Glyph{glyph,i+=10,y});
 	}
-	std::cout<<std::endl;
+	//std::cout<<std::endl;
 }
 
 bool line::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr,int y, const Cairo::Rectangle &rect){
