@@ -280,6 +280,9 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 	if(g_index>glyphs.size())
 		g_index=0;
 	size_t c_index=glyphs_index[g_index];
+	glyphs.clear();
+	glyphs_index.clear();
+	glyphs_index.push_back(0);
 	uint32_t ucs4;
 	cr->set_source_rgb(1,1,1);
 	cr->select_font_face("Source Code Pro",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
