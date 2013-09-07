@@ -32,6 +32,40 @@ struct _cairo_scaled_font {
 
 #define cairo_warn
 typedef uint32_t cairo_int_status_t;//enum type
+
+typedef struct _cairo_hash_entry cairo_hash_entry_t;
+typedef int32_t cairo_fixed_t;
+typedef struct _cairo_point {
+	cairo_fixed_t x;
+	cairo_fixed_t y;
+} cairo_point_t;
+typedef struct _cairo_line {
+	cairo_point_t p1;
+	cairo_point_t p2;
+} cairo_line_t, cairo_box_t;
+typedef struct _cairo_image_surface cairo_image_surface_t;
+typedef struct _cairo_path_fixed cairo_path_fixed_t;
+struct _cairo_hash_entry {
+	    unsigned long hash;
+};
+struct _cairo_scaled_glyph {
+	cairo_hash_entry_t hash_entry;
+
+	cairo_text_extents_t    metrics;		/* user-space metrics */
+	cairo_text_extents_t    fs_metrics;		/* font-space metrics */
+	cairo_box_t		    bbox;		/* device-space bounds */
+	int16_t                 x_advance;		/* device-space rounded X advance */
+	int16_t                 y_advance;		/* device-space rounded Y advance */
+
+	unsigned int	    has_info;
+	cairo_image_surface_t   *surface;		/* device-space image */
+	cairo_path_fixed_t	    *path;		/* device-space outline */
+	cairo_surface_t         *recording_surface;	/* device-space recording-surface */
+
+	const void		   *dev_private_key;
+	void		   *dev_private;
+	cairo_list_t            dev_privates;
+};
 typedef struct _cairo_scaled_glyph cairo_scaled_glyph_t;
 typedef enum _cairo_scaled_glyph_info{
 	CAIRO_SCALED_GLYPH_INFO_METRICS	 = (1 << 0),
@@ -296,12 +330,32 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 #endif
 	//cairo_scaled_glyph_t glyph_size;
 	int i=0;
+	cairo_scaled_glyph_t scaled_glyph;
 	while(size()>c_index){
 		c_index += _cairo_utf8_get_char_validated(&(c_str()[c_index]),&ucs4);	
-		//std::cout<<":"<<c_index;
+		//if(ucs4 is Correct)
 		glyphs_index[g_index+1]=c_index;
 		uint32_t glyph = backend->ucs4_to_index(scaled_font->cobj(),ucs4);
-		glyphs.push_back(Cairo::Glyph{glyph,i+=10,y});
+		if(glyph){
+			scaled_glyph.hash_entry.hash=glyph;
+			//FIXME:need cairo hash table acc
+			backend->scaled_glyph_init(scaled_font->cobj(),&scaled_glyph,CAIRO_SCALED_GLYPH_INFO_METRICS);
+			glyphs.push_back(Cairo::Glyph{glyph,i+=scaled_glyph.x_advance,y});
+		}
+		else switch(ucs4){//u
+			case '\t':
+				glyph = backend->ucs4_to_index(scaled_font->cobj(),' ');
+				scaled_glyph.hash_entry.hash=glyph;
+				backend->scaled_glyph_init(scaled_font->cobj(),&scaled_glyph,CAIRO_SCALED_GLYPH_INFO_METRICS);
+				glyphs.push_back(Cairo::Glyph{glyph,i+=scaled_glyph.x_advance*4,y});
+				break;
+			case '\r':
+				break;
+			case '\n':
+				break;
+			default: //fallback font;
+				std::cout<<"unrec crect\n";
+		}
 	}
 	//std::cout<<std::endl;
 }
