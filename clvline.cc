@@ -319,7 +319,7 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 	glyphs_index.push_back(0);
 	uint32_t ucs4;
 	cr->set_source_rgb(1,1,1);
-	cr->select_font_face("Source Code Pro",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
+	cr->select_font_face("Sans",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
 	cr->set_font_size(16);
 	auto scaled_font = cr->get_scaled_font();
 	auto backend = scaled_font->cobj()->backend;
@@ -340,7 +340,8 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 			scaled_glyph.hash_entry.hash=glyph;
 			//FIXME:need cairo hash table acc
 			backend->scaled_glyph_init(scaled_font->cobj(),&scaled_glyph,CAIRO_SCALED_GLYPH_INFO_METRICS);
-			glyphs.push_back(Cairo::Glyph{glyph,i+=scaled_glyph.x_advance,y});
+			glyphs.push_back(Cairo::Glyph{glyph,i,y});
+			i+=scaled_glyph.x_advance;
 		}
 		else switch(ucs4){//u
 			case '\t':
