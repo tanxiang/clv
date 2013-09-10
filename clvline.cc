@@ -311,13 +311,31 @@ _cairo_ucs4_to_utf8 (uint32_t  unicode,
 #include <iostream>
 
 void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned int g_index){
-	if(g_index>glyphs.size())
-		g_index=0;
-	size_t c_index=glyphs_index[g_index];
-	glyphs.clear();
-	glyphs_index.clear();
-	glyphs_index.push_back(0);
-	uint32_t ucs4;
+	int w_index=0;
+	int wg_index=0;
+	for(auto& glyphs:line_glyphs){
+		if(glyphs.size()>=g_index){
+			wg_index=g_index;
+			break;
+		}
+		g_index-=glyphs.size();
+		w_index++;
+	}
+	if(w_index == line_glyphs.size()){//w_index cannot > line_glyphs.size() 
+		line_glyphs.push_back(word_glyphs{});
+		glyphs_index.push_back(std::vector<int>{});
+	}
+	else{//delete to end
+		line_glyphs.erase(line_glyphs.begin()+w_index+1,line_glyphs.end());
+		glyphs_index.erase(glyphs_index.begin()+w_index+1,glyphs_index.end());
+		line_glyphs[w_index].erase(line_glyphs[w_index].begin()+wg_index,line_glyphs[w_index].end());
+		glyphs_index[w_index].erase(glyphs_index[w_index].begin()+wg_index,glyphs_index[w_index].end());
+	}
+	//line_glyphs.clear();
+	//glyphs_index.clear();
+	return;
+	size_t c_index=glyphs_index[w_index][wg_index];
+	
 	cr->set_source_rgb(1,1,1);
 	cr->select_font_face("Sans",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
 	cr->set_font_size(16);
@@ -328,19 +346,19 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 	printf(": %08x\n",&(scaled_font->cobj()->backend));
 	printf(":: %08x\n",&(backend->text_to_glyphs));
 #endif
-	//cairo_scaled_glyph_t glyph_size;
 	int i=0;
+	uint32_t ucs4;
 	cairo_scaled_glyph_t scaled_glyph;
 	while(size()>c_index){
 		c_index += _cairo_utf8_get_char_validated(&(c_str()[c_index]),&ucs4);	
 		//if(ucs4 is Correct)
-		glyphs_index[g_index+1]=c_index;
+		glyphs_index[w_index][wg_index]=c_index;
 		uint32_t glyph = backend->ucs4_to_index(scaled_font->cobj(),ucs4);
 		if(glyph){
 			scaled_glyph.hash_entry.hash=glyph;
 			//FIXME:need cairo hash table acc
 			backend->scaled_glyph_init(scaled_font->cobj(),&scaled_glyph,CAIRO_SCALED_GLYPH_INFO_METRICS);
-			glyphs.push_back(Cairo::Glyph{glyph,i,y});
+			line_glyphs[w_index].push_back(Cairo::Glyph{glyph,i,y});
 			i+=scaled_glyph.x_advance;
 		}
 		else switch(ucs4){//u
@@ -348,7 +366,7 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 				glyph = backend->ucs4_to_index(scaled_font->cobj(),' ');
 				scaled_glyph.hash_entry.hash=glyph;
 				backend->scaled_glyph_init(scaled_font->cobj(),&scaled_glyph,CAIRO_SCALED_GLYPH_INFO_METRICS);
-				glyphs.push_back(Cairo::Glyph{glyph,i+=scaled_glyph.x_advance*4,y});
+				line_glyphs[w_index].push_back(Cairo::Glyph{glyph,i+=scaled_glyph.x_advance*4,y});
 				break;
 			case '\r':
 				break;
@@ -364,7 +382,8 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 bool line::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr,int y, const Cairo::Rectangle &rect){
 	cr->save();
 	sync_glyphs(cr,y);
-	cr->show_glyphs(glyphs);
+	for(auto& glyphs:line_glyphs)
+		cr->show_glyphs(glyphs);
 	cr->restore();
 	return true;
 }

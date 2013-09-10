@@ -7,8 +7,9 @@
 
 class line :public std::string 
 {
-	std::vector<Cairo::Glyph> glyphs;
-	std::vector<int> glyphs_index;
+	typedef std::vector<Cairo::Glyph> word_glyphs;
+	std::vector<word_glyphs> line_glyphs;
+	std::vector<std::vector<int> > glyphs_index;
 protected:
 	void sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned int s=0);
 public:
@@ -20,7 +21,7 @@ public:
 		//std::cerr<<"line free\n";
 	//}
 	line(){
-		glyphs_index.push_back(0);
+		//glyphs_index.push_back(0);
 	}
 	fill_t get_fill(){
 		return 16;
