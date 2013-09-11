@@ -333,8 +333,12 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 	}
 	//line_glyphs.clear();
 	//glyphs_index.clear();
-	return;
-	size_t c_index=glyphs_index[w_index][wg_index];
+	size_t c_index=0;
+	if(wg_index)
+		c_index=glyphs_index[w_index][wg_index-1];
+	else if(w_index)
+		c_index=*glyphs_index[w_index-1].rbegin();
+	//return;
 	
 	cr->set_source_rgb(1,1,1);
 	cr->select_font_face("Sans",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
@@ -352,7 +356,7 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 	while(size()>c_index){
 		c_index += _cairo_utf8_get_char_validated(&(c_str()[c_index]),&ucs4);	
 		//if(ucs4 is Correct)
-		glyphs_index[w_index][wg_index]=c_index;
+		glyphs_index[w_index].push_back(c_index);
 		uint32_t glyph = backend->ucs4_to_index(scaled_font->cobj(),ucs4);
 		if(glyph){
 			scaled_glyph.hash_entry.hash=glyph;
