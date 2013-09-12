@@ -311,37 +311,37 @@ _cairo_ucs4_to_utf8 (uint32_t  unicode,
 #include <iostream>
 
 void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned int g_index){
-	int w_index=0;
-	int wg_index=0;
-	for(auto& glyphs:line_glyphs){
-		if(glyphs.size()>=g_index){
-			wg_index=g_index;
+	int groups_index=0;
+	int glyphs_index=0;
+	for(auto& group:line_glyphs){
+		if(group.size()>=g_index){
+			glyphs_index=g_index;
 			break;
 		}
-		g_index-=glyphs.size();
-		w_index++;
+		g_index-=group.size();
+		groups_index++;
 	}
-	if(w_index == line_glyphs.size()){//w_index cannot > line_glyphs.size() 
-		line_glyphs.push_back(word_glyphs{});
-		glyphs_index.push_back(std::vector<int>{});
+	if(groups_index == line_glyphs.size()){//groups_index cannot > line_glyphs.size() 
+		line_glyphs.push_back(glyphs_group{});
+		line_index.push_back(std::vector<int>{});
 	}
 	else{//delete to end
-		line_glyphs.erase(line_glyphs.begin()+w_index+1,line_glyphs.end());
-		glyphs_index.erase(glyphs_index.begin()+w_index+1,glyphs_index.end());
-		line_glyphs[w_index].erase(line_glyphs[w_index].begin()+wg_index,line_glyphs[w_index].end());
-		glyphs_index[w_index].erase(glyphs_index[w_index].begin()+wg_index,glyphs_index[w_index].end());
+		line_glyphs.erase(line_glyphs.begin()+groups_index+1,line_glyphs.end());
+		line_index.erase(line_index.begin()+groups_index+1,line_index.end());
+		line_glyphs[groups_index].erase(line_glyphs[groups_index].begin()+glyphs_index,line_glyphs[groups_index].end());
+		line_index[groups_index].erase(line_index[groups_index].begin()+glyphs_index,line_index[groups_index].end());
 	}
 	//line_glyphs.clear();
 	//glyphs_index.clear();
 	size_t c_index=0;
-	if(wg_index)
-		c_index=glyphs_index[w_index][wg_index-1];
-	else if(w_index)
-		c_index=*glyphs_index[w_index-1].rbegin();
+	if(glyphs_index)
+		c_index=line_index[groups_index][glyphs_index-1];
+	else if(groups_index)
+		c_index=*line_index[groups_index-1].rbegin();
 	//return;
 	
 	cr->set_source_rgb(1,1,1);
-	cr->select_font_face("Sans",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
+	cr->select_font_face("Source Code Pro",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
 	cr->set_font_size(16);
 	auto scaled_font = cr->get_scaled_font();
 	auto backend = scaled_font->cobj()->backend;
@@ -356,13 +356,13 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 	while(size()>c_index){
 		c_index += _cairo_utf8_get_char_validated(&(c_str()[c_index]),&ucs4);	
 		//if(ucs4 is Correct)
-		glyphs_index[w_index].push_back(c_index);
+		line_index[groups_index].push_back(c_index);
 		uint32_t glyph = backend->ucs4_to_index(scaled_font->cobj(),ucs4);
 		if(glyph){
 			scaled_glyph.hash_entry.hash=glyph;
 			//FIXME:need cairo hash table acc
 			backend->scaled_glyph_init(scaled_font->cobj(),&scaled_glyph,CAIRO_SCALED_GLYPH_INFO_METRICS);
-			line_glyphs[w_index].push_back(Cairo::Glyph{glyph,i,y});
+			line_glyphs[groups_index].push_back(Cairo::Glyph{glyph,i,y});
 			i+=scaled_glyph.x_advance;
 		}
 		else switch(ucs4){//u
@@ -370,7 +370,7 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 				glyph = backend->ucs4_to_index(scaled_font->cobj(),' ');
 				scaled_glyph.hash_entry.hash=glyph;
 				backend->scaled_glyph_init(scaled_font->cobj(),&scaled_glyph,CAIRO_SCALED_GLYPH_INFO_METRICS);
-				line_glyphs[w_index].push_back(Cairo::Glyph{glyph,i+=scaled_glyph.x_advance*4,y});
+				line_glyphs[groups_index].push_back(Cairo::Glyph{glyph,i+=scaled_glyph.x_advance*4,y});
 				break;
 			case '\r':
 				break;
@@ -387,7 +387,15 @@ bool line::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr,int y, const 
 	cr->save();
 	sync_glyphs(cr,y);
 	for(auto& glyphs:line_glyphs)
-		cr->show_glyphs(glyphs);
+		glyphs.draw_to_context(cr);
+	cr->restore();
+	return true;
+}
+
+
+bool glyphs_group::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr){
+	cr->save();
+	cr->show_glyphs(*this);
 	cr->restore();
 	return true;
 }

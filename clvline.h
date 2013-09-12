@@ -5,11 +5,16 @@
 #include <istream>
 #include <cairomm/cairomm.h>
 
+class glyphs_group :public std::vector<Cairo::Glyph>
+{
+public:
+	bool draw_to_context(const Cairo::RefPtr<Cairo::Context>& cr);
+};
+
 class line :public std::string 
 {
-	typedef std::vector<Cairo::Glyph> word_glyphs;
-	std::vector<word_glyphs> line_glyphs;
-	std::vector<std::vector<int> > glyphs_index;
+	std::vector<glyphs_group> line_glyphs;
+	std::vector<std::vector<int> > line_index;
 protected:
 	void sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned int s=0);
 public:
