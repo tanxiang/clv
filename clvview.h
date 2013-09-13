@@ -10,7 +10,7 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
-class ClvFileArea: public Gtk::DrawingArea,public Gtk::Scrollable{
+class ClvFileArea: public Gtk::DrawingArea{
 	unorder_tree<line> &file_context;
 	Pango::TabArray tab_width;
 	

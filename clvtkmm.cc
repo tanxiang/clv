@@ -57,7 +57,7 @@ Gtk::Image ClvFileBox::close_icon=[]{
 ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	file_name(fs),file_stream(file_name),
 	file_context(std::istream_iterator<line>{file_stream},std::istream_iterator<line>{}),
-	view(file_context),tab_label(file_name){
+	main_view(file_context),tab_label(file_name){
 	static const gchar button_style[] =
 		"* {\n"
 		  "-GtkButton-default-border : 0;\n"
@@ -77,13 +77,13 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	save_icon.set_from_icon_name("gtk-save",Gtk::ICON_SIZE_MENU);
 	bt_save.set_image (save_icon);
 	bt_save.get_style_context()->add_provider(css,400);
-	bt_save.signal_clicked().connect(sigc::mem_fun(view,&ClvFViewBox::save));
+	bt_save.signal_clicked().connect(sigc::mem_fun(main_view,&ClvFViewBox::save));
 
 	bt_close.set_relief(Gtk::RELIEF_NONE);
 	close_icon.set_from_icon_name("window-close-symbolic",Gtk::ICON_SIZE_MENU);
 	bt_close.set_image (close_icon);
 	bt_close.get_style_context()->add_provider(css,400);
-	bt_close.signal_clicked().connect(sigc::mem_fun(view,&ClvFViewBox::close));
+	bt_close.signal_clicked().connect(sigc::mem_fun(main_view,&ClvFViewBox::close));
 
 	//auto style = tab_box.get_style_context();
 	//style->add_provider(css,0);
@@ -94,7 +94,11 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	tab_box.pack_start(bt_save,false,false,0);
 	tab_box.pack_start(bt_close,false,false,0);
 	tab_box.show_all_children();
-	pack_start(view);
+	//scrolled_view.set_border_width(10);
+	scrolled_view.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
+	main_view.set_size_request( 0, 700 );
+	scrolled_view.add(main_view);
+	pack_start(scrolled_view);
 	pack_end(tool_bar,Gtk::PACK_SHRINK);
 }
 

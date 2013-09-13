@@ -10,7 +10,7 @@
 #include <fstream>
 #include "clvview.h"
 
-class ClvFViewBox : public Gtk::Box{
+class ClvFViewBox : public Gtk::Box {
 	unorder_tree<line> &file;
 	ClvLineArea lineview;
 	ClvFileArea fileview;
@@ -37,7 +37,7 @@ class ClvFileBox : public Gtk::Box{
 	Glib::ustring file_name;
 	std::fstream file_stream;
 	unorder_tree<line> file_context;
-	ClvFViewBox view;
+	ClvFViewBox main_view;
 	ClvToolBox tool_bar;
 	Gtk::Image save_icon;
 	Gtk::Button bt_save;
@@ -45,6 +45,7 @@ class ClvFileBox : public Gtk::Box{
 	Gtk::Button bt_close;
 	Gtk::Label tab_label;
 	Gtk::Box tab_box;
+	Gtk::ScrolledWindow scrolled_view;
 public:
 	ClvFileBox(Glib::ustring fs="");
 	virtual ~ClvFileBox(){};
