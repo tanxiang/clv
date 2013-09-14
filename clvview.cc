@@ -28,7 +28,7 @@ ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
 	cr->save();//need RAII mode restore
 	auto itr = file_context.get_form_fill(rect.y);
-	int height = 0;
+	int height = itr.get_fill_offset() - rect.y;//FIXME need a better way
 	while(height<rect.height && itr != file_context.end())
 	{
 		itr->draw_to_context(cr, itr.get_fill_offset()+itr->get_fill(),rect);
