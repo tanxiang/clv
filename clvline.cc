@@ -377,7 +377,8 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 			case '\n':
 				break;
 			default: //fallback font;
-				std::cout<<"unrec crect\n";
+				;
+				//std::cout<<"unrec crect\n";
 		}
 	}
 	//std::cout<<std::endl;

@@ -149,15 +149,18 @@ public:
 
 	iterator get_form_fill(typename T::fill_t filler_offset){
 		node* search_point = &*root;
+		//std::cerr<<"get_form_fill\n";
 		do{
-			//std::cerr<<search_point->filler<<*(search_point->ptr)<<std::endl;
-			if(filler_offset<search_point->filler)
+			//std::cerr<<filler_offset<<':'<<search_point->filler<<';'<<*(search_point->ptr)<<std::endl;
+			if(filler_offset < search_point->filler)
 				search_point = &*search_point->left;
-			else if(filler_offset<search_point->filler + search_point->ptr->get_fill())
+			else if(filler_offset < search_point->filler + search_point->ptr->get_fill())
 				return iterator{search_point};
 			else{
-				search_point = &*search_point->right;
 				filler_offset -= search_point->filler + search_point->ptr->get_fill();
+				search_point = &*search_point->right;
+				if(!search_point)
+					return iterator{search_point};
 			}
 		}while(true);
 	}

@@ -47,9 +47,9 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	cr->paint();
 	std::vector<Cairo::Rectangle> clip_rects;
 	cr->copy_clip_rectangle_list(clip_rects);
-	std::cerr<<"num rect = "<<clip_rects.size()<<std::endl;
+	//std::cerr<<"num rect = "<<clip_rects.size()<<std::endl;
 	for(auto& clip_rect:clip_rects){
-		//std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
+		std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
 		draw(cr,clip_rect);
 	}
 	cr->restore();
