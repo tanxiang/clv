@@ -15,9 +15,9 @@ ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 	property_can_focus() = true;
 	auto style = get_style_context();
 	style->context_save();
-	style->add_class(GTK_STYLE_CLASS_VIEW);
+	//style->add_class(GTK_STYLE_CLASS_VIEW);
 	style->context_restore();
-	
+	set_size_request( 0, file_context.end().get_fill_offset());
 #ifndef GLIBMM_DEFAULT_SIGNAL_HANDLERS_ENABLED
 	this->signal_draw().connect(sigc::mem_fun(*this,&ClvFileArea::on_draw));
 #endif
@@ -29,9 +29,9 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 	cr->save();//need RAII mode restore
 	auto itr = file_context.get_form_fill(rect.y);
 	int height = 0;
-	//std::cerr<<"itr p:"<<itr.point<<std::endl;
-	if(itr != file_context.end())
-		height = itr.get_fill_offset() - rect.y;//FIXME need a better way
+
+	//if(itr != file_context.end())
+	height = itr.get_fill_offset() - rect.y;//FIXME need a better way
 	while(height<rect.height && itr != file_context.end())
 	{
 		itr->draw_to_context(cr, itr.get_fill_offset()+itr->get_fill(),rect);

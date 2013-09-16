@@ -117,14 +117,14 @@ public:
 			return *this;
 		}
 		bool operator !=(iterator it){
-			std::cerr<<point<<"!=?"<<it.point<<std::endl;
+			//std::cerr<<point<<"!=?"<<it.point<<std::endl;
 			return point!=it.point;
 		}
 		bool operator ==(iterator it){return point==it.point;}
 		T& operator *(){return *point->ptr;}
 		T* operator -> (){return &*point->ptr;}
 		typename T::fill_t get_fill_offset(){
-			std::cerr<<point<<":node*\n";
+			//std::cerr<<point<<":node*\n";
 			typename T::fill_t offset=point->filler;
 			node* search_point = point;
 			while(search_point->parent){

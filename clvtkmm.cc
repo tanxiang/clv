@@ -95,10 +95,10 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	tab_box.pack_start(bt_close,false,false,0);
 	tab_box.show_all_children();
 	//scrolled_view.set_border_width(10);
-	scrolled_view.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
-	main_view.set_size_request( 0, 700 );
-	scrolled_view.add(main_view);
-	pack_start(scrolled_view);
+	//scrolled_view.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
+	//main_view.set_size_request( 0, 700 );
+	//scrolled_view.add(main_view);
+	pack_start(main_view);
 	pack_end(tool_bar,Gtk::PACK_SHRINK);
 }
 

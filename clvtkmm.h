@@ -45,7 +45,7 @@ class ClvFileBox : public Gtk::Box{
 	Gtk::Button bt_close;
 	Gtk::Label tab_label;
 	Gtk::Box tab_box;
-	Gtk::ScrolledWindow scrolled_view;
+	//Gtk::ScrolledWindow scrolled_view;
 public:
 	ClvFileBox(Glib::ustring fs="");
 	virtual ~ClvFileBox(){};
