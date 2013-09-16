@@ -116,11 +116,15 @@ public:
 			}
 			return *this;
 		}
-		bool operator !=(iterator it){return point!=it.point;}
+		bool operator !=(iterator it){
+			std::cerr<<point<<"!=?"<<it.point<<std::endl;
+			return point!=it.point;
+		}
 		bool operator ==(iterator it){return point==it.point;}
 		T& operator *(){return *point->ptr;}
 		T* operator -> (){return &*point->ptr;}
 		typename T::fill_t get_fill_offset(){
+			std::cerr<<point<<":node*\n";
 			typename T::fill_t offset=point->filler;
 			node* search_point = point;
 			while(search_point->parent){
@@ -158,9 +162,10 @@ public:
 				return iterator{search_point};
 			else{
 				filler_offset -= search_point->filler + search_point->ptr->get_fill();
-				search_point = &*search_point->right;
-				if(!search_point)
+				if(!search_point->right)
 					return iterator{search_point};
+				search_point = &*search_point->right;
+
 			}
 		}while(true);
 	}
