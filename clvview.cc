@@ -70,9 +70,13 @@ bool ClvFileArea::on_key_release_event(GdkEventKey *event){
 }
 
 bool ClvFileArea::on_button_press_event(GdkEventButton* event){
-	std::cout<<"press m"<<std::endl;
+	std::cerr<<"pat"<<event->x<<","<<event->y<<"\n";
+	auto line_itr=file_context.get_form_fill(event->y);
+	if(line_itr!=file_context.end()){
+		line_itr->x_to_index(event->x);
+	}
 	if(gtk_widget_has_focus(Widget::gobj())){
-		std::cout<<"focus"<<std::endl;
+		//std::cout<<"focus"<<std::endl;
 	}
 	else
 		grab_focus();

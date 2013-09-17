@@ -383,6 +383,19 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 	}
 	//std::cout<<std::endl;
 }
+#include <algorithm>
+
+int line::x_to_index(int x)
+{
+	auto lower_group = std::lower_bound(line_glyphs.begin(),line_glyphs.end(),x,
+			[](glyphs_group &group,int x){return group.empty() ? true : group.rbegin()->x > x;});
+	std::cerr<<"size"<<lower_group->size()<<"\n";
+//	if(lower_group->empty())
+//		return 0;
+//	auto lower_gl = std::lower_bound(lower_group->begin(),lower_group->end(),x,
+//			[](Cairo::Glyph &gl ,int x){return gl.x > x;});
+	return 0;
+}
 
 bool line::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr,int y, const Cairo::Rectangle &rect){
 	cr->save();
