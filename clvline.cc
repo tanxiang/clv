@@ -46,7 +46,7 @@ typedef struct _cairo_line {
 typedef struct _cairo_image_surface cairo_image_surface_t;
 typedef struct _cairo_path_fixed cairo_path_fixed_t;
 struct _cairo_hash_entry {
-	    unsigned long hash;
+	unsigned long hash;
 };
 struct _cairo_scaled_glyph {
 	cairo_hash_entry_t hash_entry;
@@ -339,7 +339,7 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 	else if(groups_index)
 		c_index=*line_index[groups_index-1].rbegin();
 	//return;
-	
+
 	cr->set_source_rgb(1,1,1);
 	cr->select_font_face("Source Code Pro",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
 	cr->set_font_size(16);

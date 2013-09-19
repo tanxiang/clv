@@ -12,6 +12,8 @@ ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 	file_context(file){
 	gtk_widget_add_events (Widget::gobj() , GDK_BUTTON_PRESS_MASK );
 	gtk_widget_add_events (Widget::gobj() , GDK_BUTTON_RELEASE_MASK );
+	im_context = gtk_im_multicontext_new();
+	gtk_im_context_set_client_window(im_context,get_window()->gobj());
 	property_can_focus() = true;
 	auto style = get_style_context();
 	style->context_save();

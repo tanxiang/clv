@@ -25,7 +25,9 @@ class ClvFileArea: public Gtk::DrawingArea{
 public:
 	void draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect);
 	ClvFileArea(unorder_tree<line> &file);
-	virtual ~ClvFileArea(){};
+	virtual ~ClvFileArea(){
+		g_object_unref (im_context);
+	};
 	
 protected:
 	bool on_draw(const ::Cairo::RefPtr< ::Cairo::Context>& cr) override;
