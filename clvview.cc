@@ -13,11 +13,19 @@ ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 	gtk_widget_add_events (Widget::gobj() , GDK_BUTTON_PRESS_MASK );
 	gtk_widget_add_events (Widget::gobj() , GDK_BUTTON_RELEASE_MASK );
 	im_context = gtk_im_multicontext_new();
-	gtk_im_context_set_client_window(im_context,get_window()->gobj());
+	//gtk_im_context_set_client_window(im_context,get_window()->gobj());
+	//gtk_im_context_set_client_window(im_context,nullptr);
+	//Gdk::Window::create(get_parent_window(), <#GdkWindowAttr *attributes#>, <#int attributes_mask#>)
+	
+	g_signal_connect (im_context, "commit", G_CALLBACK (&ClvFileArea::commit_proxy), this);
+	g_signal_connect (im_context, "preedit-changed",G_CALLBACK (&ClvFileArea::commit_proxy), this);
+	g_signal_connect (im_context, "retrieve-surrounding",G_CALLBACK (&ClvFileArea::commit_proxy), this);
+	g_signal_connect (im_context, "delete-surrounding",G_CALLBACK (&ClvFileArea::commit_proxy), this);
+	
 	property_can_focus() = true;
 	auto style = get_style_context();
 	style->context_save();
-	//style->add_class(GTK_STYLE_CLASS_VIEW);
+	style->add_class(GTK_STYLE_CLASS_VIEW);
 	style->context_restore();
 	set_size_request( 0, file_context.end().get_fill_offset());
 #ifndef GLIBMM_DEFAULT_SIGNAL_HANDLERS_ENABLED

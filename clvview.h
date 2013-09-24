@@ -24,13 +24,15 @@ class ClvFileArea: public Gtk::DrawingArea{
  	bool button_pressed (GdkEventButton * ev);
 public:
 	void draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect);
+	static void commit_proxy(GtkIMContext *context,const gchar  *str,ClvFileArea* pobj){
+	}
 	ClvFileArea(unorder_tree<line> &file);
 	virtual ~ClvFileArea(){
 		g_object_unref (im_context);
 	};
 	
 protected:
-	bool on_draw(const ::Cairo::RefPtr< ::Cairo::Context>& cr) override;
+	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 	bool on_key_press_event(GdkEventKey* event) override;
 	bool on_key_release_event(GdkEventKey* event) override;
 	bool on_button_press_event(GdkEventButton* event) override;
