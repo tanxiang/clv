@@ -19,6 +19,10 @@ ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 	g_signal_connect (im_context, "retrieve-surrounding",G_CALLBACK (&ClvFileArea::commit_proxy), this);
 	g_signal_connect (im_context, "delete-surrounding",G_CALLBACK (&ClvFileArea::commit_proxy), this);
 	GdkWindowAttr attributes;
+	attributes.x = 0;
+	attributes.y = 0;
+	attributes.width = 1;
+	attributes.height = 1;
 	attributes.window_type = GDK_WINDOW_CHILD;
 	attributes.wclass = GDK_INPUT_ONLY;
 	attributes.event_mask = get_events();
