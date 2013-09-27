@@ -50,6 +50,7 @@ protected:
 	bool on_button_release_event(GdkEventButton* event) override;
 	//bool on_scroll_event(GdkEventScroll* event) override;
 	void on_realize() override;
+	void on_unrealize() override;
 };
 
 class ClvThumArea : public Gtk::DrawingArea{

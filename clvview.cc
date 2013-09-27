@@ -36,7 +36,7 @@ void ClvFileArea::on_realize(){
 	auto allocation = get_allocation();
 	attributes.x = allocation.get_x();
 	attributes.y = allocation.get_y();
-	attributes.width =1;// allocation.get_width();
+	attributes.width =23;// allocation.get_width();
 	attributes.height =1;// allocation.get_height();
 	std::cerr<<attributes.x<<":"<<attributes.y<<":"<<attributes.width<<":"<<attributes.height<<"\n";
 	attributes.window_type = GDK_WINDOW_CHILD;
@@ -56,6 +56,10 @@ void ClvFileArea::on_realize(){
 	client_window->lower();
 	gtk_im_context_set_client_window(im_context,client_window->gobj());
 	Gtk::DrawingArea::on_realize();
+}
+
+void ClvFileArea::on_unrealize(){
+	Gtk::DrawingArea::on_unrealize();
 }
 
 void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
