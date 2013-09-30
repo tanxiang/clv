@@ -60,6 +60,7 @@ void ClvFileArea::on_realize(){
 
 void ClvFileArea::on_unrealize(){
 	Gtk::DrawingArea::on_unrealize();
+	//need unregister client_window for im??
 }
 
 void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
