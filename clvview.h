@@ -11,17 +11,26 @@ protected:
 };
 
 class ClvFileArea: public Gtk::DrawingArea{
+	enum{
+		STATUS_NONE,
+		STATUS_SELECTED,
+		STATUS_S_CLICKED,
+		STATUS_D_CLICKED,
+		STATUS_R_CLICKED,
+		STATUS_R_MENU,
+		STATUS_M_CLICKED,
+		STATUS_INPUT,
+		STATUS_DELETE,
+		STATUS_ENTER,
+		STATUS_CMD,
+	}input_status;
 	unorder_tree<line> &file_context;
-	Pango::TabArray tab_width;
 	
 	GtkIMContext *im_context;
 	
-	Pango::FontDescription get_gnome_document_font_description();
  	void on_font_setting_changed (const Glib::ustring & key);
  	void update_custom_font_setting();
  	void modify_font_from_string (const std::string & fontString);
- 	bool key_pressed (GdkEventKey * ev);
- 	bool button_pressed (GdkEventButton * ev);
 public:
 	void draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect);
 

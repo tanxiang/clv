@@ -29,7 +29,7 @@ public:
 		//glyphs_index.push_back(0);
 	}
 	fill_t get_fill(){
-		return 20;
+		return 18;
 	}
 	int x_to_index(int x);
 	bool draw_to_context(const Cairo::RefPtr<Cairo::Context>& cr,int y,const Cairo::Rectangle &rect);

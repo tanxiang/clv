@@ -138,17 +138,21 @@ bool ClvFileArea::on_button_press_event(GdkEventButton* event){
 	if(!gtk_widget_has_focus(Widget::gobj())){
 		grab_focus();
 	}
+	std::cout<<"bt press"<<std::endl;
 	if(event->button == GDK_BUTTON_PRIMARY){
 		auto line_itr=file_context.get_form_fill(event->y);
 		if(line_itr!=file_context.end()){
 			line_itr->x_to_index(event->x);
 		}
 	}
+	else if(event->button == GDK_BUTTON_SECONDARY){
+		
+	}
 	return true;
 }
 
 bool ClvFileArea::on_button_release_event(GdkEventButton* event){
-	std::cout<<"release m"<<std::endl;
+	std::cout<<"bt release"<<std::endl;
 	return true;
 }
 
