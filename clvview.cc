@@ -140,19 +140,38 @@ bool ClvFileArea::on_button_press_event(GdkEventButton* event){
 	}
 	std::cout<<"bt press"<<std::endl;
 	if(event->button == GDK_BUTTON_PRIMARY){
-		auto line_itr=file_context.get_form_fill(event->y);
-		if(line_itr!=file_context.end()){
-			line_itr->x_to_index(event->x);
+		switch(input_status){
+		case STATUS_S_CLICKED://to double clicked
+		{
+			input_status=STATUS_D_CLICKED;
+			break;
+		}
+		default:
+			input_status=STATUS_S_CLICKED;
 		}
 	}
-	else if(event->button == GDK_BUTTON_SECONDARY){
-		
-	}
+	// if(event->button == GDK_BUTTON_SECONDARY){
+
 	return true;
 }
 
 bool ClvFileArea::on_button_release_event(GdkEventButton* event){
 	std::cout<<"bt release"<<std::endl;
+	if(event->button == GDK_BUTTON_PRIMARY){
+		switch(input_status){
+		case STATUS_NONE://put cursor
+		{
+			auto line_itr = file_context.get_form_fill(event->y);
+			if(line_itr!=file_context.end()){
+				line_itr->x_to_index(event->x);
+			}
+			input_status=STATUS_S_CLICKED;
+			break;
+		}
+		default:
+			input_status=STATUS_S_CLICKED;
+		}
+	}
 	return true;
 }
 
