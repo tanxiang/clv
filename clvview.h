@@ -13,6 +13,7 @@ protected:
 class ClvFileArea: public Gtk::DrawingArea{
 	enum{
 		STATUS_NONE,
+		STATUS_NORMAL,
 		STATUS_SELECTED,
 		STATUS_S_CLICKED,
 		STATUS_D_CLICKED,

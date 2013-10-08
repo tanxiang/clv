@@ -27,6 +27,7 @@ ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 #ifndef GLIBMM_DEFAULT_SIGNAL_HANDLERS_ENABLED
 	this->signal_draw().connect(sigc::mem_fun(*this,&ClvFileArea::on_draw));
 #endif
+	input_status=STATUS_NONE;
 }
 
 #include <iostream>
@@ -131,6 +132,7 @@ void ClvFileArea::delete_surrounding_proxy(GtkIMContext *context,gint offset,gin
 
 bool ClvFileArea::on_focus_in_event(GdkEventFocus* event){
 	gtk_im_context_focus_in(im_context);
+	input_status=STATUS_NORMAL;
 	return false;
 }
 
@@ -159,17 +161,26 @@ bool ClvFileArea::on_button_release_event(GdkEventButton* event){
 	std::cout<<"bt release"<<std::endl;
 	if(event->button == GDK_BUTTON_PRIMARY){
 		switch(input_status){
-		case STATUS_NONE://put cursor
+		case STATUS_S_CLICKED://put cursor
 		{
 			auto line_itr = file_context.get_form_fill(event->y);
 			if(line_itr!=file_context.end()){
 				line_itr->x_to_index(event->x);
 			}
-			input_status=STATUS_S_CLICKED;
+			input_status=STATUS_NORMAL;
+			break;
+		}
+		case STATUS_D_CLICKED://selected
+		{
+			auto line_itr = file_context.get_form_fill(event->y);
+			if(line_itr!=file_context.end()){
+				line_itr->x_to_index(event->x);
+			}
+			input_status=STATUS_SELECTED;
 			break;
 		}
 		default:
-			input_status=STATUS_S_CLICKED;
+			input_status=STATUS_NORMAL;
 		}
 	}
 	return true;
