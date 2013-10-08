@@ -96,13 +96,39 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	return true;//Gtk::TextView::on_draw(cr);
 }
 
+
+bool ClvFileArea::on_focus_in_event(GdkEventFocus* event){
+	gtk_im_context_focus_in(im_context);
+	input_status=STATUS_NORMAL;
+	return false;
+}
+
+
 bool ClvFileArea::on_key_press_event(GdkEventKey *event){
 	std::cout<<"press"<<event->string<<std::endl;
+	switch(input_status){
+		case STATUS_NORMAL://to double clicked
+		{
+			input_status=STATUS_INPUT;
+			break;
+		}
+		default:
+			input_status=STATUS_S_CLICKED;
+	}
 	return true;
 }
 
 bool ClvFileArea::on_key_release_event(GdkEventKey *event){
 	std::cout<<"release"<<event->string<<std::endl;
+	switch(input_status){
+		case STATUS_NORMAL://to double clicked
+		{
+			input_status=STATUS_INPUT;
+			break;
+		}
+		default:
+			input_status=STATUS_S_CLICKED;
+	}
 	return true;
 }
 
@@ -128,12 +154,6 @@ void ClvFileArea::retrieve_surrounding_proxy(GtkIMContext *context,ClvFileArea *
 
 void ClvFileArea::delete_surrounding_proxy(GtkIMContext *context,gint offset,gint n_chars,ClvFileArea *pobj){
 	std::cerr<<"delete_surrounding_proxy"<<'\n'; 
-}
-
-bool ClvFileArea::on_focus_in_event(GdkEventFocus* event){
-	gtk_im_context_focus_in(im_context);
-	input_status=STATUS_NORMAL;
-	return false;
 }
 
 bool ClvFileArea::on_button_press_event(GdkEventButton* event){
