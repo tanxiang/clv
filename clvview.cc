@@ -110,21 +110,24 @@ bool ClvFileArea::on_key_press_event(GdkEventKey *event){
 		case STATUS_INPUT:
 		{
 			if(*event->string==0x8||*event->string==0x7f){
-				std::cout<<"input done";//commit change
+				std::cout<<"input done\n";//commit change
 				input_status=STATUS_DELETE;
 			}
 			break;
 		}
 		case STATUS_DELETE:
 		{
-			if(*event->string!=0x8||*event->string!=0x7f){
-				std::cout<<"delete done";//commit change
+			if(*event->string!=0x8&&*event->string!=0x7f){
+				std::cout<<"delete done\n";//commit change
 				input_status=STATUS_INPUT;
 			}
 			break;
 		}
 		default:
-			;
+			if(*event->string==0x8||*event->string==0x7f)
+				input_status=STATUS_DELETE;
+			else
+				input_status=STATUS_INPUT;
 	}
 	return true;
 }
