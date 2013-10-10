@@ -37,7 +37,7 @@ void ClvFileArea::on_realize(){
 	auto allocation = get_allocation();
 	attributes.x = allocation.get_x();
 	attributes.y = allocation.get_y();
-	attributes.width =23;// allocation.get_width();
+	attributes.width =1;// allocation.get_width();
 	attributes.height =1;// allocation.get_height();
 	std::cerr<<attributes.x<<":"<<attributes.y<<":"<<attributes.width<<":"<<attributes.height<<"\n";
 	attributes.window_type = GDK_WINDOW_CHILD;
@@ -105,29 +105,33 @@ bool ClvFileArea::on_focus_in_event(GdkEventFocus* event){
 
 
 bool ClvFileArea::on_key_press_event(GdkEventKey *event){
-	std::cout<<"press"<<event->string<<std::endl;
+	std::cout<<"press"<<(unsigned int)*event->string<<std::endl;
 	switch(input_status){
-		case STATUS_NORMAL://to double clicked
+		case STATUS_INPUT:
+		case STATUS_DELETE:
 		{
-			input_status=STATUS_INPUT;
+			if(*event->string==0x8||*event->string==0x7f)
+				;//commit change
+			input_status=STATUS_KEY_PRESS;
 			break;
 		}
 		default:
-			input_status=STATUS_S_CLICKED;
+			input_status=STATUS_KEY_PRESS;
 	}
 	return true;
 }
 
 bool ClvFileArea::on_key_release_event(GdkEventKey *event){
-	std::cout<<"release"<<event->string<<std::endl;
+	//std::cout<<"release"<<event->string<<std::endl;
 	switch(input_status){
-		case STATUS_NORMAL://to double clicked
+		case STATUS_KEY_PRESS:
 		{
 			input_status=STATUS_INPUT;
+			input_status=STATUS_DELETE;
 			break;
 		}
 		default:
-			input_status=STATUS_S_CLICKED;
+			std::cerr<<"key error no press\n";
 	}
 	return true;
 }
@@ -160,7 +164,7 @@ bool ClvFileArea::on_button_press_event(GdkEventButton* event){
 	if(!gtk_widget_has_focus(Widget::gobj())){
 		grab_focus();
 	}
-	std::cout<<"bt press"<<std::endl;
+	//std::cout<<"bt press"<<std::endl;
 	if(event->button == GDK_BUTTON_PRIMARY){
 		switch(input_status){
 		case STATUS_S_CLICKED://to double clicked
@@ -172,13 +176,17 @@ bool ClvFileArea::on_button_press_event(GdkEventButton* event){
 			input_status=STATUS_S_CLICKED;
 		}
 	}
-	// if(event->button == GDK_BUTTON_SECONDARY){
-
+	else if(event->button == GDK_BUTTON_SECONDARY){
+	
+	}
+	else{
+		std::cout<<"button_else\n";
+	}
 	return true;
 }
 
 bool ClvFileArea::on_button_release_event(GdkEventButton* event){
-	std::cout<<"bt release"<<std::endl;
+	//std::cout<<"bt release"<<std::endl;
 	if(event->button == GDK_BUTTON_PRIMARY){
 		switch(input_status){
 		case STATUS_S_CLICKED://put cursor
@@ -188,6 +196,7 @@ bool ClvFileArea::on_button_release_event(GdkEventButton* event){
 				line_itr->x_to_index(event->x);
 			}
 			input_status=STATUS_NORMAL;
+			std::cout<<"s click"<<std::endl;
 			break;
 		}
 		case STATUS_D_CLICKED://selected
@@ -197,11 +206,18 @@ bool ClvFileArea::on_button_release_event(GdkEventButton* event){
 				line_itr->x_to_index(event->x);
 			}
 			input_status=STATUS_SELECTED;
+			std::cout<<"d click"<<std::endl;
 			break;
 		}
 		default:
 			input_status=STATUS_NORMAL;
 		}
+	}
+	else if(event->button == GDK_BUTTON_SECONDARY){
+	
+	}
+	else{
+		std::cout<<"button_else\n";
 	}
 	return true;
 }

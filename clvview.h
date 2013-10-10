@@ -12,7 +12,7 @@ protected:
 
 class ClvFileArea: public Gtk::DrawingArea{
 	enum{
-		STATUS_NONE,
+		STATUS_NONE=0,
 		STATUS_NORMAL,
 		STATUS_SELECTED,
 		STATUS_S_CLICKED,
@@ -20,9 +20,9 @@ class ClvFileArea: public Gtk::DrawingArea{
 		STATUS_R_CLICKED,
 		STATUS_R_MENU,
 		STATUS_M_CLICKED,
+		STATUS_KEY_PRESS,
 		STATUS_INPUT,
 		STATUS_DELETE,
-		STATUS_ENTER,
 		STATUS_CMD,
 	}input_status;
 	unorder_tree<line> &file_context;
