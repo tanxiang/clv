@@ -108,10 +108,16 @@ bool ClvFileArea::on_key_press_event(GdkEventKey *event){
 	std::cout<<"press"<<(unsigned int)*event->string<<std::endl;
 	switch(input_status){
 		case STATUS_INPUT:
-		case STATUS_DELETE:
 		{
 			if(*event->string==0x8||*event->string==0x7f)
-				;//commit change
+				std::cout<<"input done";//commit change
+			input_status=STATUS_KEY_PRESS;
+			break;
+		}
+		case STATUS_DELETE:
+		{
+			if(*event->string!=0x8||*event->string!=0x7f)
+				std::cout<<"delete done";//commit change
 			input_status=STATUS_KEY_PRESS;
 			break;
 		}
@@ -120,14 +126,16 @@ bool ClvFileArea::on_key_press_event(GdkEventKey *event){
 	}
 	return true;
 }
-
+#ifdef CLV_RKET_EVENT
 bool ClvFileArea::on_key_release_event(GdkEventKey *event){
-	//std::cout<<"release"<<event->string<<std::endl;
+	std::cout<<"release"<<event->string<<std::endl;
 	switch(input_status){
 		case STATUS_KEY_PRESS:
 		{
-			input_status=STATUS_INPUT;
-			input_status=STATUS_DELETE;
+			if(*event->string==0x8||*event->string==0x7f)
+				input_status=STATUS_DELETE;
+			else
+				input_status=STATUS_INPUT;
 			break;
 		}
 		default:
@@ -135,6 +143,7 @@ bool ClvFileArea::on_key_release_event(GdkEventKey *event){
 	}
 	return true;
 }
+#endif
 
 void ClvFileArea::im_commit_proxy(GtkIMContext *context,const gchar  *str,ClvFileArea* pobj){
 	pobj->im_commit(context,str);
