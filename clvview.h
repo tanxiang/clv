@@ -20,7 +20,9 @@ class ClvFileArea: public Gtk::DrawingArea{
 		STATUS_R_CLICKED,
 		STATUS_R_MENU,
 		STATUS_M_CLICKED,
+#ifdef CLV_RKET_EVENT
 		STATUS_KEY_PRESS,
+#endif
 		STATUS_INPUT,
 		STATUS_DELETE,
 		STATUS_CMD,
