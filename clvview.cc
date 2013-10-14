@@ -156,6 +156,8 @@ void ClvFileArea::im_commit_proxy(GtkIMContext *context,const gchar  *str,ClvFil
 
 void ClvFileArea::im_commit(GtkIMContext *context,const gchar *str){
 	std::cerr<<"commit"<<str<<'\n';
+	if(input_status!=STATUS_INPUT)
+		input_status=STATUS_INPUT;//commit change
 }
 
 void ClvFileArea::preedit_changed_proxy(GtkIMContext *context,ClvFileArea *pobj){

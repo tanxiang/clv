@@ -311,8 +311,8 @@ _cairo_ucs4_to_utf8 (uint32_t  unicode,
 #include <iostream>
 
 void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned int g_index){
-	int groups_index=0;
-	int glyphs_index=0;
+	std::vector<glyphs_group>::size_type groups_index=0;
+	glyphs_group::size_type glyphs_index=0;
 	for(auto& group:line_glyphs){
 		if(group.size()>=g_index){
 			glyphs_index=g_index;
