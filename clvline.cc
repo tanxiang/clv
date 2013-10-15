@@ -311,6 +311,11 @@ _cairo_ucs4_to_utf8 (uint32_t  unicode,
 #include <iostream>
 
 void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned int g_index){
+	cr->set_source_rgb(1,1,1);
+	cr->select_font_face("Source Code Pro",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
+	cr->set_font_size(16);
+	if(synced)
+		return;
 	std::vector<glyphs_group>::size_type groups_index=0;
 	glyphs_group::size_type glyphs_index=0;
 	for(auto& group:line_glyphs){
@@ -340,9 +345,6 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 		c_index=*line_index[groups_index-1].rbegin();
 	//return;
 
-	cr->set_source_rgb(1,1,1);
-	cr->select_font_face("Source Code Pro",Cairo::FONT_SLANT_NORMAL,Cairo::FONT_WEIGHT_NORMAL );
-	cr->set_font_size(16);
 	auto scaled_font = cr->get_scaled_font();
 	auto backend = scaled_font->cobj()->backend;
 #if 0
@@ -381,6 +383,7 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 				//std::cout<<"unrec crect\n";
 		}
 	}
+	synced=true;
 	//std::cout<<std::endl;
 }
 #include <algorithm>
@@ -409,6 +412,7 @@ bool line::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr,int y, const 
 
 bool glyphs_group::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr){
 	cr->save();
+	cr->stroke();
 	cr->show_glyphs(*this);
 	cr->restore();
 	return true;

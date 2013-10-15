@@ -13,6 +13,7 @@ public:
 
 class line :public std::string 
 {
+	bool synced;
 	std::vector<glyphs_group> line_glyphs;
 	std::vector<std::vector<int> > line_index;
 protected:
@@ -29,7 +30,7 @@ public:
 	//virtual ~line(){
 		//std::cerr<<"line free\n";
 	//}
-	line(){
+	line():synced(false){
 		//glyphs_index.push_back(0);
 	}
 	fill_t get_fill(){
