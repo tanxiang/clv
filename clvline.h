@@ -1,5 +1,6 @@
 #ifndef _CLVLINE_H
 #define _CLVLINE_H
+//#include <memory>
 #include <vector>
 #include <string>
 #include <istream>
@@ -7,6 +8,7 @@
 
 class glyphs_group :public std::vector<Cairo::Glyph>
 {
+	Cairo::RefPtr<Cairo::FontFace> fontface_ptr;
 public:
 	bool draw_to_context(const Cairo::RefPtr<Cairo::Context>& cr);
 };
