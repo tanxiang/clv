@@ -8,7 +8,7 @@
 
 class glyphs_group :public std::vector<Cairo::Glyph>
 {
-	Cairo::RefPtr<Cairo::FontFace> fontface_ptr;
+	Cairo::RefPtr<Cairo::ScaledFont> font_ptr;
 public:
 	bool draw_to_context(const Cairo::RefPtr<Cairo::Context>& cr);
 };
