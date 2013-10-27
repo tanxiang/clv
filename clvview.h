@@ -54,6 +54,7 @@ protected:
 	
 	static void delete_surrounding_proxy(GtkIMContext *context,gint offset,gint n_chars,ClvFileArea* pobj);
 
+	bool on_blink_time();
 	bool on_focus_in_event(GdkEventFocus* event) override;
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 	bool on_key_press_event(GdkEventKey* event) override;

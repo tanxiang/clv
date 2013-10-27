@@ -10,10 +10,10 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 
 ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 	file_context(file){
-	gtk_widget_add_events (Widget::gobj() , GDK_BUTTON_PRESS_MASK );
-	gtk_widget_add_events (Widget::gobj() , GDK_BUTTON_RELEASE_MASK );
+	add_events(Gdk::BUTTON_PRESS_MASK);
+	add_events(Gdk::BUTTON_RELEASE_MASK);
+	Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_blink_time),1000);
 	im_context = gtk_im_multicontext_new();
-	
 	g_signal_connect (im_context, "commit", G_CALLBACK (&ClvFileArea::im_commit_proxy), this);
 	g_signal_connect (im_context, "preedit-changed",G_CALLBACK (&ClvFileArea::preedit_changed_proxy), this);
 	g_signal_connect (im_context, "retrieve-surrounding",G_CALLBACK (&ClvFileArea::retrieve_surrounding_proxy), this);
@@ -31,6 +31,13 @@ ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 }
 
 #include <iostream>
+
+bool ClvFileArea::on_blink_time(){
+	get_window()->invalidate_rect(Gdk::Rectangle{10,10,10,10}, false);
+
+	std::cerr<<"time\n";
+	return true;
+}
 
 void ClvFileArea::on_realize(){
 	GdkWindowAttr attributes;
