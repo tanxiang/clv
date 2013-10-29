@@ -30,6 +30,7 @@ class ClvFileArea: public Gtk::DrawingArea{
 	unorder_tree<line> &file_context;
 	
 	GtkIMContext *im_context;
+	Cairo::RefPtr<Cairo::Surface> surface_ptr;
 	
  	void on_font_setting_changed (const Glib::ustring & key);
  	void update_custom_font_setting();
@@ -55,6 +56,7 @@ protected:
 	static void delete_surrounding_proxy(GtkIMContext *context,gint offset,gint n_chars,ClvFileArea* pobj);
 
 	bool on_blink_time();
+	bool on_configure_event(GdkEventConfigure* event) override;
 	bool on_focus_in_event(GdkEventFocus* event) override;
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 	bool on_key_press_event(GdkEventKey* event) override;

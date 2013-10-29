@@ -70,7 +70,15 @@ void ClvFileArea::on_realize(){
 
 void ClvFileArea::on_unrealize(){
 	Gtk::DrawingArea::on_unrealize();
-	//need unregister client_window for im??
+	//FIXME:need unregister client_window for im??
+}
+
+bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
+	surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR, get_allocation().get_width(), get_allocation().get_width());
+	auto cr = Cairo::Context::create(surface_ptr);
+	cr->set_source_rgb(0,0,0);
+	cr->paint();
+	return Gtk::DrawingArea::on_configure_event(event);
 }
 
 void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
@@ -91,6 +99,7 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 }
 
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
+	cr->set_source(surface_ptr,0,0);
 	cr->save();
 	cr->set_source_rgb(0.3, 0.4, 0.5);
 	cr->paint();
