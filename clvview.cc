@@ -33,8 +33,10 @@ ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 #include <iostream>
 
 bool ClvFileArea::on_blink_time(){
-	get_window()->invalidate_rect(Gdk::Rectangle{10,10,10,10}, false);
-
+	//get_window()->invalidate_rect(Gdk::Rectangle{10,10,10,10}, false);
+	//get_window()->invalidate(false);d
+	//get_window()->invalidate_region(Cairo::RefPtr<Cairo::Region>region,false)
+	Gdk::Rectangle rect{10,10,10,10};
 	std::cerr<<"time\n";
 	return true;
 }
