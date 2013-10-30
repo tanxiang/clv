@@ -33,10 +33,15 @@ ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 #include <iostream>
 
 bool ClvFileArea::on_blink_time(){
-	//get_window()->invalidate_rect(Gdk::Rectangle{10,10,10,10}, false);
 	//get_window()->invalidate(false);d
 	//get_window()->invalidate_region(Cairo::RefPtr<Cairo::Region>region,false)
+	std::cerr<<"time0\n";
+	if(!surface_ptr) return false;
 	Gdk::Rectangle rect{10,10,10,10};
+	auto cr = Cairo::Context::create(surface_ptr);
+	Gdk::Cairo::add_rectangle_to_path(cr,rect);
+	cr->fill();
+	get_window()->invalidate_rect(rect , false);
 	std::cerr<<"time\n";
 	return true;
 }
@@ -75,9 +80,8 @@ void ClvFileArea::on_unrealize(){
 
 bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
 	surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR, get_allocation().get_width(), get_allocation().get_width());
-	auto cr = Cairo::Context::create(surface_ptr);
-	cr->set_source_rgb(0,0,0);
-	cr->paint();
+	//auto cr = Cairo::Context::create(surface_ptr);
+	std::cerr<<"config\n";
 	return Gtk::DrawingArea::on_configure_event(event);
 }
 
@@ -99,10 +103,9 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 }
 
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
-	cr->set_source(surface_ptr,0,0);
-	cr->save();
 	cr->set_source_rgb(0.3, 0.4, 0.5);
 	cr->paint();
+	cr->set_source(surface_ptr,0,0);
 	std::vector<Cairo::Rectangle> clip_rects;
 	cr->copy_clip_rectangle_list(clip_rects);
 	//std::cerr<<"num rect = "<<clip_rects.size()<<std::endl;
@@ -110,7 +113,6 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
 		draw(cr,clip_rect);
 	}
-	cr->restore();
 	return true;//Gtk::TextView::on_draw(cr);
 }
 
