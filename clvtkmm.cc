@@ -27,10 +27,10 @@ void ClvFViewBox::close(){
 	std::cout<<"close:"<<this<<std::endl;
 }
 
-bool ClvFileBox::on_event(GdkEvent *event){
-	std::cerr<<"visib"<<"\n";
-	return false;
-}
+//bool ClvFileBox::on_event(GdkEvent *event){
+//	std::cerr<<"visib"<<"\n";
+//	return false;
+//}
 /*
 ClvFViewBox::~ClvFViewBox(){
 	std::cout<<"free vbox"<<std::endl;

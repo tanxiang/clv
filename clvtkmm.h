@@ -50,7 +50,7 @@ class ClvFileBox : public Gtk::Box{
 	Gtk::Box tab_box;
 	//Gtk::ScrolledWindow scrolled_view;
 protected:
-	bool on_event(GdkEvent *event) override;
+	//bool on_event(GdkEvent *event) override;
 public:
 	ClvFileBox(Glib::ustring fs="");
 	virtual ~ClvFileBox(){};
