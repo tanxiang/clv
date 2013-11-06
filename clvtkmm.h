@@ -72,6 +72,8 @@ public:
 			remove_page();
 		}
 	};
+protected:
+	void on_page_switch ( Gtk::Widget *page, int page_num );
 };
 
 class ClvtkWindow : public Gtk::Window{

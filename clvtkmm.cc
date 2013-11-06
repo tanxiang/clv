@@ -107,7 +107,12 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	pack_end(tool_bar,Gtk::PACK_SHRINK);
 }
 
+void ClvNotebook::on_page_switch ( Gtk::Widget *page, int page_num ){
+	;
+}
+
 ClvNotebook::ClvNotebook(std::vector<std::string> &fn){
+	set_scrollable();
 	if(fn.empty()){
 		f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{}});
 		prepend_page(*f_boxs[0], "*UnSaved");
@@ -119,6 +124,7 @@ ClvNotebook::ClvNotebook(std::vector<std::string> &fn){
 			prepend_page(*f_boxs.back(),f_boxs.back()->get_tab_box());
 		}
 	}
+	signal_switch_page().connect(sigc::mem_fun(*this,&ClvNotebook::on_page_switch));
 }
 
 
