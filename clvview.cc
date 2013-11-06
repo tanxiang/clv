@@ -12,7 +12,6 @@ ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 	file_context(file){
 	add_events(Gdk::BUTTON_PRESS_MASK);
 	add_events(Gdk::BUTTON_RELEASE_MASK);
-	Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_blink_time),1000);
 	im_context = gtk_im_multicontext_new();
 	g_signal_connect (im_context, "commit", G_CALLBACK (&ClvFileArea::im_commit_proxy), this);
 	g_signal_connect (im_context, "preedit-changed",G_CALLBACK (&ClvFileArea::preedit_changed_proxy), this);
@@ -31,20 +30,6 @@ ClvFileArea::ClvFileArea(unorder_tree<line> &file):
 }
 
 #include <iostream>
-
-bool ClvFileArea::on_blink_time(){
-	//get_window()->invalidate(false);d
-	//get_window()->invalidate_region(Cairo::RefPtr<Cairo::Region>region,false)
-	std::cerr<<"time0\n";
-	if(!surface_ptr) return false;
-	Gdk::Rectangle rect{10,10,10,10};
-	auto cr = Cairo::Context::create(surface_ptr);
-	Gdk::Cairo::add_rectangle_to_path(cr,rect);
-	cr->fill();
-	get_window()->invalidate_rect(rect , false);
-	std::cerr<<"time\n";
-	return true;
-}
 
 void ClvFileArea::on_realize(){
 	GdkWindowAttr attributes;
@@ -80,10 +65,28 @@ void ClvFileArea::on_unrealize(){
 
 bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
 	surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR, get_allocation().get_width(), get_allocation().get_width());
+//	Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_blink_time),5000);
 	//auto cr = Cairo::Context::create(surface_ptr);
-	std::cerr<<"config\n";
+	std::cerr<<"config"<<surface_ptr.operator->()<<"\n";
 	return Gtk::DrawingArea::on_configure_event(event);
 }
+
+bool ClvFileArea::on_blink_time(){
+	//get_window()->invalidate(false);d
+	//get_window()->invalidate_region(Cairo::RefPtr<Cairo::Region>region,false)
+	std::cerr<<"time"<<surface_ptr.operator->()<<"\n";
+	if(!surface_ptr) return false;
+	Gdk::Rectangle rect{10,10,10,10};
+	auto cr = Cairo::Context::create(surface_ptr);
+	Gdk::Cairo::add_rectangle_to_path(cr,rect);
+	cr->fill();
+	get_window()->invalidate_rect(rect , false);
+//	std::cerr<<"time\n";
+	return true;
+}
+
+//void ClvFileArea::on_hide(){
+//}
 
 void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
 	cr->save();//need RAII mode restore
@@ -123,6 +126,10 @@ bool ClvFileArea::on_focus_in_event(GdkEventFocus* event){
 	return false;
 }
 
+bool ClvFileArea::on_focus_out_event(GdkEventFocus* event){
+	std::cerr<<"hide\n";
+	return false;
+}
 
 bool ClvFileArea::on_key_press_event(GdkEventKey *event){
 	std::cout<<"press"<<(unsigned int)*event->string<<std::endl;

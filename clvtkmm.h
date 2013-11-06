@@ -21,6 +21,9 @@ public:
 	virtual ~ClvFViewBox(){};
 	void save();
 	void close();
+	void set_active(){
+		fileview.set_active();
+	}
 };
 
 class ClvToolBox : public Gtk::Box{
@@ -46,11 +49,16 @@ class ClvFileBox : public Gtk::Box{
 	Gtk::Label tab_label;
 	Gtk::Box tab_box;
 	//Gtk::ScrolledWindow scrolled_view;
+protected:
+	bool on_event(GdkEvent *event) override;
 public:
 	ClvFileBox(Glib::ustring fs="");
 	virtual ~ClvFileBox(){};
 	Gtk::Widget& get_tab_box(){
 		return tab_box;
+	}
+	void set_active(){
+		main_view.set_active();
 	}
 	//static void setup_icons();
 };

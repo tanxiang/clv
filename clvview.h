@@ -35,9 +35,9 @@ class ClvFileArea: public Gtk::DrawingArea{
  	void on_font_setting_changed (const Glib::ustring & key);
  	void update_custom_font_setting();
  	void modify_font_from_string (const std::string & fontString);
-public:
 	void draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect);
-
+public:
+	void set_active();
 	ClvFileArea(unorder_tree<line> &file);
 	virtual ~ClvFileArea(){
 		g_object_unref (im_context);
@@ -58,6 +58,7 @@ protected:
 	bool on_blink_time();
 	bool on_configure_event(GdkEventConfigure* event) override;
 	bool on_focus_in_event(GdkEventFocus* event) override;
+	bool on_focus_out_event(GdkEventFocus* event) override;
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 	bool on_key_press_event(GdkEventKey* event) override;
 #ifdef CLV_RKET_EVENT
