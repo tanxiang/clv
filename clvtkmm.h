@@ -21,8 +21,8 @@ public:
 	virtual ~ClvFViewBox(){};
 	void save();
 	void close();
-	void set_active(){
-		fileview.set_active();
+	void set_activates(bool setting=false){
+		fileview.set_activates(setting);
 	}
 };
 
@@ -57,14 +57,15 @@ public:
 	Gtk::Widget& get_tab_box(){
 		return tab_box;
 	}
-	void set_active(){
-		main_view.set_active();
+	void set_activates(bool setting=false){
+		main_view.set_activates(setting);
 	}
 	//static void setup_icons();
 };
 
 class ClvNotebook : public Gtk::Notebook{
 	std::vector<std::unique_ptr<ClvFileBox> > f_boxs;
+	ClvFileBox *current_page;
 public:
 	ClvNotebook(std::vector<std::string> &fn);
 	virtual ~ClvNotebook(){

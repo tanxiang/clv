@@ -37,7 +37,7 @@ class ClvFileArea: public Gtk::DrawingArea{
  	void modify_font_from_string (const std::string & fontString);
 	void draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect);
 public:
-	void set_active();
+	void set_activates(bool setting=false);
 	ClvFileArea(unorder_tree<line> &file);
 	virtual ~ClvFileArea(){
 		g_object_unref (im_context);

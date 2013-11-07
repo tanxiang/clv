@@ -108,7 +108,11 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 }
 
 void ClvNotebook::on_page_switch ( Gtk::Widget *page, int page_num ){
-	;
+	std::cerr<<"sw page:"<<page<<"\tnum:"<<page_num<<"\n";
+	if(current_page)
+		current_page->set_activates(false);
+	current_page=static_cast<ClvFileBox*>(page);
+		current_page->set_activates(true);
 }
 
 ClvNotebook::ClvNotebook(std::vector<std::string> &fn){
