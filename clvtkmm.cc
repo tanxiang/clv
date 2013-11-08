@@ -111,11 +111,11 @@ void ClvNotebook::on_page_switch ( Gtk::Widget *page, int page_num ){
 	std::cerr<<"sw page:"<<page<<"\tnum:"<<page_num<<"\n";
 	if(current_page)
 		current_page->set_activates(false);
-	current_page=static_cast<ClvFileBox*>(page);
-		current_page->set_activates(true);
+	current_page = static_cast<ClvFileBox*>(page);
+	current_page->set_activates(true);
 }
 
-ClvNotebook::ClvNotebook(std::vector<std::string> &fn){
+ClvNotebook::ClvNotebook(std::vector<std::string> &fn):current_page{nullptr}{
 	set_scrollable();
 	if(fn.empty()){
 		f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{}});

@@ -84,7 +84,7 @@ bool ClvFileArea::on_blink_time(){
 	//get_window()->invalidate(false);d
 	//get_window()->invalidate_region(Cairo::RefPtr<Cairo::Region>region,false)
 	std::cerr<<"time"<<surface_ptr.operator->()<<"\n";
-	if(!surface_ptr) return false;
+	//if(!surface_ptr) return false;
 	Gdk::Rectangle rect{10,10,10,10};
 	auto cr = Cairo::Context::create(surface_ptr);
 	Gdk::Cairo::add_rectangle_to_path(cr,rect);
