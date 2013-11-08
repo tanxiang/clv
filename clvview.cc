@@ -68,7 +68,16 @@ bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
 //	Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_blink_time),5000);
 	//auto cr = Cairo::Context::create(surface_ptr);
 	std::cerr<<"config"<<surface_ptr.operator->()<<"\n";
-	return Gtk::DrawingArea::on_configure_event(event);
+	return false;
+}
+
+void ClvFileArea::set_activates(bool setting){
+	if(setting){
+		blink_time_out = Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_blink_time),5000);
+	}
+	else if(blink_time_out)
+		blink_time_out.disconnect();
+	std::cerr<<"activates"<<this<<':'<<setting<<'\n';
 }
 
 bool ClvFileArea::on_blink_time(){

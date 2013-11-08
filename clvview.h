@@ -31,6 +31,7 @@ class ClvFileArea: public Gtk::DrawingArea{
 	
 	GtkIMContext *im_context;
 	Cairo::RefPtr<Cairo::Surface> surface_ptr;
+	sigc::connection blink_time_out;
 	
  	void on_font_setting_changed (const Glib::ustring & key);
  	void update_custom_font_setting();
