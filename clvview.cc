@@ -38,7 +38,7 @@ void ClvFileArea::on_realize(){
 	attributes.y = allocation.get_y();
 	attributes.width =1;// allocation.get_width();
 	attributes.height =1;// allocation.get_height();
-	std::cerr<<attributes.x<<":"<<attributes.y<<":"<<attributes.width<<":"<<attributes.height<<"\n";
+	std::cerr<<__FUNCTION__<<attributes.x<<":"<<attributes.y<<":"<<attributes.width<<":"<<attributes.height<<"\n";
 	attributes.window_type = GDK_WINDOW_CHILD;
 	attributes.wclass = GDK_INPUT_ONLY;
 	attributes.event_mask = get_events();
@@ -65,25 +65,25 @@ void ClvFileArea::on_unrealize(){
 
 bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
 	surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR, get_allocation().get_width(), get_allocation().get_width());
-//	Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_blink_time),5000);
+	//Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_blink_time),5000);
 	//auto cr = Cairo::Context::create(surface_ptr);
-	std::cerr<<"config"<<surface_ptr.operator->()<<"\n";
+	//std::cerr<<"config"<<surface_ptr.operator->()<<"\n";
 	return false;
 }
 
 void ClvFileArea::set_activates(bool setting){
 	if(setting){
-		blink_time_out = Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_blink_time),5000);
+		blink_time_out = Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_blink_time),1000);
 	}
 	else if(blink_time_out)
 		blink_time_out.disconnect();
-	std::cerr<<"activates"<<this<<':'<<setting<<'\n';
+	//std::cerr<<"activates"<<this<<':'<<setting<<'\n';
 }
 
 bool ClvFileArea::on_blink_time(){
 	//get_window()->invalidate(false);d
 	//get_window()->invalidate_region(Cairo::RefPtr<Cairo::Region>region,false)
-	std::cerr<<"time"<<surface_ptr.operator->()<<"\n";
+	std::cerr<<__FUNCTION__<<surface_ptr.operator->()<<"\n";
 	//if(!surface_ptr) return false;
 	Gdk::Rectangle rect{10,10,10,10};
 	auto cr = Cairo::Context::create(surface_ptr);
@@ -136,12 +136,12 @@ bool ClvFileArea::on_focus_in_event(GdkEventFocus* event){
 }
 
 bool ClvFileArea::on_focus_out_event(GdkEventFocus* event){
-	std::cerr<<"hide\n";
+	std::cerr<<__FUNCTION__<<"\n";
 	return false;
 }
 
 bool ClvFileArea::on_key_press_event(GdkEventKey *event){
-	std::cout<<"press"<<(unsigned int)*event->string<<std::endl;
+	std::cout<<__FUNCTION__<<(unsigned int)*event->string<<std::endl;
 	switch(input_status){
 		case STATUS_INPUT:
 		{
@@ -169,7 +169,7 @@ bool ClvFileArea::on_key_press_event(GdkEventKey *event){
 }
 #ifdef CLV_RKET_EVENT
 bool ClvFileArea::on_key_release_event(GdkEventKey *event){
-	std::cout<<"release"<<event->string<<std::endl;
+	std::cout<<__FUNCTION__<<event->string<<std::endl;
 	switch(input_status){
 		case STATUS_KEY_PRESS:
 		{
