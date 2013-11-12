@@ -81,16 +81,13 @@ void ClvFileArea::set_activates(bool setting){
 }
 
 bool ClvFileArea::on_blink_time(){
-	//get_window()->invalidate(false);d
-	//get_window()->invalidate_region(Cairo::RefPtr<Cairo::Region>region,false)
 	std::cerr<<__FUNCTION__<<surface_ptr.operator->()<<"\n";
-	//if(!surface_ptr) return false;
+	//if(!surface_ptr) return false;//st ro need check surface_ptr
 	Gdk::Rectangle rect{10,10,10,10};
 	auto cr = Cairo::Context::create(surface_ptr);
 	Gdk::Cairo::add_rectangle_to_path(cr,rect);
 	cr->fill();
 	get_window()->invalidate_rect(rect , false);
-//	std::cerr<<"time\n";
 	return true;
 }
 
@@ -104,8 +101,7 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 
 	//if(itr != file_context.end())
 	height = itr.get_fill_offset() - rect.y;//FIXME need a better way
-	while(height<rect.height && itr != file_context.end())
-	{
+	while(height<rect.height && itr != file_context.end()){
 		itr->draw_to_context(cr, itr.get_fill_offset()+itr->get_fill(),rect);
 		height += itr->get_fill();
 		++itr;
