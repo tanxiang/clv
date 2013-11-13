@@ -5,11 +5,10 @@
 
 template<typename T>
 class unorder_tree{
-protected:
-public:
+
+	typedef size_t size_type;
 	struct node;
 	typedef std::unique_ptr<node> node_ptr;
-	typedef size_t size_type;
 	struct node{
 		typedef std::unique_ptr<T> segment_ptr;
 		enum {
@@ -72,6 +71,8 @@ public:
 		void rotate_right(node_ptr& root_ptr);
 		void dump(int level);
 	};
+protected:
+public:
 	struct iterator_traits {
 		typedef std::random_access_iterator_tag iterator_category;
 		typedef T			value_type;

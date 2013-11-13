@@ -3,11 +3,17 @@
 #include "unorder_tree.h"
 template<typename T>
 class context :public unorder_tree<T>{
-
+	struct cursor:public unorder_tree<T>::iterator{
+		typename T::glyphs_iter it_glyph;
+	};
 public:
+
+	std::vector<cursor> cursors;
+
 	template<typename InputIterator,typename = std::_RequireInputIter<InputIterator>>
 	context(InputIterator first,InputIterator last):unorder_tree<T>(first,last){}
 	//context();
+
 protected:
 };
 #endif //_CLVCONTEXT_H
