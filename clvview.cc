@@ -106,6 +106,8 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 		height += itr->get_fill();
 		++itr;
 	}
+	//draw cursor
+	
 	cr->clip();
 	cr->restore();
 }
