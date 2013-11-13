@@ -8,7 +8,7 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	return true;
 }
 
-ClvFileArea::ClvFileArea(unorder_tree<line> &file):
+ClvFileArea::ClvFileArea(context<line> &file):
 	file_context(file){
 	add_events(Gdk::BUTTON_PRESS_MASK);
 	add_events(Gdk::BUTTON_RELEASE_MASK);

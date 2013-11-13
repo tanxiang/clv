@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-ClvFViewBox::ClvFViewBox(unorder_tree<line> &file_ref):
+ClvFViewBox::ClvFViewBox(context<line> &file_ref):
 	file(file_ref),fileview(file){
 	//set_homogeneous(false);
 	//lineview.queue_draw_area(0,0,30,30);

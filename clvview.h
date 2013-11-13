@@ -27,7 +27,7 @@ class ClvFileArea: public Gtk::DrawingArea{
 		STATUS_DELETE,
 		STATUS_CMD,
 	}input_status;
-	unorder_tree<line> &file_context;
+	context<line> &file_context;
 	
 	GtkIMContext *im_context;
 	Cairo::RefPtr<Cairo::Surface> surface_ptr;
@@ -39,7 +39,7 @@ class ClvFileArea: public Gtk::DrawingArea{
 	void draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect);
 public:
 	void set_activates(bool setting=false);
-	ClvFileArea(unorder_tree<line> &file);
+	ClvFileArea(context<line> &file);
 	virtual ~ClvFileArea(){
 		g_object_unref (im_context);
 	};
