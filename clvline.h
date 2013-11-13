@@ -21,7 +21,7 @@ class line :public std::string
 protected:
 	void sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned int s=0);
 public:
-	typedef int fill_t;
+	typedef unsigned int fill_t;
 	struct glyphs_iter{
 		std::vector<glyphs_group>::iterator iter_group;
 		glyphs_group::iterator iter_glyph;

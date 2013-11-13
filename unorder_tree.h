@@ -156,8 +156,11 @@ public:
 		//std::cerr<<"get_form_fill\n";
 		do{
 			//std::cerr<<filler_offset<<':'<<search_point->filler<<';'<<*(search_point->ptr)<<std::endl;
-			if(filler_offset < search_point->filler)
+			if(filler_offset < search_point->filler){
+				if(!search_point->left)//FIXME bug or filler_offset < 0
+					return iterator{search_point};
 				search_point = &*search_point->left;
+			}
 			else if(filler_offset < search_point->filler + search_point->ptr->get_fill())
 				return iterator{search_point};
 			else{
