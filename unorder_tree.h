@@ -71,6 +71,9 @@ class unorder_tree{
 		void rotate_right(node_ptr& root_ptr);
 		void dump(int level);
 	};
+	void rb(node* pnode);
+	void drb(node_ptr* child_ptr_point,node* parent_point);
+	node_ptr root;
 protected:
 public:
 	struct iterator_traits {
@@ -215,9 +218,6 @@ public:
 		root->dump(0);
 	}
 private:
-	void rb(node* pnode);
-	void drb(node_ptr* child_ptr_point,node* parent_point);
-	node_ptr root;
 	//iterator start;
 	iterator finish;
 };
