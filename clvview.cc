@@ -64,7 +64,9 @@ void ClvFileArea::on_unrealize(){
 }
 
 bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
+#ifdef _THREAD_DRAW_
 	surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR, get_allocation().get_width(), get_allocation().get_width());
+#endif
 	//Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_blink_time),5000);
 	//auto cr = Cairo::Context::create(surface_ptr);
 	//std::cerr<<"config"<<surface_ptr.operator->()<<"\n";
@@ -80,14 +82,21 @@ void ClvFileArea::set_activates(bool setting){
 	//std::cerr<<"activates"<<this<<':'<<setting<<'\n';
 }
 
-bool ClvFileArea::on_blink_time(){
-	std::cerr<<__FUNCTION__<<surface_ptr.operator->()<<"\n";
-	//if(!surface_ptr) return false;//st ro need check surface_ptr
-	Gdk::Rectangle rect{10,10,10,10};
-	auto cr = Cairo::Context::create(surface_ptr);
-	Gdk::Cairo::add_rectangle_to_path(cr,rect);
-	cr->fill();
-	get_window()->invalidate_rect(rect , false);
+bool ClvFileArea::on_blink_time(){	
+	auto cr = get_window()->create_cairo_context();
+	cr->save();
+	cr->set_source_rgb(0.8, 0.0, 0.8);
+	cr->set_line_width(20.0);    // make the line wider
+	cr->rectangle(10,10,10,10);
+	cr->stroke();
+	//cr->fill();
+	//Gdk::Rectangle rect{10,10,10,10};
+	//Gdk::Cairo::add_rectangle_to_path(cr,rect);
+	cr->restore();
+	for(auto& cursor:file_context.cursors){
+		cursor.it_glyph;
+	}
+	//get_window()->invalidate_rect(rect , false);
 	return true;
 }
 
@@ -98,16 +107,13 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 	cr->save();//need RAII mode restore
 	auto itr = file_context.get_form_fill(rect.y);
 	int height = 0;
-
 	//if(itr != file_context.end())
 	height = itr.get_fill_offset() - rect.y;//FIXME need a better way
 	while(height<rect.height && itr != file_context.end()){
 		itr->draw_to_context(cr, itr.get_fill_offset()+itr->get_fill(),rect);
 		height += itr->get_fill();
 		++itr;
-	}
-	//draw cursor
-	
+	}	
 	cr->clip();
 	cr->restore();
 }
@@ -115,14 +121,16 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	cr->set_source_rgb(0.3, 0.4, 0.5);
 	cr->paint();
-	cr->set_source(surface_ptr,0,0);
+	//cr->set_source(surface_ptr,0,0);
 	std::vector<Cairo::Rectangle> clip_rects;
 	cr->copy_clip_rectangle_list(clip_rects);
 	//std::cerr<<"num rect = "<<clip_rects.size()<<std::endl;
 	for(auto& clip_rect:clip_rects){
 		std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
 		draw(cr,clip_rect);
+
 	}
+
 	return true;//Gtk::TextView::on_draw(cr);
 }
 
