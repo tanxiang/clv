@@ -100,7 +100,8 @@ bool ClvFileArea::on_blink_time(){
 	else{
 		auto cr = get_window()->create_cairo_context();
 		cr->set_source(surface_ptr,0,0);
-		cr->paint();
+		cr->rectangle(10,10,100,100);
+		cr->fill();
 		//Gdk::Rectangle rect{10,10,100,90};
 		//Gdk::Cairo::add_rectangle_to_path(cr,rect);
 		//get_window()->invalidate_rect(rect , false);
