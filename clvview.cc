@@ -81,26 +81,29 @@ void ClvFileArea::set_activates(bool setting){
 	//std::cerr<<"activates"<<this<<':'<<setting<<'\n';
 }
 
-bool ClvFileArea::on_blink_time(){	
-	auto cover_cr = Cairo::Context::create(cover_surface_ptr);
+bool ClvFileArea::on_blink_time(){
 	static bool bc;
-	auto cr = get_window()->create_cairo_context();
 	if(bc){
-		cover_cr->save();
-		cover_cr->set_source_rgba(1,1,1,0.8);
-		cover_cr->rectangle(10,10,100,100);
+		auto cr = Cairo::Context::create(cover_surface_ptr);
+		cr->save();
+		cr->set_source_rgba(1,1,1,0.1);
+		cr->rectangle(10,10,100,100);
 		//cr->stroke();
-		cover_cr->fill();
-		cover_cr->restore();
-		cover_cr->set_operator(Cairo::Operator::OPERATOR_XOR);
+		cr->fill();
+		cr->restore();
+		cr->set_operator(Cairo::Operator::OPERATOR_XOR);
 		//Gdk::Cairo::add_rectangle_to_path(cr,rect);
+		cr = get_window()->create_cairo_context();
 		cr->set_source(cover_surface_ptr,0,0);
 		cr->paint();
 	}
 	else{
-		Gdk::Rectangle rect{10,10,100,90};
-		Gdk::Cairo::add_rectangle_to_path(cr,rect);
-		get_window()->invalidate_rect(rect , false);
+		auto cr = get_window()->create_cairo_context();
+		cr->set_source(surface_ptr,0,0);
+		cr->paint();
+		//Gdk::Rectangle rect{10,10,100,90};
+		//Gdk::Cairo::add_rectangle_to_path(cr,rect);
+		//get_window()->invalidate_rect(rect , false);
 	}
 	bc=!bc;
 
@@ -140,7 +143,7 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		draw(cr,clip_rect);
 
 	}
-
+	surface_ptr = cr->get_target();
 	return true;//Gtk::TextView::on_draw(cr);
 }
 
