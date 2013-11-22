@@ -30,9 +30,7 @@ class ClvFileArea: public Gtk::DrawingArea{
 	context<line> &file_context;
 	
 	GtkIMContext *im_context;
-#ifdef _THREAD_DRAW_
-	Cairo::RefPtr<Cairo::Surface> surface_ptr;
-#endif
+	Cairo::RefPtr<Cairo::Surface> cover_surface_ptr;
 	sigc::connection blink_time_out;
 	
  	void on_font_setting_changed (const Glib::ustring & key);
