@@ -64,8 +64,8 @@ void ClvFileArea::on_unrealize(){
 }
 
 bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
-
 	cover_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR_ALPHA, get_allocation().get_width(), get_allocation().get_width());
+	
 	//Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_blink_time),5000);
 	//auto cr = Cairo::Context::create(surface_ptr);
 	//std::cerr<<"config"<<surface_ptr.operator->()<<"\n";
@@ -102,6 +102,9 @@ bool ClvFileArea::on_blink_time(){
 		cr->set_source(surface_ptr,0,0);
 		cr->rectangle(10,10,100,100);
 		cr->fill();
+		double x,y;
+		surface_ptr->get_device_offset(x,y);
+		std::cerr<<"surface:"<<surface_ptr.operator->()<<"offset:"<<x<<'-'<<y<<'\n';
 		//Gdk::Rectangle rect{10,10,100,90};
 		//Gdk::Cairo::add_rectangle_to_path(cr,rect);
 		//get_window()->invalidate_rect(rect , false);
@@ -140,7 +143,7 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	cr->copy_clip_rectangle_list(clip_rects);
 	//std::cerr<<"num rect = "<<clip_rects.size()<<std::endl;
 	for(auto& clip_rect:clip_rects){
-		std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
+		//std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
 		draw(cr,clip_rect);
 
 	}
