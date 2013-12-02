@@ -12,6 +12,7 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	file_context(file){
 	add_events(Gdk::BUTTON_PRESS_MASK);
 	add_events(Gdk::BUTTON_RELEASE_MASK);
+	add_events(Gdk::SCROLL_MASK);
 	im_context = gtk_im_multicontext_new();
 	g_signal_connect (im_context, "commit", G_CALLBACK (&ClvFileArea::im_commit_proxy), this);
 	g_signal_connect (im_context, "preedit-changed",G_CALLBACK (&ClvFileArea::preedit_changed_proxy), this);
@@ -85,12 +86,12 @@ bool ClvFileArea::on_blink_time(){
 	static bool bc;
 	if(bc){
 		auto cr = Cairo::Context::create(cover_surface_ptr);
-		cr->save();
+		//cr->save();
 		cr->set_source_rgba(1,1,1,0.1);
-		cr->rectangle(10,10,100,100);
+		cr->rectangle(110,310,100,100);
 		//cr->stroke();
 		cr->fill();
-		cr->restore();
+		//cr->restore();
 		cr->set_operator(Cairo::Operator::OPERATOR_XOR);
 		//Gdk::Cairo::add_rectangle_to_path(cr,rect);
 		cr = get_window()->create_cairo_context();
@@ -99,15 +100,17 @@ bool ClvFileArea::on_blink_time(){
 	}
 	else{
 		auto cr = get_window()->create_cairo_context();
+#ifdef CLV_SURFACE_BLINK
 		cr->set_source(surface_ptr,0,0);
-		cr->rectangle(10,10,100,100);
+		cr->rectangle(110,310,100,100);
 		cr->fill();
 		double x,y;
 		surface_ptr->get_device_offset(x,y);
-		std::cerr<<"surface:"<<surface_ptr.operator->()<<"offset:"<<x<<'-'<<y<<'\n';
-		//Gdk::Rectangle rect{10,10,100,90};
-		//Gdk::Cairo::add_rectangle_to_path(cr,rect);
-		//get_window()->invalidate_rect(rect , false);
+		std::cerr<<"surface:"<<surface_ptr->cobj()<<std::endl;
+#endif
+		Gdk::Rectangle rect{110,310,100,100};
+		Gdk::Cairo::add_rectangle_to_path(cr,rect);
+		get_window()->invalidate_rect(rect , false);
 	}
 	bc=!bc;
 
@@ -141,13 +144,14 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	//cr->set_source(cover_surface_ptr,0,0);
 	std::vector<Cairo::Rectangle> clip_rects;
 	cr->copy_clip_rectangle_list(clip_rects);
-	//std::cerr<<"num rect = "<<clip_rects.size()<<std::endl;
 	for(auto& clip_rect:clip_rects){
 		//std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
 		draw(cr,clip_rect);
-
 	}
+	std::cerr<<"context:"<<cr->cobj()<<std::endl;
+#ifdef CLV_SURFACE_BLINK
 	surface_ptr = cr->get_target();
+#endif
 	return true;//Gtk::TextView::on_draw(cr);
 }
 

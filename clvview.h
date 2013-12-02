@@ -30,7 +30,12 @@ class ClvFileArea: public Gtk::DrawingArea{
 	context<line> &file_context;
 	
 	GtkIMContext *im_context;
-	Cairo::RefPtr<Cairo::Surface> surface_ptr,cover_surface_ptr;
+#ifdef CLV_SURFACE_BLINK
+	Cairo::RefPtr<Cairo::Surface> surface_ptr;
+	//Cairo::RefPtr<Cairo::Context> cr_on_draw;
+#endif
+	Cairo::RefPtr<Cairo::Surface> cover_surface_ptr;
+	
 	sigc::connection blink_time_out;
 	
  	void on_font_setting_changed (const Glib::ustring & key);
@@ -67,7 +72,9 @@ protected:
 #endif
 	bool on_button_press_event(GdkEventButton* event) override;
 	bool on_button_release_event(GdkEventButton* event) override;
-	//bool on_scroll_event(GdkEventScroll* event) override;
+	bool on_scroll_event(GdkEventScroll* event) override{
+		return false;
+	}
 	void on_realize() override;
 	void on_unrealize() override;
 };
