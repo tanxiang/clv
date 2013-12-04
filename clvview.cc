@@ -85,16 +85,7 @@ void ClvFileArea::set_activates(bool setting){
 bool ClvFileArea::on_blink_time(){
 	static bool bc;
 	if(bc){
-		auto cr = Cairo::Context::create(cover_surface_ptr);
-		//cr->save();
-		cr->set_source_rgba(1,1,1,0.1);
-		cr->rectangle(110,310,100,100);
-		//cr->stroke();
-		cr->fill();
-		//cr->restore();
-		cr->set_operator(Cairo::Operator::OPERATOR_XOR);
-		//Gdk::Cairo::add_rectangle_to_path(cr,rect);
-		cr = get_window()->create_cairo_context();
+		auto cr = get_window()->create_cairo_context();
 		cr->set_source(cover_surface_ptr,0,0);
 		cr->paint();
 	}
@@ -253,6 +244,14 @@ bool ClvFileArea::on_button_press_event(GdkEventButton* event){
 		}
 		default:
 			input_status=STATUS_S_CLICKED;
+			auto cr = Cairo::Context::create(cover_surface_ptr);
+			//cr->save();
+			cr->set_source_rgba(1,1,1,0.1);
+			cr->rectangle(110,310,100,100);
+			//cr->stroke();
+			cr->fill();
+			//cr->restore();
+			cr->set_operator(Cairo::Operator::OPERATOR_XOR);
 		}
 	}
 	else if(event->button == GDK_BUTTON_SECONDARY){
