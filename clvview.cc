@@ -66,10 +66,7 @@ void ClvFileArea::on_unrealize(){
 
 bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
 	cover_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR_ALPHA, get_allocation().get_width(), get_allocation().get_width());
-	
-	//Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_blink_time),5000);
-	//auto cr = Cairo::Context::create(surface_ptr);
-	//std::cerr<<"config"<<surface_ptr.operator->()<<"\n";
+
 	return false;
 }
 
@@ -244,14 +241,6 @@ bool ClvFileArea::on_button_press_event(GdkEventButton* event){
 		}
 		default:
 			input_status=STATUS_S_CLICKED;
-			auto cr = Cairo::Context::create(cover_surface_ptr);
-			//cr->save();
-			cr->set_source_rgba(1,1,1,0.1);
-			cr->rectangle(110,310,100,100);
-			//cr->stroke();
-			cr->fill();
-			//cr->restore();
-			cr->set_operator(Cairo::Operator::OPERATOR_XOR);
 		}
 	}
 	else if(event->button == GDK_BUTTON_SECONDARY){
@@ -275,6 +264,12 @@ bool ClvFileArea::on_button_release_event(GdkEventButton* event){
 			}
 			input_status=STATUS_NORMAL;
 			std::cout<<"s click"<<std::endl;
+			
+			auto cr = Cairo::Context::create(cover_surface_ptr);
+			cr->set_source_rgba(1,1,1,0.7);
+			cr->rectangle(110,310,100,100);
+			cr->fill();
+			cr->set_operator(Cairo::Operator::OPERATOR_XOR);
 			break;
 		}
 		case STATUS_D_CLICKED://selected
