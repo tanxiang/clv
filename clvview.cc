@@ -103,7 +103,7 @@ bool ClvFileArea::on_blink_time(){
 	bc=!bc;
 
 	for(auto& cursor:file_context.cursors){
-		cursor.it_glyph;
+		;
 	}
 	return true;
 }
@@ -260,23 +260,26 @@ bool ClvFileArea::on_button_release_event(GdkEventButton* event){
 		{
 			auto line_itr = file_context.get_form_fill(event->y);
 			if(line_itr!=file_context.end()){
-				line_itr->x_to_index(event->x);
+				if(line_itr->empty()){
+					std::cerr<<"BUG:empty line:"<<__func__<<std::endl;
+					return true;
+				}
+				auto glyph_itr = line_itr->x_to_glyph_itr(event->x);
+				std::cout<<"s click"<<std::endl;
+				auto cr = Cairo::Context::create(cover_surface_ptr);
+				cr->set_source_rgba(1,1,1,0.7);
+				cr->rectangle(glyph_itr->x,glyph_itr->y,2,-18);
+				cr->fill();
+				cr->set_operator(Cairo::Operator::OPERATOR_XOR);
 			}
 			input_status=STATUS_NORMAL;
-			std::cout<<"s click"<<std::endl;
-			
-			auto cr = Cairo::Context::create(cover_surface_ptr);
-			cr->set_source_rgba(1,1,1,0.7);
-			cr->rectangle(110,310,100,100);
-			cr->fill();
-			cr->set_operator(Cairo::Operator::OPERATOR_XOR);
 			break;
 		}
 		case STATUS_D_CLICKED://selected
 		{
 			auto line_itr = file_context.get_form_fill(event->y);
 			if(line_itr!=file_context.end()){
-				line_itr->x_to_index(event->x);
+				line_itr->x_to_glyph_itr(event->x);
 			}
 			input_status=STATUS_SELECTED;
 			std::cout<<"d click"<<std::endl;

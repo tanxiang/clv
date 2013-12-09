@@ -39,6 +39,7 @@ public:
 		return 18;
 	}
 	int x_to_index(int x);
+	glyphs_group::iterator x_to_glyph_itr(int x);
 	bool draw_to_context(const Cairo::RefPtr<Cairo::Context>& cr,int y,const Cairo::Rectangle &rect);
 };
 #endif
