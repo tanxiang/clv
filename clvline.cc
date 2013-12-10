@@ -402,8 +402,9 @@ int line::x_to_index(int x){
 glyphs_group::iterator line::x_to_glyph_itr(int x){
 	auto lower_group = std::lower_bound(line_glyphs.begin(),line_glyphs.end(),x,
 			[](glyphs_group &group,int x){return group.empty() ? true : group.rbegin()->x < x;});
-	if(lower_group==line_glyphs.end())
-		return glyphs_group::iterator{};//FIXME bug
+	if(lower_group==line_glyphs.end()){
+		return --(--lower_group)->end();//FIXME bug
+	}
 	auto lower_gl = std::lower_bound(lower_group->begin(),lower_group->end(),x,
 			[](Cairo::Glyph &gl ,int x){return gl.x < x;});
 	std::cerr<<"x:"<<lower_gl->x<<"\n";
