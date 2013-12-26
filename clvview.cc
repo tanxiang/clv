@@ -9,7 +9,10 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 }
 
 ClvFileArea::ClvFileArea(context<line> &file):
-	file_context(file){
+	file_context(file),
+	Glib::ObjectBase(typeid(ClvFileArea)),
+	Gtk::DrawingArea(),
+	Gtk::Scrollable(){
 	add_events(Gdk::BUTTON_PRESS_MASK);
 	add_events(Gdk::BUTTON_RELEASE_MASK);
 	add_events(Gdk::SCROLL_MASK);
@@ -57,6 +60,8 @@ void ClvFileArea::on_realize(){
 	client_window->lower();
 	gtk_im_context_set_client_window(im_context,client_window->gobj());
 	Gtk::DrawingArea::on_realize();
+	Scrollable::add_interface(Scrollable::get_type());
+	//Gtk::Scrollable::add_interface(Gtk::DrawingArea::get_type());
 }
 
 void ClvFileArea::on_unrealize(){

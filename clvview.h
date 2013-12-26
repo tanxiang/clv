@@ -10,7 +10,7 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
-class ClvFileArea: public Gtk::DrawingArea{
+class ClvFileArea: public Gtk::DrawingArea,public Gtk::Scrollable{
 	enum{
 		STATUS_NONE=0,
 		STATUS_NORMAL,
@@ -43,6 +43,16 @@ class ClvFileArea: public Gtk::DrawingArea{
  	void modify_font_from_string (const std::string & fontString);
 	void draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect);
 public:
+	Glib::RefPtr<Gtk::Adjustment> get_hadjustment();
+	Glib::RefPtr<const Gtk::Adjustment> get_hadjustment() const;
+	void set_hadjustment(const Glib::RefPtr<Gtk::Adjustment>& hadjustment);
+	void unset_hadjustment();
+
+	Glib::RefPtr<Gtk::Adjustment> get_vadjustment();
+	Glib::RefPtr<const Gtk::Adjustment> get_vadjustment() const;
+	void set_vadjustment(const Glib::RefPtr<Gtk::Adjustment>& hadjustment);
+	void unset_vadjustment();
+
 	void set_activates(bool setting=false);
 	ClvFileArea(context<line> &file);
 	virtual ~ClvFileArea(){
