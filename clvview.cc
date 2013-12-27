@@ -9,13 +9,13 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 }
 
 ClvFileArea::ClvFileArea(context<line> &file):
-	file_context(file),
 	Glib::ObjectBase(typeid(ClvFileArea)),
 	Gtk::DrawingArea(),
-	Gtk::Scrollable(){
+	Gtk::Scrollable(),
+	file_context(file){
 	add_events(Gdk::BUTTON_PRESS_MASK);
 	add_events(Gdk::BUTTON_RELEASE_MASK);
-	add_events(Gdk::SCROLL_MASK);
+	//add_events(Gdk::SCROLL_MASK);
 	im_context = gtk_im_multicontext_new();
 	g_signal_connect (im_context, "commit", G_CALLBACK (&ClvFileArea::im_commit_proxy), this);
 	g_signal_connect (im_context, "preedit-changed",G_CALLBACK (&ClvFileArea::preedit_changed_proxy), this);
