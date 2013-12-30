@@ -10,9 +10,16 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 
 ClvFileArea::ClvFileArea(context<line> &file):
 	Glib::ObjectBase(typeid(ClvFileArea)),
-	Gtk::DrawingArea(),
-	Gtk::Scrollable(),
+	Gtk::DrawingArea(),	Gtk::Scrollable(),
+	clvhAdjustment(*this, "hadjustment"), clvvAdjustment(*this, "vadjustment"),
+	clvhScrollPolicy(*this, "hscroll-policy", Gtk::SCROLL_NATURAL),clvvScrollPolicy(*this, "vscroll-policy", Gtk::SCROLL_NATURAL),
 	file_context(file){
+
+  //This shows the GType name, which must be used in the CSS file.
+  //std::cout << "GType name: " << G_OBJECT_TYPE_NAME(gobj()) << std::endl;
+
+  //This shows that the GType still derives from GtkWidget:
+  //std::cout << "Gtype is a GtkWidget?:" << GTK_IS_SCROLLABLE(gobj()) << std::endl;
 	add_events(Gdk::BUTTON_PRESS_MASK);
 	add_events(Gdk::BUTTON_RELEASE_MASK);
 	//add_events(Gdk::SCROLL_MASK);
@@ -61,7 +68,6 @@ void ClvFileArea::on_realize(){
 	gtk_im_context_set_client_window(im_context,client_window->gobj());
 	Gtk::DrawingArea::on_realize();
 	Scrollable::add_interface(Scrollable::get_type());
-	//Gtk::Scrollable::add_interface(Gtk::DrawingArea::get_type());
 }
 
 void ClvFileArea::on_unrealize(){

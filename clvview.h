@@ -10,7 +10,7 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
-class ClvFileArea: public Gtk::DrawingArea,public Gtk::Scrollable{
+class ClvFileArea: public Gtk::DrawingArea,virtual public Gtk::Scrollable{
 	enum{
 		STATUS_NONE=0,
 		STATUS_NORMAL,
@@ -34,6 +34,9 @@ class ClvFileArea: public Gtk::DrawingArea,public Gtk::Scrollable{
 	Cairo::RefPtr<Cairo::Surface> surface_ptr;
 	//Cairo::RefPtr<Cairo::Context> cr_on_draw;
 #endif
+	Glib::Property<Glib::RefPtr<Gtk::Adjustment>> clvhAdjustment, clvvAdjustment;
+	Glib::Property<Gtk::ScrollablePolicy> clvhScrollPolicy, clvvScrollPolicy;
+
 	Cairo::RefPtr<Cairo::Surface> cover_surface_ptr;
 	
 	sigc::connection blink_time_out;
