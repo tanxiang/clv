@@ -7,19 +7,20 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	}
 	return true;
 }
-
+#include <iostream>
 ClvFileArea::ClvFileArea(context<line> &file):
 	Glib::ObjectBase(typeid(ClvFileArea)),
-	Gtk::DrawingArea(),	Gtk::Scrollable(),
+	//Gtk::DrawingArea(),	Gtk::Scrollable(),
+	file_context(file),
 	clvhAdjustment(*this, "hadjustment"), clvvAdjustment(*this, "vadjustment"),
-	clvhScrollPolicy(*this, "hscroll-policy", Gtk::SCROLL_NATURAL),clvvScrollPolicy(*this, "vscroll-policy", Gtk::SCROLL_NATURAL),
-	file_context(file){
+	clvhScrollPolicy(*this, "hscroll-policy", Gtk::SCROLL_NATURAL),clvvScrollPolicy(*this, "vscroll-policy", Gtk::SCROLL_NATURAL)
+	{
 
   //This shows the GType name, which must be used in the CSS file.
-  //std::cout << "GType name: " << G_OBJECT_TYPE_NAME(gobj()) << std::endl;
+  std::cout << "GType name: " << G_OBJECT_TYPE_NAME(Glib::Object::gobj()) << std::endl;
 
   //This shows that the GType still derives from GtkWidget:
-  //std::cout << "Gtype is a GtkWidget?:" << GTK_IS_SCROLLABLE(gobj()) << std::endl;
+  std::cout << "Gtype is a SCROLLABLE?:" <<( GTK_IS_SCROLLABLE(Glib::Object::gobj()) ? "Yes" : "No" )<< std::endl;
 	add_events(Gdk::BUTTON_PRESS_MASK);
 	add_events(Gdk::BUTTON_RELEASE_MASK);
 	//add_events(Gdk::SCROLL_MASK);
