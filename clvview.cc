@@ -16,11 +16,13 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	clvhScrollPolicy(*this, "hscroll-policy", Gtk::SCROLL_NATURAL),clvvScrollPolicy(*this, "vscroll-policy", Gtk::SCROLL_NATURAL)
 	{
 
-  //This shows the GType name, which must be used in the CSS file.
-  std::cout << "GType name: " << G_OBJECT_TYPE_NAME(Glib::Object::gobj()) << std::endl;
-
-  //This shows that the GType still derives from GtkWidget:
-  std::cout << "Gtype is a SCROLLABLE?:" <<( GTK_IS_SCROLLABLE(Glib::Object::gobj()) ? "Yes" : "No" )<< std::endl;
+#if 1
+	//This shows the GType name, which must be used in the CSS file.
+	std::cout << "GType name: " << G_OBJECT_TYPE_NAME(Glib::Object::gobj()) << std::endl;
+	//This shows that the GType still derives from GtkWidget:
+	std::cout << "Gtype is a Scrollable?:" <<( GTK_IS_SCROLLABLE(Glib::Object::gobj()) ? "Yes" : "No" )<< std::endl;
+	std::cout << "Gtype is a DrawingArea?:" <<( GTK_IS_DRAWING_AREA(Glib::Object::gobj()) ? "Yes" : "No" )<< std::endl;
+#endif
 	add_events(Gdk::BUTTON_PRESS_MASK);
 	add_events(Gdk::BUTTON_RELEASE_MASK);
 	//add_events(Gdk::SCROLL_MASK);
@@ -34,7 +36,11 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	style->context_save();
 	style->add_class(GTK_STYLE_CLASS_VIEW);
 	style->context_restore();
-	set_size_request( 0, file_context.end().get_fill_offset());
+
+	clvhAdjustment.get_value()->signal_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_adjustment));
+	//clvhAdjustment.get_value()->configure(0,0,500,10,10,100);
+	//set_size_request( 0, file_context.end().get_fill_offset());
+  std::cout << "set clvhAdjustment" << std::endl;
 #ifndef GLIBMM_DEFAULT_SIGNAL_HANDLERS_ENABLED
 	this->signal_draw().connect(sigc::mem_fun(*this,&ClvFileArea::on_draw));
 #endif
@@ -68,7 +74,7 @@ void ClvFileArea::on_realize(){
 	client_window->lower();
 	gtk_im_context_set_client_window(im_context,client_window->gobj());
 	Gtk::DrawingArea::on_realize();
-	Scrollable::add_interface(Scrollable::get_type());
+	//Scrollable::add_interface(Scrollable::get_type());
 }
 
 void ClvFileArea::on_unrealize(){

@@ -46,6 +46,7 @@ class ClvFileArea: public Gtk::DrawingArea,virtual public Gtk::Scrollable{
  	void modify_font_from_string (const std::string & fontString);
 	void draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect);
 public:
+	/*
 	Glib::RefPtr<Gtk::Adjustment> get_hadjustment();
 	Glib::RefPtr<const Gtk::Adjustment> get_hadjustment() const;
 	void set_hadjustment(const Glib::RefPtr<Gtk::Adjustment>& hadjustment);
@@ -55,6 +56,7 @@ public:
 	Glib::RefPtr<const Gtk::Adjustment> get_vadjustment() const;
 	void set_vadjustment(const Glib::RefPtr<Gtk::Adjustment>& hadjustment);
 	void unset_vadjustment();
+	*/
 
 	void set_activates(bool setting=false);
 	ClvFileArea(context<line> &file);
@@ -87,6 +89,9 @@ protected:
 	bool on_button_release_event(GdkEventButton* event) override;
 	bool on_scroll_event(GdkEventScroll* event) override{
 		return false;
+	}
+	void on_adjustment(){
+		
 	}
 	void on_realize() override;
 	void on_unrealize() override;
