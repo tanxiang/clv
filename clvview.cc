@@ -10,9 +10,11 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 #include <iostream>
 ClvFileArea::ClvFileArea(context<line> &file):
 	Glib::ObjectBase(typeid(ClvFileArea)),
-	//Gtk::DrawingArea(),	Gtk::Scrollable(),
+	Gtk::Scrollable(),
+	Gtk::DrawingArea(),
 	file_context(file),
-	clvhAdjustment(*this, "hadjustment"), clvvAdjustment(*this, "vadjustment"),
+	clvhAdjustment(*this, "hadjustment",Gtk::Adjustment::create(0,0,100)),
+	clvvAdjustment(*this, "vadjustment",Gtk::Adjustment::create(0,0,100)),
 	clvhScrollPolicy(*this, "hscroll-policy", Gtk::SCROLL_NATURAL),clvvScrollPolicy(*this, "vscroll-policy", Gtk::SCROLL_NATURAL)
 	{
 
@@ -36,11 +38,12 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	style->context_save();
 	style->add_class(GTK_STYLE_CLASS_VIEW);
 	style->context_restore();
-
+	if(clvhAdjustment.get_value())
+		std::cout << "set clvhAdjustment" << std::endl;
 	clvhAdjustment.get_value()->signal_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_adjustment));
-	//clvhAdjustment.get_value()->configure(0,0,500,10,10,100);
+	clvhAdjustment.get_value()->configure(0,0,500,10,10,100);
 	//set_size_request( 0, file_context.end().get_fill_offset());
-  std::cout << "set clvhAdjustment" << std::endl;
+
 #ifndef GLIBMM_DEFAULT_SIGNAL_HANDLERS_ENABLED
 	this->signal_draw().connect(sigc::mem_fun(*this,&ClvFileArea::on_draw));
 #endif
