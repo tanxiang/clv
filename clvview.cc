@@ -12,10 +12,13 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	Glib::ObjectBase(typeid(ClvFileArea)),
 	Gtk::Scrollable(),
 	Gtk::DrawingArea(),
-	file_context(file),
-	clvhAdjustment(*this, "hadjustment",Gtk::Adjustment::create(0,0,100)),
-	clvvAdjustment(*this, "vadjustment",Gtk::Adjustment::create(0,0,100)),
-	clvhScrollPolicy(*this, "hscroll-policy", Gtk::SCROLL_NATURAL),clvvScrollPolicy(*this, "vscroll-policy", Gtk::SCROLL_NATURAL)
+	file_context(file)
+	//clvhAdjustment(*this, "hadjustment" , Gtk::Adjustment::create(0,0,100)),
+	//clvvAdjustment(*this, "vadjustment" , Gtk::Adjustment::create(0,0,100)),
+	//clvhAdjustment(*this, "hadjustment"),
+	//clvvAdjustment(*this, "vadjustment"),
+	//clvhScrollPolicy(*this, "hscroll-policy" , Gtk::SCROLL_NATURAL),
+	//clvvScrollPolicy(*this, "vscroll-policy" , Gtk::SCROLL_NATURAL)
 	{
 
 #if 1
@@ -38,11 +41,17 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	style->context_save();
 	style->add_class(GTK_STYLE_CLASS_VIEW);
 	style->context_restore();
-	if(clvhAdjustment.get_value())
-		std::cout << "set clvhAdjustment" << std::endl;
+	/*
+	set_hadjustment(clvhAdjustment.get_value());
+	set_vadjustment(clvvAdjustment.get_value());
+	std::cout << "hadjustment:" << get_hadjustment().operator->()<<std::endl;
+	std::cout << "clvhAdjustment:"<< clvhAdjustment.get_value().operator->() << std::endl;
 	clvhAdjustment.get_value()->signal_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_adjustment));
-	clvhAdjustment.get_value()->configure(0,0,500,10,10,100);
-	//set_size_request( 0, file_context.end().get_fill_offset());
+	clvhAdjustment.get_value()->configure(0,0,50000,1,10,100);
+	clvvAdjustment.get_value()->signal_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_adjustment));
+	clvvAdjustment.get_value()->configure(0,0,50000,1,10,100);
+	*/
+	set_size_request( 0, file_context.end().get_fill_offset());
 
 #ifndef GLIBMM_DEFAULT_SIGNAL_HANDLERS_ENABLED
 	this->signal_draw().connect(sigc::mem_fun(*this,&ClvFileArea::on_draw));
@@ -89,6 +98,17 @@ bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
 	cover_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR_ALPHA, get_allocation().get_width(), get_allocation().get_width());
 
 	return false;
+}
+
+void ClvFileArea::on_size_allocate(Gtk::Allocation& allocation){
+
+	std::cout << "hadjustment:" << get_hadjustment().operator->()<<std::endl;
+	//std::cout << "clvhAdjustment:"<< clvhAdjustment.get_value().operator->() << std::endl;
+	get_hadjustment()->signal_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_adjustment));
+	get_hadjustment()->configure(0,0,50000,1,10,100);
+	get_vadjustment()->signal_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_adjustment));
+	get_vadjustment()->configure(0,0,50000,1,10,100);
+	Gtk::DrawingArea::on_size_allocate(allocation);
 }
 
 void ClvFileArea::set_activates(bool setting){

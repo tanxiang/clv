@@ -13,7 +13,6 @@
 class ClvFViewBox : public Gtk::Box {
 	context<line> &file;
 	ClvLineArea lineview;
-	Gtk::ScrolledWindow sc_fileview;
 	ClvFileArea fileview;
 	ClvThumArea thumview;
 	Gtk::ScrolledWindow scrolledview;

@@ -5,7 +5,9 @@
 
 
 ClvFViewBox::ClvFViewBox(context<line> &file_ref):
-	file(file_ref),fileview(file){
+	file(file_ref),fileview(file)
+	//,scrolledview(fileview.get_hadjustment(),fileview.get_vadjustment())
+	{
 	//set_homogeneous(false);
 	//lineview.queue_draw_area(0,0,30,30);
 	//FIXME:reconfig w,h by font w,h
@@ -13,7 +15,9 @@ ClvFViewBox::ClvFViewBox(context<line> &file_ref):
 	pack_start(lineview,Gtk::PACK_SHRINK);
 
 	pack_start(scrolledview);
+//	std::cout<<"scrolledview hadj b:"<<scrolledview.get_hadjustment().operator->()<<std::endl;
 	scrolledview.add(fileview);
+	std::cout<<"scrolledview hadj f:"<<scrolledview.get_hadjustment().operator->()<<std::endl;
 	thumview.set_size_request(100);
 	pack_start(thumview,Gtk::PACK_SHRINK);
 }

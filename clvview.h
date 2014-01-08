@@ -34,8 +34,8 @@ class ClvFileArea: public Gtk::DrawingArea,virtual public Gtk::Scrollable{
 	Cairo::RefPtr<Cairo::Surface> surface_ptr;
 	//Cairo::RefPtr<Cairo::Context> cr_on_draw;
 #endif
-	Glib::Property<Glib::RefPtr<Gtk::Adjustment>> clvhAdjustment, clvvAdjustment;
-	Glib::Property<Gtk::ScrollablePolicy> clvhScrollPolicy, clvvScrollPolicy;
+	//Glib::Property<Glib::RefPtr<Gtk::Adjustment>> clvhAdjustment, clvvAdjustment;
+	//Glib::Property<Gtk::ScrollablePolicy> clvhScrollPolicy, clvvScrollPolicy;
 
 	Cairo::RefPtr<Cairo::Surface> cover_surface_ptr;
 	
@@ -78,6 +78,7 @@ protected:
 
 	bool on_blink_time();
 	bool on_configure_event(GdkEventConfigure* event) override;
+	void on_size_allocate(Gtk::Allocation& allocation) override;
 	bool on_focus_in_event(GdkEventFocus* event) override;
 	bool on_focus_out_event(GdkEventFocus* event) override;
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
