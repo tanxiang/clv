@@ -30,7 +30,9 @@ ClvFileArea::ClvFileArea(context<line> &file):
 #endif
 	add_events(Gdk::BUTTON_PRESS_MASK);
 	add_events(Gdk::BUTTON_RELEASE_MASK);
-	//add_events(Gdk::SCROLL_MASK);
+	add_events(Gdk::SCROLL_MASK);
+	add_events(Gdk::TOUCH_MASK);
+	add_events(Gdk::SMOOTH_SCROLL_MASK);
 	im_context = gtk_im_multicontext_new();
 	g_signal_connect (im_context, "commit", G_CALLBACK (&ClvFileArea::im_commit_proxy), this);
 	g_signal_connect (im_context, "preedit-changed",G_CALLBACK (&ClvFileArea::preedit_changed_proxy), this);
