@@ -88,9 +88,7 @@ protected:
 #endif
 	bool on_button_press_event(GdkEventButton* event) override;
 	bool on_button_release_event(GdkEventButton* event) override;
-	bool on_scroll_event(GdkEventScroll* event) override{
-		return false;
-	}
+	bool on_scroll_event(GdkEventScroll* event) override;
 	void on_adjustment(){
 		
 	}

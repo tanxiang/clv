@@ -79,7 +79,7 @@ void ClvFileArea::on_realize(){
 		GDK_POINTER_MOTION_MASK |
 		GDK_ENTER_NOTIFY_MASK |
 		GDK_LEAVE_NOTIFY_MASK);
-	auto client_window = Gdk::Window::create(get_parent_window(), &attributes, GDK_WA_X | GDK_WA_Y );
+	auto client_window = Gdk::Window::create(get_parent_window(), &attributes, Gdk::WA_X | Gdk::WA_Y );
 	//client_window->show();
 	register_window(client_window);
 	client_window->lower();
@@ -109,6 +109,17 @@ void ClvFileArea::on_size_allocate(Gtk::Allocation& allocation){
 	get_vadjustment()->configure(0,0,50000,1,10,100);
 	Gtk::DrawingArea::on_size_allocate(allocation);
 }
+
+bool ClvFileArea::on_scroll_event(GdkEventScroll* event){
+	switch(event->direction){
+		case GDK_SCROLL_SMOOTH:
+		break;
+		default:
+		;
+	}
+	return true;
+}
+
 
 void ClvFileArea::set_activates(bool setting){
 	if(setting){
