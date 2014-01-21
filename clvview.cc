@@ -84,6 +84,9 @@ void ClvFileArea::on_realize(){
 	register_window(client_window);
 	client_window->lower();
 	gtk_im_context_set_client_window(im_context,client_window->gobj());
+
+	get_hadjustment()->signal_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_adjustment));
+	get_vadjustment()->signal_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_adjustment));
 	Gtk::DrawingArea::on_realize();
 	//Scrollable::add_interface(Scrollable::get_type());
 }
@@ -102,20 +105,30 @@ bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
 void ClvFileArea::on_size_allocate(Gtk::Allocation& allocation){
 
 	std::cout << "hadjustment:" << get_hadjustment().operator->()<<std::endl;
-	//std::cout << "clvhAdjustment:"<< clvhAdjustment.get_value().operator->() << std::endl;
-	get_hadjustment()->signal_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_adjustment));
 	get_hadjustment()->configure(0,0,50000,1,10,100);
-	get_vadjustment()->signal_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_adjustment));
 	get_vadjustment()->configure(0,0,50000,1,10,100);
 	Gtk::DrawingArea::on_size_allocate(allocation);
 }
 
 bool ClvFileArea::on_scroll_event(GdkEventScroll* event){
 	switch(event->direction){
-		case GDK_SCROLL_SMOOTH:
-		break;
+		case GDK_SCROLL_SMOOTH:{
+			gdouble delta_x,delta_y;
+			if(gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event),&delta_x,&delta_y))
+				std::cout << "GDK_SCROLL_SMOOTH" <<delta_x<<'-'<<delta_y<<std::endl;	
+			break;
+		}
+		case GDK_SCROLL_RIGHT:
+		case GDK_SCROLL_DOWN:
+			//scroll_by ( 16 );
+			break;
+		case GDK_SCROLL_LEFT:
+		case GDK_SCROLL_UP:
+			//scroll_by ( - 16);
+			break;
 		default:
-		;
+		std::cout << "GDK_SCROLL_ELSE" <<std::endl;
+
 	}
 	return true;
 }
