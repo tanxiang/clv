@@ -114,8 +114,11 @@ bool ClvFileArea::on_scroll_event(GdkEventScroll* event){
 	switch(event->direction){
 		case GDK_SCROLL_SMOOTH:{
 			gdouble delta_x,delta_y;
-			if(gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event),&delta_x,&delta_y))
-				std::cout << "GDK_SCROLL_SMOOTH" <<delta_x<<'-'<<delta_y<<std::endl;	
+			if(gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event),&delta_x,&delta_y)){
+				std::cout << "GDK_SCROLL_SMOOTH" <<delta_x<<'-'<<delta_y<<std::endl;
+				get_window()->move(0,delta_y);
+				get_window()->scroll(0,delta_y);
+			}
 			break;
 		}
 		case GDK_SCROLL_RIGHT:
