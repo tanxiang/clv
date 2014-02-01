@@ -116,8 +116,8 @@ bool ClvFileArea::on_scroll_event(GdkEventScroll* event){
 			gdouble delta_x,delta_y;
 			if(gdk_event_get_scroll_deltas(reinterpret_cast<GdkEvent*>(event),&delta_x,&delta_y)){
 				std::cout << "GDK_SCROLL_SMOOTH" <<delta_x<<'-'<<delta_y<<std::endl;
-				get_window()->move(0,delta_y);
-				get_window()->scroll(0,delta_y);
+				get_window()->move(0,-delta_y);
+				//get_window()->scroll(0,-delta_y);
 			}
 			break;
 		}
@@ -200,10 +200,10 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	std::vector<Cairo::Rectangle> clip_rects;
 	cr->copy_clip_rectangle_list(clip_rects);
 	for(auto& clip_rect:clip_rects){
-		//std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
+		std::cerr<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
 		draw(cr,clip_rect);
 	}
-	std::cerr<<"context:"<<cr->cobj()<<std::endl;
+	//std::cerr<<"context:"<<cr->cobj()<<std::endl;
 #ifdef CLV_SURFACE_BLINK
 	surface_ptr = cr->get_target();
 #endif
