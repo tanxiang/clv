@@ -3,6 +3,7 @@
 #include <gtkmm.h>
 #include "clvcontext.h"
 #include "clvline.h"
+
 class ClvLineArea : public Gtk::DrawingArea{
 public:
 protected:
@@ -88,10 +89,10 @@ protected:
 #endif
 	bool on_button_press_event(GdkEventButton* event) override;
 	bool on_button_release_event(GdkEventButton* event) override;
-	bool on_scroll_event(GdkEventScroll* event) override;
-	void on_adjustment(){
-		
-	}
+	//bool on_scroll_event(GdkEventScroll* event) override;
+	void on_hadjustment();
+	void on_vadjustment();
+
 	void on_realize() override;
 	void on_unrealize() override;
 };
