@@ -92,7 +92,8 @@ void ClvFileArea::on_size_allocate(Gtk::Allocation& allocation){
 	std::cerr << "size_allocate:" <<allocation.get_height()<<std::endl;
 	get_hadjustment()->configure(0,0,50000,1,10,100);
 	get_vadjustment()->configure(0,0,50000,1,10,100);
-	Gtk::Widget::on_size_allocate(allocation);
+	Gtk::Allocation context_allocate{0,0,get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
+	Gtk::Widget::on_size_allocate(context_allocate);
 	//allocation.
 }
 
