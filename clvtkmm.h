@@ -16,6 +16,9 @@ class ClvFViewBox : public Gtk::Box {
 	ClvFileArea fileview;
 	ClvThumArea thumview;
 	Gtk::ScrolledWindow scrolledview;
+protected:
+	void on_realize() override;
+	void on_unrealize() override;
 public:
 	ClvFViewBox(context<line> &file_ref);
 	virtual ~ClvFViewBox(){};

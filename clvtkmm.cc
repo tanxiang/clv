@@ -6,20 +6,31 @@
 
 ClvFViewBox::ClvFViewBox(context<line> &file_ref):
 	file(file_ref),fileview(file)
-	//,scrolledview(fileview.get_hadjustment(),fileview.get_vadjustment())
-	{
-	//set_homogeneous(false);
-	//lineview.queue_draw_area(0,0,30,30);
-	//FIXME:reconfig w,h by font w,h
-	//lineview.set_size_request(10);
+{
+
+}
+
+void ClvFViewBox::on_realize(){
+
 	pack_start(lineview,Gtk::PACK_SHRINK);
 
 	pack_start(scrolledview);
-//	std::cout<<"scrolledview hadj b:"<<scrolledview.get_hadjustment().operator->()<<std::endl;
+	std::cout<<&scrolledview<<"add"<<&fileview<<std::endl;
 	scrolledview.add(fileview);
-	std::cout<<"scrolledview hadj f:"<<scrolledview.get_hadjustment().operator->()<<std::endl;
-	thumview.set_size_request(100);
+	std::cout<<"scrolledview had:"<<scrolledview.get_hadjustment().operator->()<<std::endl;
+	std::cout<<"scrolledview vad:"<<scrolledview.get_vadjustment().operator->()<<std::endl;
+	std::cout<<&fileview<<"fileview had:"<<fileview.get_hadjustment().operator->()<<std::endl;
+	std::cout<<&fileview<<"fileview vad:"<<fileview.get_vadjustment().operator->()<<std::endl;
+
+	scrolledview.set_policy(Gtk::POLICY_ALWAYS,Gtk::POLICY_ALWAYS);
+	thumview.set_size_request(10);
 	pack_start(thumview,Gtk::PACK_SHRINK);
+	Gtk::Box::on_realize();
+	show_all_children();
+}
+
+void ClvFViewBox::on_unrealize(){
+	Gtk::Box::on_unrealize();
 }
 
 void ClvFViewBox::save(){

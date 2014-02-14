@@ -33,10 +33,7 @@ class ClvFileArea: public Gtk::DrawingArea,virtual public Gtk::Scrollable{
 	GtkIMContext *im_context;
 #ifdef CLV_SURFACE_BLINK
 	Cairo::RefPtr<Cairo::Surface> surface_ptr;
-	//Cairo::RefPtr<Cairo::Context> cr_on_draw;
 #endif
-	//Glib::Property<Glib::RefPtr<Gtk::Adjustment>> clvhAdjustment, clvvAdjustment;
-	//Glib::Property<Gtk::ScrollablePolicy> clvhScrollPolicy, clvvScrollPolicy;
 
 	Cairo::RefPtr<Cairo::Surface> cover_surface_ptr;
 	
@@ -47,17 +44,6 @@ class ClvFileArea: public Gtk::DrawingArea,virtual public Gtk::Scrollable{
  	void modify_font_from_string (const std::string & fontString);
 	void draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect);
 public:
-	/*
-	Glib::RefPtr<Gtk::Adjustment> get_hadjustment();
-	Glib::RefPtr<const Gtk::Adjustment> get_hadjustment() const;
-	void set_hadjustment(const Glib::RefPtr<Gtk::Adjustment>& hadjustment);
-	void unset_hadjustment();
-
-	Glib::RefPtr<Gtk::Adjustment> get_vadjustment();
-	Glib::RefPtr<const Gtk::Adjustment> get_vadjustment() const;
-	void set_vadjustment(const Glib::RefPtr<Gtk::Adjustment>& hadjustment);
-	void unset_vadjustment();
-	*/
 
 	void set_activates(bool setting=false);
 	ClvFileArea(context<line> &file);

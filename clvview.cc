@@ -1,4 +1,5 @@
 #include "clvview.h"
+#include <iostream>
 
 bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	if(should_draw_window(cr,get_window())){
@@ -8,8 +9,6 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	return true;
 }
 
-#include <iostream>
-
 ClvFileArea::ClvFileArea(context<line> &file):
 	Glib::ObjectBase(typeid(ClvFileArea)),
 	Gtk::Scrollable(),
@@ -18,13 +17,12 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	//clvhScrollPolicy(*this, "hscroll-policy" , Gtk::SCROLL_NATURAL),
 	//clvvScrollPolicy(*this, "vscroll-policy" , Gtk::SCROLL_NATURAL)
 	{
-
 #if 1
 	//This shows the GType name, which must be used in the CSS file.
 	std::cout << "GType name: " << G_OBJECT_TYPE_NAME(Glib::Object::gobj()) << std::endl;
 	//This shows that the GType still derives from GtkWidget:
-	std::cout << "Gtype is a Scrollable?:" <<( GTK_IS_SCROLLABLE(Glib::Object::gobj()) ? "Yes" : "No" )<< std::endl;
-	std::cout << "Gtype is a DrawingArea?:" <<( GTK_IS_DRAWING_AREA(Glib::Object::gobj()) ? "Yes" : "No" )<< std::endl;
+	std::cout << "Gtype is a Scrollable?: " <<( GTK_IS_SCROLLABLE(Glib::Object::gobj()) ? "Yes" : "No" )<< std::endl;
+	std::cout << "Gtype is a DrawingArea?: " <<( GTK_IS_DRAWING_AREA(Glib::Object::gobj()) ? "Yes" : "No" )<< std::endl;
 #endif
 	add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK);
 
@@ -38,9 +36,7 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	style->context_save();
 	style->add_class(GTK_STYLE_CLASS_VIEW);
 	style->context_restore();
-
-	set_size_request( 0, file_context.end().get_fill_offset());
-
+	//set_size_request( 0, file_context.end().get_fill_offset());
 #ifndef GLIBMM_DEFAULT_SIGNAL_HANDLERS_ENABLED
 	this->signal_draw().connect(sigc::mem_fun(*this,&ClvFileArea::on_draw));
 #endif
@@ -71,11 +67,22 @@ void ClvFileArea::on_realize(){
 	register_window(client_window);
 	client_window->lower();
 	gtk_im_context_set_client_window(im_context,client_window->gobj());
-
+	get_hadjustment()->configure(0,0,1200,1,10,100);
+	get_vadjustment()->configure(0,0,2400,1,10,100);
+	std::cerr<<"get_parent"<<get_parent()<<std::endl;
+	std::cerr<<"get_hadjustment:"<<get_hadjustment().operator->()<<":this="<<this<<std::endl;
+	std::cerr<<"get_vadjustment:"<<get_vadjustment().operator->()<<":this="<<this<<std::endl;
+#if 0
+	GtkAdjustment *adj = NULL;
+	g_object_get (Gtk::Scrollable::gobj(), "hadjustment", &adj, NULL);
+	if (adj)
+		g_object_unref (adj);
+  	std::cerr<<Gtk::Scrollable::gobj()<<"gobj_hadjustment:"<<adj<<":"<<get_hadjustment()->gobj()<<std::endl;
+#endif
 	get_hadjustment()->signal_value_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_hadjustment));
 	get_vadjustment()->signal_value_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_vadjustment));
 	Gtk::DrawingArea::on_realize();
-	get_window()->resize(3000,3000);
+	//get_window()->resize(3000,3000);
 }
 
 void ClvFileArea::on_unrealize(){
@@ -90,11 +97,8 @@ bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
 
 void ClvFileArea::on_size_allocate(Gtk::Allocation& allocation){
 	std::cerr << "size_allocate:" <<allocation.get_height()<<std::endl;
-	get_hadjustment()->configure(0,0,50000,1,10,100);
-	get_vadjustment()->configure(0,0,50000,1,10,100);
-	//Gtk::Allocation context_allocate{0,0,get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
-	Gtk::Allocation context_allocate{0,0,1024,1024};
-	Gtk::Widget::on_size_allocate(context_allocate);
+	Gtk::Allocation context_allocation{0,0,get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
+	Gtk::DrawingArea::on_size_allocate(context_allocation);
 	//allocation.
 }
 
@@ -108,6 +112,7 @@ void ClvFileArea::set_activates(bool setting){
 }
 
 bool ClvFileArea::on_blink_time(){
+	return true;
 	static bool bc;
 	if(bc){
 		auto cr = get_window()->create_cairo_context();
@@ -139,7 +144,7 @@ bool ClvFileArea::on_blink_time(){
 //void ClvFileArea::on_hide(){
 //}
 void ClvFileArea::on_hadjustment(){
-	std::cout<<"hadjustment:"<<std::endl;
+	//std::cout<<"hadjustment:"<<std::endl;
 	int x,y;
 	get_window()->get_position(x,y);
 	int new_x = - get_hadjustment()->get_value();
@@ -147,7 +152,7 @@ void ClvFileArea::on_hadjustment(){
 }
 
 void ClvFileArea::on_vadjustment(){
-	std::cout<<"vadjustment:"<<std::endl;
+	std::cout<<"vadjustment:window="<<get_window().operator->()<<std::endl;
 	int x,y;
 	get_window()->get_position(x,y);
 	int new_y = - get_vadjustment()->get_value();
@@ -195,12 +200,12 @@ bool ClvFileArea::on_focus_in_event(GdkEventFocus* event){
 }
 
 bool ClvFileArea::on_focus_out_event(GdkEventFocus* event){
-	std::cerr<<__FUNCTION__<<"\n";
+	std::cerr<<__FUNCTION__<<std::endl;
 	return false;
 }
 
 bool ClvFileArea::on_key_press_event(GdkEventKey *event){
-	std::cout<<__FUNCTION__<<(unsigned int)*event->string<<std::endl;
+	std::cout<<__FUNCTION__<<event->string<<std::endl;
 	switch(input_status){
 		case STATUS_INPUT:
 		{
@@ -273,6 +278,7 @@ void ClvFileArea::delete_surrounding_proxy(GtkIMContext *context,gint offset,gin
 }
 
 bool ClvFileArea::on_button_press_event(GdkEventButton* event){
+	std::cerr<<this<<':'<<get_vadjustment()->get_upper()<<std::endl;
 	if(!gtk_widget_has_focus(Widget::gobj())){
 		grab_focus();
 	}
@@ -280,10 +286,10 @@ bool ClvFileArea::on_button_press_event(GdkEventButton* event){
 	if(event->button == GDK_BUTTON_PRIMARY){
 		switch(input_status){
 		case STATUS_S_CLICKED://to double clicked
-		{
+			//static int i;
+			//get_vadjustment()->set_value(i+=10);
 			input_status=STATUS_D_CLICKED;
 			break;
-		}
 		default:
 			input_status=STATUS_S_CLICKED;
 		}
