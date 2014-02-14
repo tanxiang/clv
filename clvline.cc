@@ -1,4 +1,5 @@
 #include "clvline.h"
+#include "dbg.h"
 
 extern "C"{
 typedef enum _cairo_lcd_filter {
@@ -308,7 +309,6 @@ _cairo_ucs4_to_utf8 (uint32_t  unicode,
 }
 
 }
-#include <iostream>
 
 void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned int g_index){
 	cr->set_source_rgb(1,1,1);

@@ -27,6 +27,7 @@ rule cxx_cairomm
 #    description = CXX $out
 #    depfile = .$out.d
 
+build dbg.o: cxx dbg.cc
 build clthread.o: cxx clthread.cc
 build clvparser.o: cxx clvparser.cc
 build clangparse.o: cxx clangparse.cc
@@ -46,6 +47,6 @@ rule link_gtkmm
     command = $cxx $in $cxxflags $linkflags_gtkmm -o $out
 
 #build clv: link view.o clthread.o clangparse.o filemap.o
-build clvtk: link_gtkmm clvtkmm.o clvview.o gtk_window.o unorder_tree.o clvline.o
+build clvtk: link_gtkmm clvtkmm.o clvview.o gtk_window.o unorder_tree.o clvline.o dbg.o
 
 #build sk: link_skia view.o filemap.o

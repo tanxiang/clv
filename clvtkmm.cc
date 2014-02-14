@@ -1,7 +1,7 @@
 #include "clvtkmm.h"
 #include "clvbuffer.h"
 #include <pangomm.h>
-#include <iostream>
+#include "dbg.h"
 
 
 ClvFViewBox::ClvFViewBox(context<line> &file_ref):
@@ -11,18 +11,17 @@ ClvFViewBox::ClvFViewBox(context<line> &file_ref):
 }
 
 void ClvFViewBox::on_realize(){
-
 	pack_start(lineview,Gtk::PACK_SHRINK);
-
 	pack_start(scrolledview);
-	std::cout<<&scrolledview<<"add"<<&fileview<<std::endl;
 	scrolledview.add(fileview);
-	std::cout<<"scrolledview had:"<<scrolledview.get_hadjustment().operator->()<<std::endl;
-	std::cout<<"scrolledview vad:"<<scrolledview.get_vadjustment().operator->()<<std::endl;
-	std::cout<<&fileview<<"fileview had:"<<fileview.get_hadjustment().operator->()<<std::endl;
-	std::cout<<&fileview<<"fileview vad:"<<fileview.get_vadjustment().operator->()<<std::endl;
-
-	scrolledview.set_policy(Gtk::POLICY_ALWAYS,Gtk::POLICY_ALWAYS);
+#if 0
+	debug<<&scrolledview<<"add"<<&fileview<<std::endl;
+	debug<<"scrolledview had:"<<scrolledview.get_hadjustment().operator->()<<std::endl;
+	debug<<"scrolledview vad:"<<scrolledview.get_vadjustment().operator->()<<std::endl;
+	debug<<&fileview<<"fileview had:"<<fileview.get_hadjustment().operator->()<<std::endl;
+	debug<<&fileview<<"fileview vad:"<<fileview.get_vadjustment().operator->()<<std::endl;
+#endif
+	scrolledview.set_policy(Gtk::POLICY_AUTOMATIC,Gtk::POLICY_AUTOMATIC);
 	thumview.set_size_request(10);
 	pack_start(thumview,Gtk::PACK_SHRINK);
 	Gtk::Box::on_realize();
@@ -35,11 +34,11 @@ void ClvFViewBox::on_unrealize(){
 
 void ClvFViewBox::save(){
 	//std::cout<<"save:"<<reinterpret_cast<unsigned int>(this)<<std::endl;
-	std::cout<<"save:"<<this<<std::endl;
+	debug<<"save:"<<this<<std::endl;
 }
 
 void ClvFViewBox::close(){
-	std::cout<<"close:"<<this<<std::endl;
+	debug<<"close:"<<this<<std::endl;
 }
 
 //bool ClvFileBox::on_event(GdkEvent *event){
@@ -48,7 +47,7 @@ void ClvFViewBox::close(){
 //}
 /*
 ClvFViewBox::~ClvFViewBox(){
-	std::cout<<"free vbox"<<std::endl;
+	debug<<"free vbox"<<std::endl;
 }*/
 
 ClvToolBox::ClvToolBox():file_mode("c++",true),
@@ -123,7 +122,7 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 }
 
 void ClvNotebook::on_page_switch ( Gtk::Widget *page, int page_num ){
-	std::cerr<<"sw page:"<<page<<"\tnum:"<<page_num<<"\n";
+	debug<<"sw page:"<<page<<"\tnum:"<<page_num<<"\n";
 	if(current_page)
 		current_page->set_activates(false);
 	current_page = static_cast<ClvFileBox*>(page);
