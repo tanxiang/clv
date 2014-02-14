@@ -1,5 +1,5 @@
 #include "unorder_tree.h"
-#include <iostream>
+#include "dbg.h"
 template<typename T>
 void unorder_tree<T>::node::dump(int level){
 	if(left) left->dump(level+1);
@@ -17,7 +17,7 @@ void unorder_tree<T>::node::dump(int level){
 template<typename T>
 void unorder_tree<T>::node::rotate_left(node_ptr& root_ptr){
 	if(!right)
-		std::cerr<<"error rotate_left right==null\n";
+		debug<<"error rotate_left right==null\n";
 	node_ptr new_root = std::move(right);
 	if(new_root->left){
 		right = std::move(new_root->left);				
@@ -39,7 +39,7 @@ void unorder_tree<T>::node::rotate_left(node_ptr& root_ptr){
 template<typename T>
 void  unorder_tree<T>::node::rotate_right(node_ptr& root_ptr){
 	if(!left)
-		std::cerr<<"error rotate_right left==null\n";
+		debug<<"error rotate_right left==null\n";
 	node_ptr new_root = std::move(left);
 	if(new_root->right){
 		left = std::move(new_root->right);
