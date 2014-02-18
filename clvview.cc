@@ -184,8 +184,15 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 
 	Cairo::RectangleInt view_rect{0,0,get_window()->get_width(),get_window()->get_height()};
 	Cairo::RectangleInt canvas_rect{};
+	//auto bg = get_window()->get_background_pattern();
+	//if(bg && bg->get_type()==Cairo::PATTERN_TYPE_SOLID)
+	//	cairo_pattern_get_rgba(); //alpha==1.0??
+	//Cairo::Content def_content = Cairo::CONTENT_ALPHA or Cairo::CONTENT_COLOR;//like gtktextview
+
 	//check alpha surface
-	Cairo::Content def_content = Cairo::CONTENT_ALPHA;//like gtktextview
+	if(!alpha_surface_ptr){
+		alpha_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_ALPHA,20,30);
+	}
 
 	cr->set_source_rgb(0.3, 0.4, 0.5);
 	cr->paint();
