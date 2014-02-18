@@ -164,6 +164,7 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 	auto itr = file_context.get_form_fill(rect.y);
 	int height = 0;
 	//if(itr != file_context.end())
+	Cairo::Content def_content = Cairo::CAIRO_CONTENT_ALPHA;//like gtktextview
 	height = itr.get_fill_offset() - rect.y;//FIXME need a better way
 	while(height<rect.height && itr != file_context.end()){
 		itr->draw_to_context(cr, itr.get_fill_offset()+itr->get_fill(),rect);
