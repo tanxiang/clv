@@ -182,7 +182,8 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<get_window()->get_width()<<'x'<<get_window()->get_height()<<std::endl;
 
-	Cairo::RectangleInt view_rect;
+	Cairo::RectangleInt view_rect{0,0,get_window()->get_width(),get_window()->get_height()};
+	Cairo::RectangleInt canvas_rect{};
 	//check alpha surface
 	Cairo::Content def_content = Cairo::CONTENT_ALPHA;//like gtktextview
 
