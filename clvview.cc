@@ -159,12 +159,16 @@ void ClvFileArea::on_vadjustment(){
 	get_window()->move(x,new_y);
 }
 
+/* The extra size of the offscreen surface we allocate
+   to make scrolling more efficient */
+#define DEFAULT_EXTRA_SIZE 64
+
 void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
 	cr->save();//need RAII mode restore
 	auto itr = file_context.get_form_fill(rect.y);
 	int height = 0;
 	//if(itr != file_context.end())
-	Cairo::Content def_content = Cairo::CONTENT_ALPHA;//like gtktextview
+
 	height = itr.get_fill_offset() - rect.y;//FIXME need a better way
 	while(height<rect.height && itr != file_context.end()){
 		itr->draw_to_context(cr, itr.get_fill_offset()+itr->get_fill(),rect);
@@ -177,6 +181,11 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<get_window()->get_width()<<'x'<<get_window()->get_height()<<std::endl;
+
+	Cairo::RectangleInt view_rect;
+	//check alpha surface
+	Cairo::Content def_content = Cairo::CONTENT_ALPHA;//like gtktextview
+
 	cr->set_source_rgb(0.3, 0.4, 0.5);
 	cr->paint();
 	//cr->set_source(cover_surface_ptr,0,0);
