@@ -183,7 +183,7 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<get_window()->get_width()<<'x'<<get_window()->get_height()<<std::endl;
 
 	Cairo::RectangleInt view_rect{0,0,get_window()->get_width(),get_window()->get_height()};
-	Cairo::RectangleInt canvas_rect{};
+	Cairo::RectangleInt canvas_rect{-get_hadjustment()->get_value(),-get_vadjustment()->get_value(),1200,2400};
 	//auto bg = get_window()->get_background_pattern();
 	//if(bg && bg->get_type()==Cairo::PATTERN_TYPE_SOLID)
 	//	cairo_pattern_get_rgba(); //alpha==1.0??
@@ -192,6 +192,7 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	//check alpha surface
 	if(!alpha_surface_ptr){
 		alpha_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_ALPHA,20,30);
+		debug<<"create alpha_surface_ptr:"<<alpha_surface_ptr.operator->()<<std::endl;
 	}
 
 	cr->set_source_rgb(0.3, 0.4, 0.5);
