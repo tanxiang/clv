@@ -190,10 +190,18 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	//Cairo::Content def_content = Cairo::CONTENT_ALPHA or Cairo::CONTENT_COLOR;//like gtktextview
 
 	//check alpha surface
-	if(!alpha_surface_ptr){
-		alpha_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_ALPHA,20,30);
-		debug<<"create alpha_surface_ptr:"<<alpha_surface_ptr.operator->()<<std::endl;
+	if(!backing_surface_ptr){//or need re-build surface
+		backing_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_ALPHA,20,30);
+		debug<<"create alpha_surface_ptr:"<<backing_surface_ptr.operator->()<<std::endl;
 	}
+	auto backing_cr = Cairo::Context::create(backing_surface_ptr);
+	backing_cr->set_source_rgba(0,0,0,0);
+	backing_cr->set_operator(Cairo::OPERATOR_SOURCE);
+	backing_cr->paint();
+	backing_cr->set_operator(Cairo::OPERATOR_OVER);
+	backing_cr->save();
+	//draw(backing_cr,)
+	backing_cr->restore();
 
 	cr->set_source_rgb(0.3, 0.4, 0.5);
 	cr->paint();
