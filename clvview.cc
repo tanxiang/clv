@@ -162,6 +162,8 @@ void ClvFileArea::on_vadjustment(){
 /* The extra size of the offscreen surface we allocate
    to make scrolling more efficient */
 #define DEFAULT_EXTRA_SIZE 64
+int ClvFileArea::extra_width = DEFAULT_EXTRA_SIZE;
+int ClvFileArea::extra_height = DEFAULT_EXTRA_SIZE;
 
 void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
 	cr->save();//need RAII mode restore
@@ -184,11 +186,16 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 
 	Cairo::RectangleInt view_rect{0,0,get_window()->get_width(),get_window()->get_height()};
 	Cairo::RectangleInt canvas_rect{-get_hadjustment()->get_value(),-get_vadjustment()->get_value(),1200,2400};
+	int surface_w = view_rect.width;
+	int surface_h = view_rect.height;
 	//auto bg = get_window()->get_background_pattern();
 	//if(bg && bg->get_type()==Cairo::PATTERN_TYPE_SOLID)
 	//	cairo_pattern_get_rgba(); //alpha==1.0??
 	//Cairo::Content def_content = Cairo::CONTENT_ALPHA or Cairo::CONTENT_COLOR;//like gtktextview
-
+	if(canvas_rect.width > surface_w)
+		surface_w = std::min(surface_w + extra_width,canvas_rect.width); 
+	if(canvas_rect.height > surface_h)
+		surface_h = std::min(surface_h + extra_height,canvas_rect.height);
 	//check alpha surface
 	if(!backing_surface_ptr){//or need re-build surface
 		backing_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_ALPHA,20,30);

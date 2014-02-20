@@ -38,6 +38,7 @@ class ClvFileArea: public Gtk::DrawingArea,virtual public Gtk::Scrollable{
 #endif
 
 	Cairo::RefPtr<Cairo::Surface> cover_surface_ptr;
+	static int extra_width,extra_height;
 	
 	sigc::connection blink_time_out;
 	
