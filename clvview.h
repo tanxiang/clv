@@ -32,6 +32,7 @@ class ClvFileArea: public Gtk::DrawingArea,virtual public Gtk::Scrollable{
 	
 	GtkIMContext *im_context;
 	Cairo::RefPtr<Cairo::Surface> backing_surface_ptr;
+	int backing_surface_x,backing_surface_y,backing_surface_w,backing_surface_h;
 
 #ifdef CLV_SURFACE_BLINK
 	Cairo::RefPtr<Cairo::Surface> surface_ptr;

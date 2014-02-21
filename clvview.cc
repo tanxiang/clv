@@ -13,7 +13,9 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	Glib::ObjectBase(typeid(ClvFileArea)),
 	Gtk::Scrollable(),
 	Gtk::DrawingArea(),
-	file_context(file)
+	file_context(file),
+	backing_surface_x(0),backing_surface_y(0),
+	backing_surface_w(0),backing_surface_h(0)
 	//clvhScrollPolicy(*this, "hscroll-policy" , Gtk::SCROLL_NATURAL),
 	//clvvScrollPolicy(*this, "vscroll-policy" , Gtk::SCROLL_NATURAL)
 	{
@@ -186,6 +188,7 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 
 	Cairo::RectangleInt view_rect{0,0,get_window()->get_width(),get_window()->get_height()};
 	Cairo::RectangleInt canvas_rect{-get_hadjustment()->get_value(),-get_vadjustment()->get_value(),1200,2400};
+	Cairo::RectangleInt view_pos{-canvas_rect.x,-canvas_rect.y,view_rect.width,view_rect.height};
 	int surface_w = view_rect.width;
 	int surface_h = view_rect.height;
 	//auto bg = get_window()->get_background_pattern();
@@ -198,8 +201,9 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		surface_h = std::min(surface_h + extra_height,canvas_rect.height);
 	//check alpha surface
 	if(!backing_surface_ptr){//or need re-build surface
-		backing_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_ALPHA,20,30);
+		backing_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_ALPHA,surface_w,surface_h);
 		debug<<"create alpha_surface_ptr:"<<backing_surface_ptr.operator->()<<std::endl;
+
 	}
 	auto backing_cr = Cairo::Context::create(backing_surface_ptr);
 	backing_cr->set_source_rgba(0,0,0,0);
