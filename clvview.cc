@@ -188,7 +188,7 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 
 	Cairo::RectangleInt view_rect{0,0,get_window()->get_width(),get_window()->get_height()};
 	Cairo::RectangleInt canvas_rect{-get_hadjustment()->get_value(),-get_vadjustment()->get_value(),1200,2400};
-	Cairo::RectangleInt view_pos{-canvas_rect.x,-canvas_rect.y,view_rect.width,view_rect.height};
+	Cairo::RectangleInt view_in_canvas_pos{-canvas_rect.x,-canvas_rect.y,view_rect.width,view_rect.height};
 	int surface_w = view_rect.width;
 	int surface_h = view_rect.height;
 	//auto bg = get_window()->get_background_pattern();
@@ -200,9 +200,12 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	if(canvas_rect.height > surface_h)
 		surface_h = std::min(surface_h + extra_height,canvas_rect.height);
 	//check alpha surface
-	if(!backing_surface_ptr){//or need re-build surface
+	if(!backing_surface_ptr ||
+		( backing_surface_w < std::max(surface_w - 32, view_rect.width) || backing_surface_w > surface_w + 32
+		||backing_surface_h < std::max(surface_h - 32, view_rect.height) || backing_surface_h > surface_h + 32)){//or need re-build surface
 		backing_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_ALPHA,surface_w,surface_h);
-		debug<<"create alpha_surface_ptr:"<<backing_surface_ptr.operator->()<<std::endl;
+		backing_surface_w=surface_w,backing_surface_h=surface_h;
+		debug<<"fill alpha_surface_ptr:"<<backing_surface_ptr.operator->()<<std::endl;
 
 	}
 	auto backing_cr = Cairo::Context::create(backing_surface_ptr);
