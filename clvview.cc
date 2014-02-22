@@ -201,8 +201,8 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		surface_h = std::min(surface_h + extra_height,canvas_rect.height);
 	//check alpha surface
 	if(!backing_surface_ptr ||
-		( backing_surface_w < std::max(surface_w - 32, view_rect.width) || backing_surface_w > surface_w + 32
-		||backing_surface_h < std::max(surface_h - 32, view_rect.height) || backing_surface_h > surface_h + 32)){//or need re-build surface
+		backing_surface_w < std::max(surface_w - 32, view_rect.width) || backing_surface_w > surface_w + 32||
+		backing_surface_h < std::max(surface_h - 32, view_rect.height) || backing_surface_h > surface_h + 32){//or need re-build surface
 		backing_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_ALPHA,surface_w,surface_h);
 		backing_surface_w=surface_w,backing_surface_h=surface_h;
 		debug<<"fill alpha_surface_ptr:"<<backing_surface_ptr.operator->()<<std::endl;
