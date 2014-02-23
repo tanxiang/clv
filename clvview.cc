@@ -93,14 +93,19 @@ void ClvFileArea::on_unrealize(){
 }
 
 bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
+	debug<<__func__<<std::endl;
 	cover_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR_ALPHA, get_allocation().get_width(), get_allocation().get_width());
 	return false;
 }
 
 void ClvFileArea::on_size_allocate(Gtk::Allocation& allocation){
 	debug << "size_allocate:" <<allocation.get_height()<<std::endl;
+	Gtk::DrawingArea::on_size_allocate(allocation);
+	if(get_realized()){
+		get_window()->move_resize(allocation.get_x(),allocation.get_y(),allocation.get_width(),allocation.get_height());
+	}
 	Gtk::Allocation context_allocation{0,0,get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
-	Gtk::DrawingArea::on_size_allocate(context_allocation);
+
 	//allocation.
 }
 
