@@ -11,7 +11,7 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
-class ClvFileArea: public Gtk::DrawingArea,virtual public Gtk::Scrollable{
+class ClvFileArea: public Gtk::DrawingArea{
 	enum{
 		STATUS_NONE=0,
 		STATUS_NORMAL,
@@ -79,10 +79,6 @@ protected:
 #endif
 	bool on_button_press_event(GdkEventButton* event) override;
 	bool on_button_release_event(GdkEventButton* event) override;
-	//bool on_scroll_event(GdkEventScroll* event) override;
-	void on_hadjustment();
-	void on_vadjustment();
-
 	void on_realize() override;
 	void on_unrealize() override;
 };

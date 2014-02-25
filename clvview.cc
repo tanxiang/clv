@@ -10,24 +10,11 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 }
 
 ClvFileArea::ClvFileArea(context<line> &file):
-	Glib::ObjectBase(typeid(ClvFileArea)),
-	Gtk::Scrollable(),
-	Gtk::DrawingArea(),
 	file_context(file),
 	backing_surface_x(0),backing_surface_y(0),
 	backing_surface_w(0),backing_surface_h(0)
-	//clvhScrollPolicy(*this, "hscroll-policy" , Gtk::SCROLL_NATURAL),
-	//clvvScrollPolicy(*this, "vscroll-policy" , Gtk::SCROLL_NATURAL)
 	{
-#if 1
-	//This shows the GType name, which must be used in the CSS file.
-	debug << "GType name: " << G_OBJECT_TYPE_NAME(Glib::Object::gobj()) << std::endl;
-	//This shows that the GType still derives from GtkWidget:
-	debug << "Gtype is a Scrollable?: " <<( GTK_IS_SCROLLABLE(Glib::Object::gobj()) ? "Yes" : "No" )<< std::endl;
-	debug << "Gtype is a DrawingArea?: " <<( GTK_IS_DRAWING_AREA(Glib::Object::gobj()) ? "Yes" : "No" )<< std::endl;
-#endif
 	add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK);
-
 	im_context = gtk_im_multicontext_new();
 	g_signal_connect (im_context, "commit",G_CALLBACK (&ClvFileArea::im_commit_proxy), this);
 	g_signal_connect (im_context, "preedit-changed",G_CALLBACK (&ClvFileArea::preedit_changed_proxy), this);
@@ -69,22 +56,8 @@ void ClvFileArea::on_realize(){
 	register_window(client_window);
 	client_window->lower();
 	gtk_im_context_set_client_window(im_context,client_window->gobj());
-	get_hadjustment()->configure(0,0,1200,1,10,100);
-	get_vadjustment()->configure(0,0,2400,1,10,100);
-#if 0
-	debug<<"get_parent"<<get_parent()<<std::endl;
-	debug<<"get_hadjustment:"<<get_hadjustment().operator->()<<":this="<<this<<std::endl;
-	debug<<"get_vadjustment:"<<get_vadjustment().operator->()<<":this="<<this<<std::endl;
-	GtkAdjustment *adj = NULL;
-	g_object_get (Gtk::Scrollable::gobj(), "hadjustment", &adj, NULL);
-	if (adj)
-		g_object_unref (adj);
-  	debug<<Gtk::Scrollable::gobj()<<"gobj_hadjustment:"<<adj<<":"<<get_hadjustment()->gobj()<<std::endl;
-#endif
-	get_hadjustment()->signal_value_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_hadjustment));
-	get_vadjustment()->signal_value_changed().connect(sigc::mem_fun(*this,&ClvFileArea::on_vadjustment));
+
 	Gtk::DrawingArea::on_realize();
-	//get_window()->resize(3000,3000);
 }
 
 void ClvFileArea::on_unrealize(){
@@ -104,7 +77,7 @@ void ClvFileArea::on_size_allocate(Gtk::Allocation& allocation){
 	if(get_realized()){
 		get_window()->move_resize(allocation.get_x(),allocation.get_y(),allocation.get_width(),allocation.get_height());
 	}
-	Gtk::Allocation context_allocation{0,0,get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
+	//Gtk::Allocation context_allocation{0,0,get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
 
 	//allocation.
 }
@@ -150,21 +123,6 @@ bool ClvFileArea::on_blink_time(){
 
 //void ClvFileArea::on_hide(){
 //}
-void ClvFileArea::on_hadjustment(){
-	//debug<<"hadjustment:"<<std::endl;
-	int x,y;
-	get_window()->get_position(x,y);
-	int new_x = - get_hadjustment()->get_value();
-	get_window()->move(new_x,y);
-}
-
-void ClvFileArea::on_vadjustment(){
-	//debug<<"vadjustment:window="<<get_window().operator->()<<std::endl;
-	int x,y;
-	get_window()->get_position(x,y);
-	int new_y = - get_vadjustment()->get_value();
-	get_window()->move(x,new_y);
-}
 
 /* The extra size of the offscreen surface we allocate
    to make scrolling more efficient */
@@ -192,7 +150,7 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<get_window()->get_width()<<'x'<<get_window()->get_height()<<std::endl;
 
 	Cairo::RectangleInt view_rect{0,0,get_window()->get_width(),get_window()->get_height()};
-	Cairo::RectangleInt canvas_rect{-get_hadjustment()->get_value(),-get_vadjustment()->get_value(),1200,2400};
+	Cairo::RectangleInt canvas_rect{0,0,1200,2400};
 	Cairo::RectangleInt view_in_canvas_pos{-canvas_rect.x,-canvas_rect.y,view_rect.width,view_rect.height};
 	int surface_w = view_rect.width;
 	int surface_h = view_rect.height;
@@ -324,7 +282,7 @@ void ClvFileArea::delete_surrounding_proxy(GtkIMContext *context,gint offset,gin
 }
 
 bool ClvFileArea::on_button_press_event(GdkEventButton* event){
-	debug<<this<<':'<<get_vadjustment()->get_upper()<<std::endl;
+//	debug<<this<<':'<<get_vadjustment()->get_upper()<<std::endl;
 	if(!gtk_widget_has_focus(Widget::gobj())){
 		grab_focus();
 	}

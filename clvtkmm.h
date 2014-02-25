@@ -10,22 +10,26 @@
 #include <fstream>
 #include "clvview.h"
 
-class ClvFViewBox : public Gtk::Box {
+class ClvFViewBox :public Gtk::Container,virtual public Gtk::Scrollable {
 	context<line> &file;
-	ClvLineArea lineview;
-	ClvFileArea fileview;
-	ClvThumArea thumview;
-	Gtk::ScrolledWindow scrolledview;
+	ClvLineArea line_view;
+	ClvFileArea file_view;
+	//Glib::RefPtr<Gdk::Window> window;
 protected:
+	//void add(Widget& widget) override{}
 	void on_realize() override;
 	void on_unrealize() override;
+	void on_size_allocate(Gtk::Allocation& allocation) override;
+
+	void on_hadjustment();
+	void on_vadjustment();
 public:
 	ClvFViewBox(context<line> &file_ref);
 	virtual ~ClvFViewBox(){};
 	void save();
 	void close();
 	void set_activates(bool setting=false){
-		fileview.set_activates(setting);
+		file_view.set_activates(setting);
 	}
 };
 
@@ -39,11 +43,16 @@ public:
 	virtual ~ClvToolBox(){};
 };
 
-class ClvFileBox : public Gtk::Box{
+class ClvPageBox : public Gtk::Box{
 	Glib::ustring file_name;
 	std::fstream file_stream;
 	context<line> file_context;
-	ClvFViewBox main_view;
+	Gtk::Box main_view;
+	//Gtk::DrawingArea head_view;
+	Gtk::ScrolledWindow scrolled_content_view;
+	ClvFViewBox content_view;
+	ClvThumArea thumb_view;
+
 	ClvToolBox tool_bar;
 	Gtk::Image save_icon;
 	Gtk::Button bt_save;
@@ -53,22 +62,24 @@ class ClvFileBox : public Gtk::Box{
 	Gtk::Box tab_box;
 	//Gtk::ScrolledWindow scrolled_view;
 protected:
+	void on_realize() override;
+	void on_unrealize() override;
 	//bool on_event(GdkEvent *event) override;
 public:
-	ClvFileBox(Glib::ustring fs="");
-	virtual ~ClvFileBox(){};
+	ClvPageBox(Glib::ustring fs="");
+	virtual ~ClvPageBox(){};
 	Gtk::Widget& get_tab_box(){
 		return tab_box;
 	}
 	void set_activates(bool setting=false){
-		main_view.set_activates(setting);
+		content_view.set_activates(setting);
 	}
 	//static void setup_icons();
 };
 
 class ClvNotebook : public Gtk::Notebook{
-	std::vector<std::unique_ptr<ClvFileBox> > f_boxs;
-	ClvFileBox *current_page;
+	std::vector<std::unique_ptr<ClvPageBox> > f_boxs;
+	ClvPageBox *current_page;
 public:
 	ClvNotebook(std::vector<std::string> &fn);
 	virtual ~ClvNotebook(){

@@ -5,31 +5,72 @@
 
 
 ClvFViewBox::ClvFViewBox(context<line> &file_ref):
-	file(file_ref),fileview(file)
+	Glib::ObjectBase(typeid(ClvFViewBox)),
+	Gtk::Scrollable(),
+	file(file_ref),file_view(file)
 {
-
+	set_has_window(true);
+	//add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK);
 }
 
 void ClvFViewBox::on_realize(){
-	pack_start(lineview,Gtk::PACK_SHRINK);
-	pack_start(scrolledview);
-	scrolledview.add(fileview);
-#if 0
-	debug<<&scrolledview<<"add"<<&fileview<<std::endl;
-	debug<<"scrolledview had:"<<scrolledview.get_hadjustment().operator->()<<std::endl;
-	debug<<"scrolledview vad:"<<scrolledview.get_vadjustment().operator->()<<std::endl;
-	debug<<&fileview<<"fileview had:"<<fileview.get_hadjustment().operator->()<<std::endl;
-	debug<<&fileview<<"fileview vad:"<<fileview.get_vadjustment().operator->()<<std::endl;
-#endif
-	scrolledview.set_policy(Gtk::POLICY_AUTOMATIC,Gtk::POLICY_AUTOMATIC);
-	thumview.set_size_request(10);
-	pack_start(thumview,Gtk::PACK_SHRINK);
-	Gtk::Box::on_realize();
+	GdkWindowAttr attributes;
+
+	auto allocation = get_allocation();
+	attributes.x = allocation.get_x();
+	attributes.y = allocation.get_y();
+	attributes.width = allocation.get_width();
+	attributes.height = allocation.get_height();
+	attributes.window_type = GDK_WINDOW_CHILD;
+	attributes.wclass = GDK_INPUT_OUTPUT;
+	attributes.visual = get_visual()->gobj();
+	attributes.event_mask = get_events() | GDK_VISIBILITY_NOTIFY_MASK | GDK_EXPOSURE_MASK;
+	int attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_SCROLL_MASK | GDK_TOUCH_MASK | GDK_SMOOTH_SCROLL_MASK;;
+	auto window = Gdk::Window::create(get_parent_window(), &attributes, Gdk::WA_X | Gdk::WA_Y );
+	set_window(window);
+	register_window(window);
+	line_view.set_parent_window(window);
+	file_view.set_parent_window(window);
+	//debug<<"get_window:"<<get_window().operator->()<<std::endl;
+	get_hadjustment()->configure(0,0,1200,1,10,100);
+	get_vadjustment()->configure(0,0,2400,1,10,100);
+
+	get_hadjustment()->signal_value_changed().connect(sigc::mem_fun(*this,&ClvFViewBox::on_hadjustment));
+	get_vadjustment()->signal_value_changed().connect(sigc::mem_fun(*this,&ClvFViewBox::on_vadjustment));
+
+	//add(line_view);
+	//add(file_view);
+	//Gtk::Container::on_realize();
+	set_realized(true);
 	show_all_children();
 }
 
 void ClvFViewBox::on_unrealize(){
-	Gtk::Box::on_unrealize();
+	Gtk::Container::on_unrealize();
+}
+
+void ClvFViewBox::on_size_allocate(Gtk::Allocation& allocation){
+	debug<<__func__<<std::endl;
+	Gtk::Container::on_size_allocate(allocation);
+	Gtk::Allocation file_view_allocation{0,0,get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
+	file_view.size_allocate(file_view_allocation);
+
+}
+
+void ClvFViewBox::on_hadjustment(){
+	//debug<<"hadjustment:"<<std::endl;
+	int x,y;
+	get_window()->get_position(x,y);
+	int new_x = - get_hadjustment()->get_value();
+	get_window()->move(new_x,y);
+}
+
+void ClvFViewBox::on_vadjustment(){
+	int x,y;
+	get_window()->get_position(x,y);
+	int new_y = - get_vadjustment()->get_value();
+	get_window()->move(x,new_y);
+	debug<<"vadjustment:window="<<get_window().operator->()<<"y="<<new_y<<std::endl;
 }
 
 void ClvFViewBox::save(){
@@ -41,14 +82,7 @@ void ClvFViewBox::close(){
 	debug<<"close:"<<this<<std::endl;
 }
 
-//bool ClvFileBox::on_event(GdkEvent *event){
-//	std::cerr<<"visib"<<"\n";
-//	return false;
-//}
-/*
-ClvFViewBox::~ClvFViewBox(){
-	debug<<"free vbox"<<std::endl;
-}*/
+
 
 ClvToolBox::ClvToolBox():file_mode("c++",true),
 	search("search",true),options("options",true){
@@ -60,23 +94,14 @@ ClvToolBox::ClvToolBox():file_mode("c++",true),
 	pack_start(tab_size,Gtk::PACK_SHRINK);
 	pack_start(options,Gtk::PACK_SHRINK);
 }
-/*
-Gtk::Image ClvFileBox::close_icon=[]{
-		Gtk::Image img;
-		img.set_from_icon_name("window-close-symbolic",Gtk::ICON_SIZE_MENU);
-		return img;
-	}
-*/
 
-//void ClvFileBox::setup_icons(){
-	//close_icon.set_from_icon_name("window-close-symbolic",Gtk::ICON_SIZE_MENU);
-//}
+
 #include <iterator>
 
-ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
+ClvPageBox::ClvPageBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	file_name(fs),file_stream(file_name),
 	file_context(std::istream_iterator<line>{file_stream},std::istream_iterator<line>{}),
-	main_view(file_context),tab_label(file_name){
+	content_view(file_context),tab_label(file_name){
 	static const gchar button_style[] =
 		"* {\n"
 		  "-GtkButton-default-border : 0;\n"
@@ -96,13 +121,13 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	save_icon.set_from_icon_name("gtk-save",Gtk::ICON_SIZE_MENU);
 	bt_save.set_image (save_icon);
 	bt_save.get_style_context()->add_provider(css,400);
-	bt_save.signal_clicked().connect(sigc::mem_fun(main_view,&ClvFViewBox::save));
+	bt_save.signal_clicked().connect(sigc::mem_fun(content_view,&ClvFViewBox::save));
 
 	bt_close.set_relief(Gtk::RELIEF_NONE);
 	close_icon.set_from_icon_name("window-close-symbolic",Gtk::ICON_SIZE_MENU);
 	bt_close.set_image (close_icon);
 	bt_close.get_style_context()->add_provider(css,400);
-	bt_close.signal_clicked().connect(sigc::mem_fun(main_view,&ClvFViewBox::close));
+	bt_close.signal_clicked().connect(sigc::mem_fun(content_view,&ClvFViewBox::close));
 
 	//auto style = tab_box.get_style_context();
 	//style->add_provider(css,0);
@@ -113,31 +138,44 @@ ClvFileBox::ClvFileBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	tab_box.pack_start(bt_save,false,false,0);
 	tab_box.pack_start(bt_close,false,false,0);
 	tab_box.show_all_children();
-	//scrolled_view.set_border_width(10);
-	//scrolled_view.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
-	//main_view.set_size_request( 0, 700 );
-	//scrolled_view.add(main_view);
+
+}
+
+void ClvPageBox::on_realize(){
+	//pack_start(head_view,Gtk::PACK_SHRINK);
+	//head_view.set_size_request(0,0);
 	pack_start(main_view);
+	main_view.pack_start(scrolled_content_view);
+	scrolled_content_view.add(content_view);
+	scrolled_content_view.set_policy(Gtk::POLICY_AUTOMATIC,Gtk::POLICY_AUTOMATIC);
+	thumb_view.set_size_request(10);
+	main_view.pack_start(thumb_view,Gtk::PACK_SHRINK);
 	pack_end(tool_bar,Gtk::PACK_SHRINK);
+	Gtk::Box::on_realize();
+	show_all_children();
+}
+
+void ClvPageBox::on_unrealize(){
+	Gtk::Box::on_unrealize();
 }
 
 void ClvNotebook::on_page_switch ( Gtk::Widget *page, int page_num ){
 	debug<<"sw page:"<<page<<"\tnum:"<<page_num<<"\n";
 	if(current_page)
 		current_page->set_activates(false);
-	current_page = static_cast<ClvFileBox*>(page);
+	current_page = static_cast<ClvPageBox*>(page);
 	current_page->set_activates(true);
 }
 
 ClvNotebook::ClvNotebook(std::vector<std::string> &fn):current_page{nullptr}{
 	set_scrollable();
 	if(fn.empty()){
-		f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{}});
+		f_boxs.push_back(std::unique_ptr<ClvPageBox>{new ClvPageBox{}});
 		prepend_page(*f_boxs[0], "*UnSaved");
 	}
 	else{
 		for(auto &fname : fn){
-			f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{fname}});
+			f_boxs.push_back(std::unique_ptr<ClvPageBox>{new ClvPageBox{fname}});
 			//prepend_page(*f_boxs.back(),fname.c_str());
 			prepend_page(*f_boxs.back(),f_boxs.back()->get_tab_box());
 		}
@@ -154,9 +192,5 @@ bool ClvtkWindow::on_key_release_event(GdkEventKey* event){
 ClvtkWindow::ClvtkWindow(std::vector<std::string> fn):flist_notebook(fn){
 	set_size_request(500,400);
 	add(flist_notebook);
-	//f_boxs.push_back(std::unique_ptr<ClvFileBox>{new ClvFileBox{}});
-	//flist_notebook.prepend_page(*f_boxs[0], "*UnSaved");
-	//main_box.pack_end(tool_box,Gtk::PACK_SHRINK);
-	//main_box.set_spacing(3);
 	show_all_children();
 };
