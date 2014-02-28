@@ -77,6 +77,9 @@ bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	return true;
 }
 
+void ClvFViewBox::forall_vfunc(gboolean include_internals, GtkCallback callback, gpointer callback_data){
+}
+
 void ClvFViewBox::on_hadjustment(){
 	//debug<<"hadjustment:"<<std::endl;
 	if(edit_view.get_realized()){

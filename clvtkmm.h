@@ -21,9 +21,19 @@ protected:
 	}
 	void on_realize() override;
 	void on_unrealize() override;
+	Gtk::SizeRequestMode get_request_mode_vfunc() const override{
+		return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+	}
+	void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
+	void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const override;
+	void get_preferred_height_vfunc(int& minimum_height, int& natural_height) const override;
+	void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override;
+  
 	void on_size_allocate(Gtk::Allocation& allocation) override;
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
+	void forall_vfunc(gboolean include_internals, GtkCallback callback, gpointer callback_data) override;
+	//GType child_type_vfunc() const override;
 	void on_hadjustment();
 	void on_vadjustment();
 public:
