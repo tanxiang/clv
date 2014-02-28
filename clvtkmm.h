@@ -24,10 +24,18 @@ protected:
 	Gtk::SizeRequestMode get_request_mode_vfunc() const override{
 		return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
 	}
-	void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
-	void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const override;
-	void get_preferred_height_vfunc(int& minimum_height, int& natural_height) const override;
-	void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override;
+	void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override{
+		minimum_width=300;natural_width=1000;
+	}
+	void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const override{
+		get_preferred_height_vfunc(minimum_height,natural_height);
+	}
+	void get_preferred_height_vfunc(int& minimum_height, int& natural_height) const override{
+		minimum_height=200;natural_height=700;
+	}
+	void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override{
+		get_preferred_width_vfunc(minimum_width,natural_width);
+	}
   
 	void on_size_allocate(Gtk::Allocation& allocation) override;
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
