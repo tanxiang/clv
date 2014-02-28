@@ -13,13 +13,16 @@
 class ClvFViewBox :public Gtk::Container,virtual public Gtk::Scrollable {
 	context<line> &file;
 	ClvLineArea line_view;
-	ClvFileArea file_view;
+	ClvFileArea edit_view;
 	//Glib::RefPtr<Gdk::Window> window;
 protected:
-	//void add(Widget& widget) override{}
+	void on_add(Gtk::Widget* widget) override{
+		//Gtk::Container::on_add(widget);
+	}
 	void on_realize() override;
 	void on_unrealize() override;
 	void on_size_allocate(Gtk::Allocation& allocation) override;
+	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
 	void on_hadjustment();
 	void on_vadjustment();
@@ -29,7 +32,7 @@ public:
 	void save();
 	void close();
 	void set_activates(bool setting=false){
-		file_view.set_activates(setting);
+		edit_view.set_activates(setting);
 	}
 };
 

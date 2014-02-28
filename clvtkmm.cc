@@ -7,7 +7,7 @@
 ClvFViewBox::ClvFViewBox(context<line> &file_ref):
 	Glib::ObjectBase(typeid(ClvFViewBox)),
 	Gtk::Scrollable(),
-	file(file_ref),file_view(file)
+	file(file_ref),edit_view(file)
 {
 	set_has_window(true);
 	//add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK);
@@ -15,7 +15,7 @@ ClvFViewBox::ClvFViewBox(context<line> &file_ref):
 
 void ClvFViewBox::on_realize(){
 	GdkWindowAttr attributes;
-
+	//Gtk::Container::on_realize();
 	auto allocation = get_allocation();
 	attributes.x = allocation.get_x();
 	attributes.y = allocation.get_y();
@@ -29,8 +29,9 @@ void ClvFViewBox::on_realize(){
 	auto window = Gdk::Window::create(get_parent_window(), &attributes, Gdk::WA_X | Gdk::WA_Y );
 	set_window(window);
 	register_window(window);
-	line_view.set_parent_window(window);
-	file_view.set_parent_window(window);
+	//line_view.set_parent_window(window);
+	edit_view.set_parent_window(window);
+	edit_view.set_parent(*this);
 	//debug<<"get_window:"<<get_window().operator->()<<std::endl;
 	get_hadjustment()->configure(0,0,1200,1,10,100);
 	get_vadjustment()->configure(0,0,2400,1,10,100);
@@ -39,38 +40,62 @@ void ClvFViewBox::on_realize(){
 	get_vadjustment()->signal_value_changed().connect(sigc::mem_fun(*this,&ClvFViewBox::on_vadjustment));
 
 	//add(line_view);
-	//add(file_view);
-	//Gtk::Container::on_realize();
+	//add(edit_view);
 	set_realized(true);
-	show_all_children();
+	if(get_has_window())
+		debug<<"get_has_window"<<std::endl;
+	
+	//show();
+	//edit_view.map();
+	//show_all_children();
 }
 
 void ClvFViewBox::on_unrealize(){
+	//unregister_window(get_window());
 	Gtk::Container::on_unrealize();
 }
 
 void ClvFViewBox::on_size_allocate(Gtk::Allocation& allocation){
-	debug<<__func__<<std::endl;
+	debug<<__PRETTY_FUNCTION__<<std::endl;
+	//set_allocation(allocation);
 	Gtk::Container::on_size_allocate(allocation);
-	Gtk::Allocation file_view_allocation{0,0,get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
-	file_view.size_allocate(file_view_allocation);
+	if(true){
+		debug<<"edit_view realized"<<std::endl;
+		Gtk::Allocation edit_view_allocation{-get_hadjustment()->get_value(),-get_vadjustment()->get_value(),
+			get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
+		edit_view.size_allocate(edit_view_allocation);
+	}
+	if(line_view.get_realized()){
+		debug<<"line_view realized"<<std::endl;
+	}
+}
 
+bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
+	debug<<__PRETTY_FUNCTION__<<std::endl;
+	if(should_draw_window(cr,get_window()))
+		debug<<"should_draw_window"<<std::endl;
+	return true;
 }
 
 void ClvFViewBox::on_hadjustment(){
 	//debug<<"hadjustment:"<<std::endl;
-	int x,y;
-	get_window()->get_position(x,y);
-	int new_x = - get_hadjustment()->get_value();
-	get_window()->move(new_x,y);
+	if(edit_view.get_realized()){
+		int x,y;
+		edit_view.get_window()->get_position(x,y);
+		int new_x = - get_hadjustment()->get_value();
+		edit_view.get_window()->move(new_x,y);
+	}
+	//if(line_view.get_realized())
+	//	line_view.get_window()->move(new_x,y);
 }
 
 void ClvFViewBox::on_vadjustment(){
-	int x,y;
-	get_window()->get_position(x,y);
-	int new_y = - get_vadjustment()->get_value();
-	get_window()->move(x,new_y);
-	debug<<"vadjustment:window="<<get_window().operator->()<<"y="<<new_y<<std::endl;
+	if(edit_view.get_realized()){
+		int x,y;
+		edit_view.get_window()->get_position(x,y);
+		int new_y = - get_vadjustment()->get_value();
+		edit_view.get_window()->move(x,new_y);
+	}
 }
 
 void ClvFViewBox::save(){
