@@ -16,9 +16,6 @@ class ClvFViewBox :public Gtk::Container,virtual public Gtk::Scrollable {
 	ClvFileArea edit_view;
 	//Glib::RefPtr<Gdk::Window> window;
 protected:
-	void on_add(Gtk::Widget* widget) override{
-		//Gtk::Container::on_add(widget);
-	}
 	void on_realize() override;
 	void on_unrealize() override;
 	Gtk::SizeRequestMode get_request_mode_vfunc() const override{
@@ -36,8 +33,10 @@ protected:
 	void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override{
 		get_preferred_width_vfunc(minimum_width,natural_width);
 	}
-  
 	void on_size_allocate(Gtk::Allocation& allocation) override;
+	void on_add(Gtk::Widget* widget) override{
+		//Gtk::Container::on_add(widget);
+	}
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
 	void forall_vfunc(gboolean include_internals, GtkCallback callback, gpointer callback_data) override;

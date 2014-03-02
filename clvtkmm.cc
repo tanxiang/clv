@@ -9,7 +9,8 @@ ClvFViewBox::ClvFViewBox(context<line> &file_ref):
 	Gtk::Scrollable(),
 	file(file_ref),edit_view(file)
 {
-	set_has_window(true);
+	//set_has_window(true);
+	set_redraw_on_allocate(false);
 	//add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK);
 }
 
@@ -57,8 +58,8 @@ void ClvFViewBox::on_unrealize(){
 
 void ClvFViewBox::on_size_allocate(Gtk::Allocation& allocation){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
-	//set_allocation(allocation);
-	Gtk::Container::on_size_allocate(allocation);
+	set_allocation(allocation);
+	//Gtk::Container::on_size_allocate(allocation);
 	if(true){
 		debug<<"edit_view realized"<<std::endl;
 		Gtk::Allocation edit_view_allocation{-get_hadjustment()->get_value(),-get_vadjustment()->get_value(),
@@ -78,6 +79,7 @@ bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 }
 
 void ClvFViewBox::forall_vfunc(gboolean include_internals, GtkCallback callback, gpointer callback_data){
+	callback((GtkWidget*)edit_view.gobj(), callback_data);
 }
 
 void ClvFViewBox::on_hadjustment(){
