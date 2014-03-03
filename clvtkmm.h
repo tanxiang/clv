@@ -33,9 +33,15 @@ protected:
 	void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override{
 		get_preferred_width_vfunc(minimum_width,natural_width);
 	}
+	GType child_type_vfunc() const override{
+		Gtk::Widget::get_type();
+	}
 	void on_size_allocate(Gtk::Allocation& allocation) override;
 	void on_add(Gtk::Widget* widget) override{
 		//Gtk::Container::on_add(widget);
+	}
+	virtual void on_remove(Gtk::Widget* child) override{
+
 	}
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 

@@ -14,6 +14,7 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	backing_surface_x(0),backing_surface_y(0),
 	backing_surface_w(0),backing_surface_h(0)
 	{
+	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK);
 	im_context = gtk_im_multicontext_new();
 	g_signal_connect (im_context, "commit",G_CALLBACK (&ClvFileArea::im_commit_proxy), this);
@@ -33,6 +34,7 @@ ClvFileArea::ClvFileArea(context<line> &file):
 }
 
 void ClvFileArea::on_realize(){
+	debug<<__PRETTY_FUNCTION__<<std::endl;
 	GdkWindowAttr attributes;
 	auto allocation = get_allocation();
 	attributes.x = allocation.get_x();
@@ -66,7 +68,7 @@ void ClvFileArea::on_unrealize(){
 }
 
 bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
-	debug<<__func__<<std::endl;
+	debug<<__PRETTY_FUNCTION__<<std::endl;
 	cover_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR_ALPHA, get_allocation().get_width(), get_allocation().get_width());
 	return false;
 }
@@ -147,6 +149,7 @@ void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rect
 }
 
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
+	debug<<__PRETTY_FUNCTION__<<std::endl;
 	debug<<get_window()->get_width()<<'x'<<get_window()->get_height()<<std::endl;
 
 	Cairo::RectangleInt view_rect{0,0,get_window()->get_width(),get_window()->get_height()};

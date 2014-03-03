@@ -9,13 +9,15 @@ ClvFViewBox::ClvFViewBox(context<line> &file_ref):
 	Gtk::Scrollable(),
 	file(file_ref),edit_view(file)
 {
-	//set_has_window(true);
+	set_has_window(true);
 	set_redraw_on_allocate(false);
 	//add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK);
 }
 
 void ClvFViewBox::on_realize(){
+	set_realized(true);
 	GdkWindowAttr attributes;
+	memset(&attributes, 0, sizeof(attributes));
 	//Gtk::Container::on_realize();
 	auto allocation = get_allocation();
 	attributes.x = allocation.get_x();
@@ -30,7 +32,10 @@ void ClvFViewBox::on_realize(){
 	auto window = Gdk::Window::create(get_parent_window(), &attributes, Gdk::WA_X | Gdk::WA_Y );
 	set_window(window);
 	register_window(window);
+	//override_background_color(Gdk::RGBA("black"));
+	//override_color(Gdk::RGBA("blue"));
 	//line_view.set_parent_window(window);
+
 	edit_view.set_parent_window(window);
 	edit_view.set_parent(*this);
 	//debug<<"get_window:"<<get_window().operator->()<<std::endl;
@@ -42,9 +47,9 @@ void ClvFViewBox::on_realize(){
 
 	//add(line_view);
 	//add(edit_view);
-	set_realized(true);
-	if(get_has_window())
-		debug<<"get_has_window"<<std::endl;
+
+	//if(get_has_window())
+	//	debug<<"get_has_window"<<std::endl;
 	
 	//show();
 	//edit_view.map();
@@ -59,9 +64,15 @@ void ClvFViewBox::on_unrealize(){
 void ClvFViewBox::on_size_allocate(Gtk::Allocation& allocation){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
 	set_allocation(allocation);
+	get_window()->move_resize(allocation.get_x(),allocation.get_y(),
+		allocation.get_width(),allocation.get_height());
 	//Gtk::Container::on_size_allocate(allocation);
+	if(edit_view.get_visible())
+		debug<<"edit_view visible"<<std::endl;
+	else
+		debug<<"edit_view unvisible"<<std::endl;
+
 	if(true){
-		debug<<"edit_view realized"<<std::endl;
 		Gtk::Allocation edit_view_allocation{-get_hadjustment()->get_value(),-get_vadjustment()->get_value(),
 			get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
 		edit_view.size_allocate(edit_view_allocation);
