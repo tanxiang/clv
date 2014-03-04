@@ -32,27 +32,19 @@ void ClvFViewBox::on_realize(){
 	auto window = Gdk::Window::create(get_parent_window(), &attributes, Gdk::WA_X | Gdk::WA_Y );
 	set_window(window);
 	register_window(window);
-	override_background_color(Gdk::RGBA("black"));
+	Gdk::RGBA bg_color;
+	bg_color.set_rgba(0.3,0.4,0.5);
+	override_background_color(bg_color);
 	//override_color(Gdk::RGBA("blue"));
-	//line_view.set_parent_window(window);
-
-	edit_view.set_parent_window(window);
+	line_view.set_parent(*this);
+	//edit_view.set_parent_window(window);
 	edit_view.set_parent(*this);
-	//debug<<"get_window:"<<get_window().operator->()<<std::endl;
+
 	get_hadjustment()->configure(0,0,1200,1,10,100);
 	get_vadjustment()->configure(0,0,2400,1,10,100);
 
 	get_hadjustment()->signal_value_changed().connect(sigc::mem_fun(*this,&ClvFViewBox::on_hadjustment));
 	get_vadjustment()->signal_value_changed().connect(sigc::mem_fun(*this,&ClvFViewBox::on_vadjustment));
-
-	//add(line_view);
-	//add(edit_view);
-
-	//if(get_has_window())
-	//	debug<<"get_has_window"<<std::endl;
-	
-	//show();
-	//show_all_children();
 }
 
 void ClvFViewBox::on_unrealize(){
@@ -65,13 +57,11 @@ void ClvFViewBox::on_size_allocate(Gtk::Allocation& allocation){
 	set_allocation(allocation);
 	get_window()->move_resize(allocation.get_x(),allocation.get_y(),
 		allocation.get_width(),allocation.get_height());
-	get_window()->lower();
-	//Gtk::Container::on_size_allocate(allocation);
+	//get_window()->lower();
 	if(edit_view.get_visible())
 		debug<<"edit_view visible"<<std::endl;
 	else
 		debug<<"edit_view unvisible"<<std::endl;
-//set_opacity (0);
 	if(edit_view.get_realized()){
 		Gtk::Allocation edit_view_allocation{-get_hadjustment()->get_value(),-get_vadjustment()->get_value(),
 			get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};

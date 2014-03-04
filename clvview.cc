@@ -78,7 +78,7 @@ void ClvFileArea::on_size_allocate(Gtk::Allocation& allocation){
 	if(get_realized()){
 		debug <<__PRETTY_FUNCTION__<<allocation.get_height()<<std::endl;
 		get_window()->move_resize(allocation.get_x(),allocation.get_y(),allocation.get_width(),allocation.get_height());
-		get_window()->show();
+		//get_window()->show();
 	}
 	//Gtk::Allocation context_allocation{0,0,get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
 
@@ -184,8 +184,8 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	//draw(backing_cr,)
 	backing_cr->restore();
 
-	cr->set_source_rgb(0.3, 0.4, 0.5);
-	cr->paint();
+	//cr->set_source_rgba(0.3, 0.4, 0.5 ,0.5);
+	//cr->paint();
 	//cr->set_source(cover_surface_ptr,0,0);
 	std::vector<Cairo::Rectangle> clip_rects;
 	cr->copy_clip_rectangle_list(clip_rects);
