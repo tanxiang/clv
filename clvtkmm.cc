@@ -32,7 +32,7 @@ void ClvFViewBox::on_realize(){
 	auto window = Gdk::Window::create(get_parent_window(), &attributes, Gdk::WA_X | Gdk::WA_Y );
 	set_window(window);
 	register_window(window);
-	//override_background_color(Gdk::RGBA("black"));
+	override_background_color(Gdk::RGBA("black"));
 	//override_color(Gdk::RGBA("blue"));
 	//line_view.set_parent_window(window);
 
@@ -52,7 +52,6 @@ void ClvFViewBox::on_realize(){
 	//	debug<<"get_has_window"<<std::endl;
 	
 	//show();
-	//edit_view.map();
 	//show_all_children();
 }
 
@@ -66,13 +65,14 @@ void ClvFViewBox::on_size_allocate(Gtk::Allocation& allocation){
 	set_allocation(allocation);
 	get_window()->move_resize(allocation.get_x(),allocation.get_y(),
 		allocation.get_width(),allocation.get_height());
+	get_window()->lower();
 	//Gtk::Container::on_size_allocate(allocation);
 	if(edit_view.get_visible())
 		debug<<"edit_view visible"<<std::endl;
 	else
 		debug<<"edit_view unvisible"<<std::endl;
-
-	if(true){
+//set_opacity (0);
+	if(edit_view.get_realized()){
 		Gtk::Allocation edit_view_allocation{-get_hadjustment()->get_value(),-get_vadjustment()->get_value(),
 			get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
 		edit_view.size_allocate(edit_view_allocation);
@@ -86,7 +86,8 @@ bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
 	if(should_draw_window(cr,get_window()))
 		debug<<"should_draw_window"<<std::endl;
-	return true;
+	propagate_draw(edit_view,cr);
+	return false;
 }
 
 void ClvFViewBox::forall_vfunc(gboolean include_internals, GtkCallback callback, gpointer callback_data){
