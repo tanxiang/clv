@@ -15,7 +15,7 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	backing_surface_w(0),backing_surface_h(0)
 	{
 	//debug<<__PRETTY_FUNCTION__<<std::endl;
-	add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK);
+	add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK|Gdk::EXPOSURE_MASK);
 	im_context = gtk_im_multicontext_new();
 	g_signal_connect (im_context, "commit",G_CALLBACK (&ClvFileArea::im_commit_proxy), this);
 	g_signal_connect (im_context, "preedit-changed",G_CALLBACK (&ClvFileArea::preedit_changed_proxy), this);
@@ -45,14 +45,14 @@ void ClvFileArea::on_realize(){
 	attributes.window_type = GDK_WINDOW_CHILD;
 	attributes.wclass = GDK_INPUT_ONLY;
 	attributes.event_mask = get_events();
-	attributes.event_mask |= (GDK_BUTTON_PRESS_MASK |
-		GDK_BUTTON_RELEASE_MASK |
-		GDK_BUTTON1_MOTION_MASK |
-		GDK_BUTTON3_MOTION_MASK |
-		GDK_POINTER_MOTION_HINT_MASK |
-		GDK_POINTER_MOTION_MASK |
-		GDK_ENTER_NOTIFY_MASK |
-		GDK_LEAVE_NOTIFY_MASK);
+	attributes.event_mask |= (Gdk::BUTTON_PRESS_MASK |
+		Gdk::BUTTON_RELEASE_MASK |
+		Gdk::BUTTON1_MOTION_MASK |
+		Gdk::BUTTON3_MOTION_MASK |
+		Gdk::POINTER_MOTION_HINT_MASK |
+		Gdk::POINTER_MOTION_MASK |
+		Gdk::ENTER_NOTIFY_MASK |
+		Gdk::LEAVE_NOTIFY_MASK );
 	auto client_window = Gdk::Window::create(get_parent_window(), &attributes, Gdk::WA_X | Gdk::WA_Y );
 	//client_window->show();
 	register_window(client_window);
@@ -60,6 +60,7 @@ void ClvFileArea::on_realize(){
 	gtk_im_context_set_client_window(im_context,client_window->gobj());
 
 	Gtk::DrawingArea::on_realize();
+	//get_window()->set_user_data(gobj());
 }
 
 void ClvFileArea::on_unrealize(){
@@ -133,7 +134,7 @@ bool ClvFileArea::on_blink_time(){
 int ClvFileArea::extra_width = DEFAULT_EXTRA_SIZE;
 int ClvFileArea::extra_height = DEFAULT_EXTRA_SIZE;
 
-void ClvFileArea::draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
+void ClvFileArea::draw_rect(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
 	cr->save();//need RAII mode restore
 	auto itr = file_context.get_form_fill(rect.y);
 	int height = 0;
@@ -181,7 +182,6 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	backing_cr->paint();
 	backing_cr->set_operator(Cairo::OPERATOR_OVER);
 	backing_cr->save();
-	//draw(backing_cr,)
 	backing_cr->restore();
 
 	//cr->set_source_rgba(0.3, 0.4, 0.5 ,0.5);
@@ -191,7 +191,7 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	cr->copy_clip_rectangle_list(clip_rects);
 	for(auto& clip_rect:clip_rects){
 		debug<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
-		draw(cr,clip_rect);
+		draw_rect(cr,clip_rect);
 	}
 	//debug<<"context:"<<cr->cobj()<<std::endl;
 #ifdef CLV_SURFACE_BLINK

@@ -46,7 +46,7 @@ class ClvFileArea: public Gtk::DrawingArea{
  	void on_font_setting_changed (const Glib::ustring & key);
  	void update_custom_font_setting();
  	void modify_font_from_string (const std::string & fontString);
-	void draw(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect);
+	void draw_rect(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect);
 public:
 
 	void set_activates(bool setting=false);

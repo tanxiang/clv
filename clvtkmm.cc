@@ -18,7 +18,6 @@ void ClvFViewBox::on_realize(){
 	set_realized(true);
 	GdkWindowAttr attributes;
 	memset(&attributes, 0, sizeof(attributes));
-	//Gtk::Container::on_realize();
 	auto allocation = get_allocation();
 	attributes.x = allocation.get_x();
 	attributes.y = allocation.get_y();
@@ -32,6 +31,7 @@ void ClvFViewBox::on_realize(){
 	auto window = Gdk::Window::create(get_parent_window(), &attributes, Gdk::WA_X | Gdk::WA_Y );
 	set_window(window);
 	register_window(window);
+
 	Gdk::RGBA bg_color;
 	bg_color.set_rgba(0.3,0.4,0.5);
 	override_background_color(bg_color);
@@ -49,6 +49,7 @@ void ClvFViewBox::on_realize(){
 
 void ClvFViewBox::on_unrealize(){
 	//unregister_window(get_window());
+	set_realized(false);
 	Gtk::Container::on_unrealize();
 }
 
@@ -57,26 +58,35 @@ void ClvFViewBox::on_size_allocate(Gtk::Allocation& allocation){
 	set_allocation(allocation);
 	get_window()->move_resize(allocation.get_x(),allocation.get_y(),
 		allocation.get_width(),allocation.get_height());
+#if 0
 	//get_window()->lower();
 	if(edit_view.get_visible())
 		debug<<"edit_view visible"<<std::endl;
 	else
 		debug<<"edit_view unvisible"<<std::endl;
+	if(line_view.get_realized()){
+		debug<<"line_view realized"<<std::endl;
+	}
+#endif
 	if(edit_view.get_realized()){
 		Gtk::Allocation edit_view_allocation{-get_hadjustment()->get_value(),-get_vadjustment()->get_value(),
 			get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
 		edit_view.size_allocate(edit_view_allocation);
 	}
-	if(line_view.get_realized()){
-		debug<<"line_view realized"<<std::endl;
-	}
 }
 
 bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
-	if(should_draw_window(cr,get_window()))
-		debug<<"should_draw_window"<<std::endl;
+	if(!should_draw_window(cr,get_window()))
+		return false;
+	//gtk_widget_get_frame_clock(reinterpret_cast<GtkWidget*>( Gtk::Container::gobj()));
+	if(should_draw_window(cr,edit_view.get_window())){
+		debug<<"should_draw_window edit_view"<<std::endl;
+	}
 	propagate_draw(edit_view,cr);
+	//edit_view.draw(cr);
+	//gtk_widget_draw((GtkWidget*)edit_view.gobj(),cr->cobj());
+	//_gtk_widget_draw_windows((GtkWidget*)edit_view.gobj(),cr->cobj(),0,0);
 	return false;
 }
 
