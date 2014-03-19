@@ -37,9 +37,9 @@ void ClvFViewBox::on_realize(){
 	override_background_color(bg_color);
 	//override_color(Gdk::RGBA("blue"));
 	line_view.set_parent(*this);
-	//edit_view.set_parent_window(window);
 	edit_view.set_parent(*this);
-
+	//debug<<"edit_view.get_parent_window:"<<edit_view.get_parent_window().operator->()<<':'<<window.operator->()<<std::endl;
+	//edit_view.set_parent_window(window);
 	get_hadjustment()->configure(0,0,1200,1,10,100);
 	get_vadjustment()->configure(0,0,2400,1,10,100);
 
@@ -75,19 +75,30 @@ void ClvFViewBox::on_size_allocate(Gtk::Allocation& allocation){
 	}
 }
 
+//GdkWindow* _gtk_cairo_get_event_window (cairo_t *cr);
+
 bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
-	if(!should_draw_window(cr,get_window()))
-		return false;
+	if(should_draw_window(cr,get_window())){
+		//return false;
+	}
 	//gtk_widget_get_frame_clock(reinterpret_cast<GtkWidget*>( Gtk::Container::gobj()));
+	static cairo_user_data_key_t event_window_key;
+#if 0
+	debug<<"cr user data"<<cairo_get_user_data(cr->cobj(),&event_window_key)<<':'<<get_window()->gobj()<<':'<<edit_view.get_window()->gobj()<<std::endl;
 	if(should_draw_window(cr,edit_view.get_window())){
 		debug<<"should_draw_window edit_view"<<std::endl;
 	}
-	propagate_draw(edit_view,cr);
+	else
+#endif
+	return Gtk::Container::on_draw(cr);
+
+	//if(GDK_IS_WINDOW (get_window()->gobj()))
+	//	debug<<"GDK_IS_WINDOW"<<std::endl;
 	//edit_view.draw(cr);
 	//gtk_widget_draw((GtkWidget*)edit_view.gobj(),cr->cobj());
 	//_gtk_widget_draw_windows((GtkWidget*)edit_view.gobj(),cr->cobj(),0,0);
-	return false;
+	//	propagate_draw(edit_view,cr);
 }
 
 void ClvFViewBox::forall_vfunc(gboolean include_internals, GtkCallback callback, gpointer callback_data){

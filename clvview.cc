@@ -150,6 +150,7 @@ void ClvFileArea::draw_rect(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo:
 	cr->restore();
 }
 
+
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
 	debug<<get_window()->get_width()<<'x'<<get_window()->get_height()<<std::endl;
