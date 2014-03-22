@@ -7,7 +7,9 @@
 ClvFViewBox::ClvFViewBox(context<line> &file_ref):
 	Glib::ObjectBase(typeid(ClvFViewBox)),
 	Gtk::Scrollable(),
-	file(file_ref),edit_view(file)
+	file(file_ref),edit_view(file),
+	backing_surface_x(0),backing_surface_y(0),
+	backing_surface_w(0),backing_surface_h(0)
 {
 	set_has_window(true);
 	set_redraw_on_allocate(false);
@@ -76,13 +78,21 @@ void ClvFViewBox::on_size_allocate(Gtk::Allocation& allocation){
 }
 
 //GdkWindow* _gtk_cairo_get_event_window (cairo_t *cr);
+/* The extra size of the offscreen surface we allocate
+   to make scrolling more efficient */
+#define DEFAULT_EXTRA_SIZE 64
+int ClvFViewBox::extra_width = DEFAULT_EXTRA_SIZE;
+int ClvFViewBox::extra_height = DEFAULT_EXTRA_SIZE;
 
 bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
 	if(should_draw_window(cr,get_window())){
-		//return false;
+		auto style = get_style_context();
+		style->context_save();
+		style->add_class(GTK_STYLE_CLASS_FRAME);
+		style->render_frame(cr,0,0,get_window()->get_width(),get_window()->get_height());
+		style->context_restore();
 	}
-	//gtk_widget_get_frame_clock(reinterpret_cast<GtkWidget*>( Gtk::Container::gobj()));
 	static cairo_user_data_key_t event_window_key;
 #if 0
 	debug<<"cr user data"<<cairo_get_user_data(cr->cobj(),&event_window_key)<<':'<<get_window()->gobj()<<':'<<edit_view.get_window()->gobj()<<std::endl;
@@ -91,14 +101,36 @@ bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	}
 	else
 #endif
+	if(should_draw_window(cr,get_window())){//FIXME
+		Cairo::RectangleInt view_rect{0,0,get_window()->get_width(),get_window()->get_height()};
+		Cairo::RectangleInt canvas_rect{0,0,1200,2400};
+		Cairo::RectangleInt view_in_canvas_pos{-canvas_rect.x,-canvas_rect.y,view_rect.width,view_rect.height};
+		auto surface_w = view_rect.width;
+		auto surface_h = view_rect.height;
+		//auto bg = get_window()->get_background_pattern();
+		//if(bg && bg->get_type()==Cairo::PATTERN_TYPE_SOLID)
+		//	cairo_pattern_get_rgba(); //alpha==1.0??
+		//Cairo::Content def_content = Cairo::CONTENT_ALPHA or Cairo::CONTENT_COLOR;//like gtktextview
+		if(canvas_rect.width > surface_w)
+			surface_w = std::min(surface_w + extra_width,canvas_rect.width); 
+		if(canvas_rect.height > surface_h)
+			surface_h = std::min(surface_h + extra_height,canvas_rect.height);
+		if(!backing_surface_ptr ||
+			backing_surface_w < std::max(surface_w - 32, view_rect.width) || backing_surface_w > surface_w + 32||
+			backing_surface_h < std::max(surface_h - 32, view_rect.height) || backing_surface_h > surface_h + 32){//or need re-build surface
+			backing_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_ALPHA,surface_w,surface_h);
+			backing_surface_w=surface_w,backing_surface_h=surface_h;
+			debug<<"fill alpha_surface_ptr:"<<backing_surface_ptr.operator->()<<std::endl;
+		}
+		auto backing_cr = Cairo::Context::create(backing_surface_ptr);
+		backing_cr->set_source_rgba(0,0,0,0);
+		backing_cr->set_operator(Cairo::OPERATOR_SOURCE);
+		backing_cr->paint();
+		backing_cr->set_operator(Cairo::OPERATOR_OVER);
+		backing_cr->save();
+		backing_cr->restore();
+	}
 	return Gtk::Container::on_draw(cr);
-
-	//if(GDK_IS_WINDOW (get_window()->gobj()))
-	//	debug<<"GDK_IS_WINDOW"<<std::endl;
-	//edit_view.draw(cr);
-	//gtk_widget_draw((GtkWidget*)edit_view.gobj(),cr->cobj());
-	//_gtk_widget_draw_windows((GtkWidget*)edit_view.gobj(),cr->cobj(),0,0);
-	//	propagate_draw(edit_view,cr);
 }
 
 void ClvFViewBox::forall_vfunc(gboolean include_internals, GtkCallback callback, gpointer callback_data){

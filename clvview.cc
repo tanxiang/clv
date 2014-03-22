@@ -10,9 +10,7 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 }
 
 ClvFileArea::ClvFileArea(context<line> &file):
-	file_context(file),
-	backing_surface_x(0),backing_surface_y(0),
-	backing_surface_w(0),backing_surface_h(0)
+	file_context(file)
 	{
 	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK|Gdk::EXPOSURE_MASK);
@@ -128,11 +126,7 @@ bool ClvFileArea::on_blink_time(){
 //void ClvFileArea::on_hide(){
 //}
 
-/* The extra size of the offscreen surface we allocate
-   to make scrolling more efficient */
-#define DEFAULT_EXTRA_SIZE 64
-int ClvFileArea::extra_width = DEFAULT_EXTRA_SIZE;
-int ClvFileArea::extra_height = DEFAULT_EXTRA_SIZE;
+
 
 void ClvFileArea::draw_rect(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
 	cr->save();//need RAII mode restore
@@ -155,39 +149,7 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
 	debug<<get_window()->get_width()<<'x'<<get_window()->get_height()<<std::endl;
 
-	Cairo::RectangleInt view_rect{0,0,get_window()->get_width(),get_window()->get_height()};
-	Cairo::RectangleInt canvas_rect{0,0,1200,2400};
-	Cairo::RectangleInt view_in_canvas_pos{-canvas_rect.x,-canvas_rect.y,view_rect.width,view_rect.height};
-	int surface_w = view_rect.width;
-	int surface_h = view_rect.height;
-	//auto bg = get_window()->get_background_pattern();
-	//if(bg && bg->get_type()==Cairo::PATTERN_TYPE_SOLID)
-	//	cairo_pattern_get_rgba(); //alpha==1.0??
-	//Cairo::Content def_content = Cairo::CONTENT_ALPHA or Cairo::CONTENT_COLOR;//like gtktextview
-	if(canvas_rect.width > surface_w)
-		surface_w = std::min(surface_w + extra_width,canvas_rect.width); 
-	if(canvas_rect.height > surface_h)
-		surface_h = std::min(surface_h + extra_height,canvas_rect.height);
-	//check alpha surface
-	if(!backing_surface_ptr ||
-		backing_surface_w < std::max(surface_w - 32, view_rect.width) || backing_surface_w > surface_w + 32||
-		backing_surface_h < std::max(surface_h - 32, view_rect.height) || backing_surface_h > surface_h + 32){//or need re-build surface
-		backing_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_ALPHA,surface_w,surface_h);
-		backing_surface_w=surface_w,backing_surface_h=surface_h;
-		debug<<"fill alpha_surface_ptr:"<<backing_surface_ptr.operator->()<<std::endl;
 
-	}
-	auto backing_cr = Cairo::Context::create(backing_surface_ptr);
-	backing_cr->set_source_rgba(0,0,0,0);
-	backing_cr->set_operator(Cairo::OPERATOR_SOURCE);
-	backing_cr->paint();
-	backing_cr->set_operator(Cairo::OPERATOR_OVER);
-	backing_cr->save();
-	backing_cr->restore();
-
-	//cr->set_source_rgba(0.3, 0.4, 0.5 ,0.5);
-	//cr->paint();
-	//cr->set_source(cover_surface_ptr,0,0);
 	std::vector<Cairo::Rectangle> clip_rects;
 	cr->copy_clip_rectangle_list(clip_rects);
 	for(auto& clip_rect:clip_rects){

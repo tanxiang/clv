@@ -15,6 +15,11 @@ class ClvFViewBox :public Gtk::Container,virtual public Gtk::Scrollable {
 	ClvLineArea line_view;
 	ClvFileArea edit_view;
 	//Glib::RefPtr<Gdk::Window> window;
+
+	Cairo::RefPtr<Cairo::Surface> backing_surface_ptr;
+	int backing_surface_x,backing_surface_y,backing_surface_w,backing_surface_h;
+	static int extra_width,extra_height;
+
 protected:
 	void on_realize() override;
 	void on_unrealize() override;

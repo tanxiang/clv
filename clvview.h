@@ -31,15 +31,12 @@ class ClvFileArea: public Gtk::DrawingArea{
 	context<line> &file_context;
 	
 	GtkIMContext *im_context;
-	Cairo::RefPtr<Cairo::Surface> backing_surface_ptr;
-	int backing_surface_x,backing_surface_y,backing_surface_w,backing_surface_h;
 
 #ifdef CLV_SURFACE_BLINK
 	Cairo::RefPtr<Cairo::Surface> surface_ptr;
 #endif
 
 	Cairo::RefPtr<Cairo::Surface> cover_surface_ptr;
-	static int extra_width,extra_height;
 	
 	sigc::connection blink_time_out;
 	
