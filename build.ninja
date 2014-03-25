@@ -33,6 +33,7 @@ build clvparser.o: cxx clvparser.cc
 build clangparse.o: cxx clangparse.cc
 build filemap.o: cxx filemap.cc
 build unorder_tree.o: cxx_cairomm unorder_tree.cc
+build clvfont.o: cxx_cairomm clvfont.cc
 build clvline.o: cxx_cairomm clvline.cc
 #build view.o: cxx_skia view.cc
 build gtk_window.o: cxx_gtkmm gtk_window.cc

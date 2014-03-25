@@ -347,15 +347,14 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 
 	auto scaled_font = cr->get_scaled_font();
 	auto backend = scaled_font->cobj()->backend;
-#if 0
-	printf(" %08x\n",scaled_font->cobj());
-	printf(": %08x\n",&(scaled_font->cobj()->backend));
-	printf(":: %08x\n",&(backend->text_to_glyphs));
-#endif
+
 	int i=0;
 	uint32_t ucs4;
 	cairo_scaled_glyph_t scaled_glyph;
 	while(size()>c_index){
+	#if 0
+		debug<<"string size"<<size()<<" index"<<c_index<<std::endl;
+	#endif
 		c_index += _cairo_utf8_get_char_validated(&(c_str()[c_index]),&ucs4);	
 		//if(ucs4 is Correct)
 		line_index[groups_index].push_back(c_index);
@@ -379,8 +378,7 @@ void line::sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned in
 			case '\n':
 				break;
 			default: //fallback font;
-				;
-				//std::cout<<"unrec crect\n";
+				debug<<"fallback crect\n";
 		}
 	}
 	synced=true;
@@ -412,11 +410,11 @@ glyphs_group::iterator line::x_to_glyph_itr(int x){
 }
 
 bool line::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr,int y, const Cairo::Rectangle &rect){
-	cr->save();
+	//cr->save();
 	sync_glyphs(cr,y);
 	for(auto& glyphs:line_glyphs)
 		glyphs.draw_to_context(cr);
-	cr->restore();
+	//cr->restore();
 	return true;
 }
 
