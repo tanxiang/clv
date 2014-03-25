@@ -119,18 +119,24 @@ bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 			backing_surface_w < std::max(surface_w - 32, view_rect.width) || backing_surface_w > surface_w + 32||
 			backing_surface_h < std::max(surface_h - 32, view_rect.height) || backing_surface_h > surface_h + 32){//or need re-build surface
 			backing_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_ALPHA,surface_w,surface_h);
-			backing_surface_w=surface_w,backing_surface_h=surface_h;
+			backing_surface_w = surface_w, backing_surface_h = surface_h;
 			debug<<"fill alpha_surface_ptr:"<<backing_surface_ptr.operator->()<<std::endl;
 		}
 		auto backing_cr = Cairo::Context::create(backing_surface_ptr);
+		auto region_dirty=Cairo::Region::create(Cairo::RectangleInt{0,0,surface_w,surface_h});
+		debug<<"back size="<<backing_surface_w<<':'<<surface_w<<std::endl;
+		Gdk::Cairo::add_region_to_path(backing_cr,region_dirty);
+		backing_cr->clip();
 		backing_cr->set_source_rgba(0,0,0,0);
 		backing_cr->set_operator(Cairo::OPERATOR_SOURCE);
 		backing_cr->paint();
 		backing_cr->set_operator(Cairo::OPERATOR_OVER);
 		backing_cr->save();
+		Gtk::Container::on_draw(backing_cr);
 		backing_cr->restore();
 	}
-	return Gtk::Container::on_draw(cr);
+
+	return true;
 }
 
 void ClvFViewBox::forall_vfunc(gboolean include_internals, GtkCallback callback, gpointer callback_data){
