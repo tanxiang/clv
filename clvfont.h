@@ -1,3 +1,5 @@
+#ifndef _CLVFONT_H
+#define _CLVFONT_H
 #include "dbg.h"
 #include <vector>
 #include <string>
@@ -35,3 +37,4 @@ public:
 };
 
 unsigned long ucs4_to_index(void *abstract_font, uint32_t ucs4);
+#endif

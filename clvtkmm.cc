@@ -38,7 +38,7 @@ void ClvFViewBox::on_realize(){
 	bg_color.set_rgba(0.3,0.4,0.5);
 	override_background_color(bg_color);
 	//override_color(Gdk::RGBA("blue"));
-	line_view.set_parent(*this);
+	//line_view.set_parent(*this);
 	edit_view.set_parent(*this);
 	//debug<<"edit_view.get_parent_window:"<<edit_view.get_parent_window().operator->()<<':'<<window.operator->()<<std::endl;
 	//edit_view.set_parent_window(window);

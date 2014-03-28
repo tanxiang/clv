@@ -12,6 +12,7 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 ClvFileArea::ClvFileArea(context<line> &file):
 	file_context(file)
 	{
+		return;
 	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK|Gdk::EXPOSURE_MASK);
 	im_context = gtk_im_multicontext_new();
@@ -29,6 +30,12 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	this->signal_draw().connect(sigc::mem_fun(*this,&ClvFileArea::on_draw));
 #endif
 	input_status=STATUS_NONE;
+}
+
+ClvFileArea::~ClvFileArea(){
+	debug<<__PRETTY_FUNCTION__<<std::endl;
+	//FIXME im_context?
+	//g_object_unref (im_context);
 }
 
 void ClvFileArea::on_realize(){
@@ -51,17 +58,19 @@ void ClvFileArea::on_realize(){
 		Gdk::POINTER_MOTION_MASK |
 		Gdk::ENTER_NOTIFY_MASK |
 		Gdk::LEAVE_NOTIFY_MASK );
+#if 0
 	auto client_window = Gdk::Window::create(get_parent_window(), &attributes, Gdk::WA_X | Gdk::WA_Y );
 	//client_window->show();
 	register_window(client_window);
 	client_window->lower();
 	gtk_im_context_set_client_window(im_context,client_window->gobj());
-
+#endif
 	Gtk::DrawingArea::on_realize();
 	//get_window()->set_user_data(gobj());
 }
 
 void ClvFileArea::on_unrealize(){
+	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	Gtk::DrawingArea::on_unrealize();
 	//FIXME:need unregister client_window for im??
 }

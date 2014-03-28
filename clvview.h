@@ -48,9 +48,7 @@ public:
 
 	void set_activates(bool setting=false);
 	ClvFileArea(context<line> &file);
-	virtual ~ClvFileArea(){
-		g_object_unref (im_context);
-	};
+	virtual ~ClvFileArea();
 	
 protected:
 
