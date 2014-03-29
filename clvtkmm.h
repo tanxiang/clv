@@ -12,7 +12,7 @@
 
 class ClvFViewBox :public Gtk::Container,virtual public Gtk::Scrollable {
 	context<line> &file;
-	//ClvLineArea line_view;
+	ClvLineArea line_view;
 	ClvFileArea edit_view;
 	//Glib::RefPtr<Gdk::Window> window;
 
