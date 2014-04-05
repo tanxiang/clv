@@ -35,9 +35,7 @@ class ClvFileArea: public Gtk::DrawingArea{
 #ifdef CLV_SURFACE_BLINK
 	Cairo::RefPtr<Cairo::Surface> surface_ptr;
 #endif
-
 	Cairo::RefPtr<Cairo::Surface> cover_surface_ptr;
-	
 	sigc::connection blink_time_out;
 	
  	void on_font_setting_changed (const Glib::ustring & key);

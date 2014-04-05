@@ -12,7 +12,6 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 ClvFileArea::ClvFileArea(context<line> &file):
 	file_context(file)
 	{
-		return;
 	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK|Gdk::EXPOSURE_MASK);
 	im_context = gtk_im_multicontext_new();
@@ -33,13 +32,13 @@ ClvFileArea::ClvFileArea(context<line> &file):
 }
 
 ClvFileArea::~ClvFileArea(){
-	debug<<__PRETTY_FUNCTION__<<std::endl;
+	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	//FIXME im_context?
-	//g_object_unref (im_context);
+	g_object_unref (im_context);
 }
 
 void ClvFileArea::on_realize(){
-	debug<<__PRETTY_FUNCTION__<<std::endl;
+	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	GdkWindowAttr attributes;
 	auto allocation = get_allocation();
 	attributes.x = allocation.get_x();
@@ -58,7 +57,7 @@ void ClvFileArea::on_realize(){
 		Gdk::POINTER_MOTION_MASK |
 		Gdk::ENTER_NOTIFY_MASK |
 		Gdk::LEAVE_NOTIFY_MASK );
-#if 0
+#if 1
 	auto client_window = Gdk::Window::create(get_parent_window(), &attributes, Gdk::WA_X | Gdk::WA_Y );
 	//client_window->show();
 	register_window(client_window);
@@ -76,7 +75,7 @@ void ClvFileArea::on_unrealize(){
 }
 
 bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
-	debug<<__PRETTY_FUNCTION__<<std::endl;
+	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	cover_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR_ALPHA, get_allocation().get_width(), get_allocation().get_width());
 	return false;
 }
@@ -139,6 +138,8 @@ bool ClvFileArea::on_blink_time(){
 
 void ClvFileArea::draw_rect(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
 	cr->save();//need RAII mode restore
+	cr->set_source_rgb(1,1,1);
+
 	auto itr = file_context.get_form_fill(rect.y);
 	int height = 0;
 	//if(itr != file_context.end())
@@ -158,6 +159,10 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
 	debug<<get_window()->get_width()<<'x'<<get_window()->get_height()<<std::endl;
 
+	cr->set_source_rgba(0,0,0,0);
+	cr->set_operator(Cairo::OPERATOR_SOURCE);
+	cr->paint();
+	cr->set_operator(Cairo::OPERATOR_OVER);
 
 	std::vector<Cairo::Rectangle> clip_rects;
 	cr->copy_clip_rectangle_list(clip_rects);

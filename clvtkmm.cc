@@ -107,10 +107,6 @@ bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		Cairo::RectangleInt view_in_canvas_pos{-canvas_rect.x,-canvas_rect.y,view_rect.width,view_rect.height};
 		auto surface_w = view_rect.width;
 		auto surface_h = view_rect.height;
-		//auto bg = get_window()->get_background_pattern();
-		//if(bg && bg->get_type()==Cairo::PATTERN_TYPE_SOLID)
-		//	cairo_pattern_get_rgba(); //alpha==1.0??
-		//Cairo::Content def_content = Cairo::CONTENT_ALPHA or Cairo::CONTENT_COLOR;//like gtktextview
 		if(canvas_rect.width > surface_w)
 			surface_w = std::min(surface_w + extra_width,canvas_rect.width); 
 		if(canvas_rect.height > surface_h)
@@ -123,17 +119,19 @@ bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 			debug<<"fill alpha_surface_ptr:"<<backing_surface_ptr.operator->()<<std::endl;
 		}
 		auto backing_cr = Cairo::Context::create(backing_surface_ptr);
-		auto region_dirty=Cairo::Region::create(Cairo::RectangleInt{0,0,surface_w,surface_h});
-		debug<<"back size="<<backing_surface_w<<':'<<surface_w<<std::endl;
+		auto region_dirty = Cairo::Region::create(Cairo::RectangleInt{0,0,surface_w,surface_h});
+		//debug<<"back size="<<backing_surface_w<<':'<<surface_w<<std::endl;
 		Gdk::Cairo::add_region_to_path(backing_cr,region_dirty);
 		backing_cr->clip();
-		backing_cr->set_source_rgba(0,0,0,0);
+		//backing_cr->set_source_rgba(0,0,0,0);
 		backing_cr->set_operator(Cairo::OPERATOR_SOURCE);
-		backing_cr->paint();
+		//backing_cr->paint();
 		backing_cr->set_operator(Cairo::OPERATOR_OVER);
-		backing_cr->save();
 		Gtk::Container::on_draw(backing_cr);
-		backing_cr->restore();
+		cr->save();
+		cr->set_source(backing_surface_ptr,0,0);
+		cr->paint();
+		cr->restore();
 	}
 
 	return true;
