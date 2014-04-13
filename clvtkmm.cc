@@ -114,7 +114,7 @@ bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		if(!backing_surface_ptr ||
 			backing_surface_w < std::max(surface_w - 32, view_rect.width) || backing_surface_w > surface_w + 32||
 			backing_surface_h < std::max(surface_h - 32, view_rect.height) || backing_surface_h > surface_h + 32){//or need re-build surface
-			backing_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_ALPHA,surface_w,surface_h);
+			backing_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR_ALPHA,surface_w,surface_h);
 			backing_surface_w = surface_w, backing_surface_h = surface_h;
 			debug<<"fill alpha_surface_ptr:"<<backing_surface_ptr.operator->()<<std::endl;
 		}
@@ -123,15 +123,22 @@ bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		//debug<<"back size="<<backing_surface_w<<':'<<surface_w<<std::endl;
 		Gdk::Cairo::add_region_to_path(backing_cr,region_dirty);
 		backing_cr->clip();
-		//backing_cr->set_source_rgba(0,0,0,0);
+		backing_cr->set_source_rgba(0,0,0,0);
 		backing_cr->set_operator(Cairo::OPERATOR_SOURCE);
-		//backing_cr->paint();
+		backing_cr->paint();
+
 		backing_cr->set_operator(Cairo::OPERATOR_OVER);
+		backing_cr->save();
 		Gtk::Container::on_draw(backing_cr);
-		cr->save();
+		backing_cr->restore();
+		//backing_cr->paint();
+		//
+		cr->set_operator(Cairo::OPERATOR_OVER);
 		cr->set_source(backing_surface_ptr,0,0);
+		//cr->fill();
 		cr->paint();
-		cr->restore();
+		//cr->restore();
+		//Gtk::Container::on_draw(cr);
 	}
 
 	return true;

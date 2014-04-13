@@ -159,10 +159,10 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
 	debug<<get_window()->get_width()<<'x'<<get_window()->get_height()<<std::endl;
 
-	cr->set_source_rgba(0,0,0,0);
-	cr->set_operator(Cairo::OPERATOR_SOURCE);
-	cr->paint();
-	cr->set_operator(Cairo::OPERATOR_OVER);
+	cr->set_source_rgba(0,0,0,0.0);
+	//cr->set_operator(Cairo::OPERATOR_SOURCE);
+	//cr->paint();
+	//cr->set_operator(Cairo::OPERATOR_OVER);
 
 	std::vector<Cairo::Rectangle> clip_rects;
 	cr->copy_clip_rectangle_list(clip_rects);
@@ -174,6 +174,7 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 #ifdef CLV_SURFACE_BLINK
 	surface_ptr = cr->get_target();
 #endif
+	cr->paint();
 	return true;//Gtk::TextView::on_draw(cr);
 }
 
