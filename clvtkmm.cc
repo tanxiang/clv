@@ -2,6 +2,7 @@
 #include "clvbuffer.h"
 #include <pangomm.h>
 #include "dbg.h"
+#include <ctime>
 
 
 ClvFViewBox::ClvFViewBox(context<line> &file_ref):
@@ -86,6 +87,7 @@ int ClvFViewBox::extra_height = DEFAULT_EXTRA_SIZE;
 
 bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
+	std::clock_t c_start = std::clock();
 	if(should_draw_window(cr,get_window())){
 		auto style = get_style_context();
 		style->context_save();
@@ -126,21 +128,14 @@ bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		backing_cr->set_source_rgba(0,0,0,0);
 		backing_cr->set_operator(Cairo::OPERATOR_SOURCE);
 		backing_cr->paint();
-
 		backing_cr->set_operator(Cairo::OPERATOR_OVER);
 		backing_cr->save();
 		Gtk::Container::on_draw(backing_cr);
 		backing_cr->restore();
-		//backing_cr->paint();
-		//
 		cr->set_operator(Cairo::OPERATOR_OVER);
 		cr->set_source(backing_surface_ptr,0,0);
-		//cr->fill();
 		cr->paint();
-		//cr->restore();
-		//Gtk::Container::on_draw(cr);
 	}
-
 	return true;
 }
 

@@ -3,6 +3,7 @@
 #include <gtkmm.h>
 #include "clvcontext.h"
 #include "clvline.h"
+#include <chrono>
 
 class ClvLineArea : public Gtk::DrawingArea{
 public:
@@ -32,11 +33,9 @@ class ClvFileArea: public Gtk::DrawingArea{
 	
 	GtkIMContext *im_context;
 
-#ifdef CLV_SURFACE_BLINK
-	Cairo::RefPtr<Cairo::Surface> surface_ptr;
-#endif
-	Cairo::RefPtr<Cairo::Surface> cover_surface_ptr;
+	Cairo::RefPtr<Cairo::Surface> glyphs_surface_ptr;
 	sigc::connection blink_time_out;
+	std::chrono::steady_clock::time_point refresh_time = std::chrono::steady_clock::now();
 	
  	void on_font_setting_changed (const Glib::ustring & key);
  	void update_custom_font_setting();
@@ -60,7 +59,7 @@ protected:
 	
 	static void delete_surrounding_proxy(GtkIMContext *context,gint offset,gint n_chars,ClvFileArea* pobj);
 
-	bool on_blink_time();
+	bool on_timer();
 	bool on_configure_event(GdkEventConfigure* event) override;
 	void on_size_allocate(Gtk::Allocation& allocation) override;
 	bool on_focus_in_event(GdkEventFocus* event) override;

@@ -7,5 +7,5 @@ int main(int argc, char *argv[]){
 	ClvtkWindow window{std::vector<std::string>{"../Desktop/t.cc","../Desktop/t.c","view.cc"}};
 	//ClvtkWindow window{std::vector<std::string>{"../Desktop/t.cc"}};
 	window.set_title("clv");
-	return app->run(window);
+	return app->run(window,argc,argv);
 }

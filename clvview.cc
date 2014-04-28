@@ -76,7 +76,7 @@ void ClvFileArea::on_unrealize(){
 
 bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
 	//debug<<__PRETTY_FUNCTION__<<std::endl;
-	cover_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR_ALPHA, get_allocation().get_width(), get_allocation().get_width());
+	glyphs_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR_ALPHA, get_allocation().get_width(), get_allocation().get_width());
 	return false;
 }
 
@@ -85,45 +85,34 @@ void ClvFileArea::on_size_allocate(Gtk::Allocation& allocation){
 	if(get_realized()){
 		debug <<__PRETTY_FUNCTION__<<allocation.get_height()<<std::endl;
 		get_window()->move_resize(allocation.get_x(),allocation.get_y(),allocation.get_width(),allocation.get_height());
-		//get_window()->show();
 	}
-	//Gtk::Allocation context_allocation{0,0,get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
-
-	//allocation.
 }
 
 void ClvFileArea::set_activates(bool setting){
 	if(setting){
-		blink_time_out = Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_blink_time),1000);
+		blink_time_out = Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_timer),100);
 	}
 	else if(blink_time_out)
 		blink_time_out.disconnect();
 	//debug<<"activates"<<this<<':'<<setting<<'\n';
 }
 
-bool ClvFileArea::on_blink_time(){
-	return true;
-	static bool bc;
-	if(bc){
-		auto cr = get_window()->create_cairo_context();
-		cr->set_source(cover_surface_ptr,0,0);
-		cr->paint();
-	}
-	else{
-		auto cr = get_window()->create_cairo_context();
-#ifdef CLV_SURFACE_BLINK
-		cr->set_source(surface_ptr,0,0);
-		cr->rectangle(110,310,100,100);
-		cr->fill();
-		double x,y;
-		surface_ptr->get_device_offset(x,y);
-		debug<<"surface:"<<surface_ptr->cobj()<<std::endl;
-#endif
-		Gdk::Rectangle rect{110,310,100,100};
-		Gdk::Cairo::add_rectangle_to_path(cr,rect);
-		get_window()->invalidate_rect(rect , false);
-	}
-	bc=!bc;
+bool ClvFileArea::on_timer(){
+	auto cr = get_window()->create_cairo_context();
+	auto dms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-refresh_time).count(); 
+	dms%=1000;	debug<<"timer:"<<dms<<std::endl;
+
+	Gdk::Rectangle rect{110,10,3,18};
+	Gdk::Cairo::add_rectangle_to_path(cr,rect);
+	cr->set_source_rgb(0,0,0);
+	cr->fill_preserve();
+	cr->set_source(glyphs_surface_ptr,0,0);
+	cr->fill_preserve();
+	cr->set_source_rgba(1,1,1,static_cast<double>(dms)/1000);
+	cr->fill();
+	
+	//Gdk::Cairo::add_rectangle_to_path(cr,rect);
+	//get_window()->invalidate_rect(rect , false);
 
 	for(auto& cursor:file_context.cursors){
 		;
@@ -160,9 +149,6 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<get_window()->get_width()<<'x'<<get_window()->get_height()<<std::endl;
 
 	cr->set_source_rgba(0,0,0,0.0);
-	//cr->set_operator(Cairo::OPERATOR_SOURCE);
-	//cr->paint();
-	//cr->set_operator(Cairo::OPERATOR_OVER);
 
 	std::vector<Cairo::Rectangle> clip_rects;
 	cr->copy_clip_rectangle_list(clip_rects);
@@ -170,12 +156,8 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		debug<<"x"<<clip_rect.x<<"y"<<clip_rect.y<<"\tw="<<clip_rect.width<<" h="<<clip_rect.height<<std::endl;
 		draw_rect(cr,clip_rect);
 	}
-	//debug<<"context:"<<cr->cobj()<<std::endl;
-#ifdef CLV_SURFACE_BLINK
-	surface_ptr = cr->get_target();
-#endif
 	cr->paint();
-	return true;//Gtk::TextView::on_draw(cr);
+	return true;
 }
 
 
@@ -196,7 +178,6 @@ bool ClvFileArea::on_key_press_event(GdkEventKey *event){
 		case STATUS_INPUT:
 		{
 			if(*event->string==0x8||*event->string==0x7f){
-				//debug<<"input done\n";//commit change
 				input_status=STATUS_DELETE;
 			}
 			break;
@@ -204,7 +185,6 @@ bool ClvFileArea::on_key_press_event(GdkEventKey *event){
 		case STATUS_DELETE:
 		{
 			if(*event->string!=0x8&&*event->string!=0x7f){
-				//debug<<"delete done\n";//commit change
 				input_status=STATUS_INPUT;
 			}
 			break;
@@ -284,7 +264,7 @@ bool ClvFileArea::on_button_press_event(GdkEventButton* event){
 	
 	}
 	else{
-		//debug<<"button_else\n";
+		debug<<"button_else\n";
 	}
 	return true;
 }
@@ -302,8 +282,7 @@ bool ClvFileArea::on_button_release_event(GdkEventButton* event){
 					return true;
 				}
 				auto glyph_itr = line_itr->x_to_glyph_itr(event->x);
-				//debug<<"s click"<<std::endl;
-				auto cr = Cairo::Context::create(cover_surface_ptr);
+				auto cr = Cairo::Context::create(glyphs_surface_ptr);
 				cr->set_source_rgba(1,1,1,0.7);
 				cr->rectangle(glyph_itr->x,glyph_itr->y,2,-18);
 				cr->fill();
