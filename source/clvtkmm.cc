@@ -2,7 +2,6 @@
 #include "clvbuffer.h"
 #include <pangomm.h>
 #include "dbg.h"
-#include <ctime>
 
 
 ClvFViewBox::ClvFViewBox(context<line> &file_ref):
@@ -30,7 +29,7 @@ void ClvFViewBox::on_realize(){
 	attributes.wclass = GDK_INPUT_OUTPUT;
 	attributes.visual = get_visual()->gobj();
 	attributes.event_mask = get_events() | GDK_VISIBILITY_NOTIFY_MASK | GDK_EXPOSURE_MASK;
-	int attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_SCROLL_MASK | GDK_TOUCH_MASK | GDK_SMOOTH_SCROLL_MASK;;
+	//int attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_SCROLL_MASK | GDK_TOUCH_MASK | GDK_SMOOTH_SCROLL_MASK;;
 	auto window = Gdk::Window::create(get_parent_window(), &attributes, Gdk::WA_X | Gdk::WA_Y );
 	set_window(window);
 	register_window(window);
@@ -87,7 +86,6 @@ int ClvFViewBox::extra_height = DEFAULT_EXTRA_SIZE;
 
 bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
-	std::clock_t c_start = std::clock();
 	if(should_draw_window(cr,get_window())){
 		auto style = get_style_context();
 		style->context_save();
@@ -95,7 +93,7 @@ bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 		style->render_frame(cr,0,0,get_window()->get_width(),get_window()->get_height());
 		style->context_restore();
 	}
-	static cairo_user_data_key_t event_window_key;
+	//static cairo_user_data_key_t event_window_key;
 #if 0
 	debug<<"cr user data"<<cairo_get_user_data(cr->cobj(),&event_window_key)<<':'<<get_window()->gobj()<<':'<<edit_view.get_window()->gobj()<<std::endl;
 	if(should_draw_window(cr,edit_view.get_window())){

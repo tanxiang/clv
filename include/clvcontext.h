@@ -1,6 +1,7 @@
 #ifndef _CLVCONTEXT_H
 #define _CLVCONTEXT_H
 #include "unorder_tree.h"
+#include <vector>
 template<typename T>
 class context :public unorder_tree<T>{
 	struct cursor:public unorder_tree<T>::iterator{
