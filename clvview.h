@@ -31,8 +31,7 @@ class ClvFileArea: public Gtk::DrawingArea{
 	}input_status;
 	context<line> &file_context;
 	
-	GtkIMContext *im_context;
-
+	GtkIMContext *im_context = gtk_im_multicontext_new();
 	Cairo::RefPtr<Cairo::Surface> glyphs_surface_ptr;
 	sigc::connection blink_time_out;
 	std::chrono::steady_clock::time_point refresh_time = std::chrono::steady_clock::now();

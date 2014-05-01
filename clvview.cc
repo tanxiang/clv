@@ -14,7 +14,6 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	{
 	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK|Gdk::EXPOSURE_MASK);
-	im_context = gtk_im_multicontext_new();
 	g_signal_connect (im_context, "commit",G_CALLBACK (&ClvFileArea::im_commit_proxy), this);
 	g_signal_connect (im_context, "preedit-changed",G_CALLBACK (&ClvFileArea::preedit_changed_proxy), this);
 	g_signal_connect (im_context, "retrieve-surrounding",G_CALLBACK (&ClvFileArea::retrieve_surrounding_proxy), this);
@@ -76,7 +75,7 @@ void ClvFileArea::on_unrealize(){
 
 bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
 	//debug<<__PRETTY_FUNCTION__<<std::endl;
-	glyphs_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR_ALPHA, get_allocation().get_width(), get_allocation().get_width());
+	//glyphs_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR_ALPHA, get_allocation().get_width(), get_allocation().get_width());
 	return false;
 }
 
@@ -98,25 +97,20 @@ void ClvFileArea::set_activates(bool setting){
 }
 
 bool ClvFileArea::on_timer(){
-	auto cr = get_window()->create_cairo_context();
+	auto draw_object_cr = get_window()->create_cairo_context();
 	auto dms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-refresh_time).count(); 
-	dms%=1000;	debug<<"timer:"<<dms<<std::endl;
-
-	Gdk::Rectangle rect{110,10,3,18};
-	Gdk::Cairo::add_rectangle_to_path(cr,rect);
-	cr->set_source_rgb(0,0,0);
-	cr->fill_preserve();
-	cr->set_source(glyphs_surface_ptr,0,0);
-	cr->fill_preserve();
-	cr->set_source_rgba(1,1,1,static_cast<double>(dms)/1000);
-	cr->fill();
-	
-	//Gdk::Cairo::add_rectangle_to_path(cr,rect);
-	//get_window()->invalidate_rect(rect , false);
-
+	dms%=1000;
 	for(auto& cursor:file_context.cursors){
 		;
 	}
+	Gdk::Rectangle rect{110,10,3,18};
+	Gdk::Cairo::add_rectangle_to_path(draw_object_cr,rect);
+	draw_object_cr->set_source_rgb(0.3,0.4,0.5);
+	draw_object_cr->fill_preserve();
+	draw_object_cr->set_source(glyphs_surface_ptr,0,0);
+	draw_object_cr->fill_preserve();
+	draw_object_cr->set_source_rgba(1,1,1,static_cast<double>(dms)/1000);
+	draw_object_cr->fill();
 	return true;
 }
 
@@ -146,6 +140,7 @@ void ClvFileArea::draw_rect(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo:
 
 bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
+	glyphs_surface_ptr = cr->get_target();
 	debug<<get_window()->get_width()<<'x'<<get_window()->get_height()<<std::endl;
 
 	cr->set_source_rgba(0,0,0,0.0);
