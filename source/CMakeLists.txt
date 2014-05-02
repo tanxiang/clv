@@ -28,5 +28,11 @@ target_link_libraries(clvtk
 	${GTKMM_LIBRARIES}
 )
 
-
+add_library(clvclang SHARED
+	clvparser.cc
+	clthread.cc
+)
+target_link_libraries(clvtk
+	${LibClang_LIBRARIES}
+)
 
