@@ -11,7 +11,7 @@
 #include "clvview.h"
 
 class ClvFViewBox :public Gtk::Container,virtual public Gtk::Scrollable {
-	context<line> &file;
+	context<clv::line> &file;
 	ClvLineArea line_view;
 	ClvFileArea edit_view;
 	//Glib::RefPtr<Gdk::Window> window;
@@ -55,7 +55,7 @@ protected:
 	void on_hadjustment();
 	void on_vadjustment();
 public:
-	ClvFViewBox(context<line> &file_ref);
+	ClvFViewBox(context<clv::line> &file_ref);
 	virtual ~ClvFViewBox(){};
 	void save();
 	void close();
@@ -77,7 +77,7 @@ public:
 class ClvPageBox : public Gtk::Box{
 	Glib::ustring file_name;
 	std::fstream file_stream;
-	context<line> file_context;
+	context<clv::line> file_context;
 	Gtk::Box main_view;
 	//Gtk::DrawingArea head_view;
 	Gtk::ScrolledWindow scrolled_content_view;

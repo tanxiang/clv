@@ -1,6 +1,8 @@
 #include "clvview.h"
 #include "dbg.h"
 
+using namespace clv;
+
 bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	if(should_draw_window(cr,get_window())){
 		cr->set_source_rgb(0.0, 0.0, 0.0);
@@ -10,8 +12,7 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 }
 
 ClvFileArea::ClvFileArea(context<line> &file):
-	file_context(file)
-	{
+	file_context(file) {
 	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK|Gdk::EXPOSURE_MASK);
 	g_signal_connect (im_context, "commit",G_CALLBACK (&ClvFileArea::im_commit_proxy), this);
@@ -277,9 +278,10 @@ bool ClvFileArea::on_button_release_event(GdkEventButton* event){
 					return true;
 				}
 				auto glyph_itr = line_itr->x_to_glyph_itr(event->x);
+				
 				auto cr = Cairo::Context::create(glyphs_surface_ptr);
 				cr->set_source_rgba(1,1,1,0.7);
-				cr->rectangle(glyph_itr->x,glyph_itr->y,2,-18);
+				//cr->rectangle(glyph_itr->x,glyph_itr->y,2,-18);
 				cr->fill();
 				cr->set_operator(Cairo::Operator::OPERATOR_XOR);
 			}

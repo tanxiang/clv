@@ -29,7 +29,7 @@ class ClvFileArea: public Gtk::DrawingArea{
 		STATUS_DELETE,
 		STATUS_CMD,
 	}input_status;
-	context<line> &file_context;
+	context<clv::line> &file_context;
 	
 	GtkIMContext *im_context = gtk_im_multicontext_new();
 	Cairo::RefPtr<Cairo::Surface> glyphs_surface_ptr;
@@ -43,7 +43,7 @@ class ClvFileArea: public Gtk::DrawingArea{
 public:
 
 	void set_activates(bool setting=false);
-	ClvFileArea(context<line> &file);
+	ClvFileArea(context<clv::line> &file);
 	virtual ~ClvFileArea();
 	
 protected:

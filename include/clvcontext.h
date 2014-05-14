@@ -5,7 +5,7 @@
 template<typename T>
 class context :public unorder_tree<T>{
 	struct cursor:public unorder_tree<T>::iterator{
-		typename T::glyphs_iter it_glyph;
+		typename T::glyph_iter it_glyph;
 	};
 public:
 

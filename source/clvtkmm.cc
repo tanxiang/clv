@@ -4,7 +4,7 @@
 #include "dbg.h"
 
 
-ClvFViewBox::ClvFViewBox(context<line> &file_ref):
+ClvFViewBox::ClvFViewBox(context<clv::line> &file_ref):
 	Glib::ObjectBase(typeid(ClvFViewBox)),
 	Gtk::Scrollable(),
 	file(file_ref),edit_view(file),
@@ -13,7 +13,6 @@ ClvFViewBox::ClvFViewBox(context<line> &file_ref):
 {
 	set_has_window(true);
 	set_redraw_on_allocate(false);
-	//add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK);
 }
 
 void ClvFViewBox::on_realize(){
@@ -189,7 +188,7 @@ ClvToolBox::ClvToolBox():file_mode("c++",true),
 
 ClvPageBox::ClvPageBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	file_name(fs),file_stream(file_name),
-	file_context(std::istream_iterator<line>{file_stream},std::istream_iterator<line>{}),
+	file_context(std::istream_iterator<clv::line>{file_stream},std::istream_iterator<clv::line>{}),
 	content_view(file_context),tab_label(file_name){
 	static const gchar button_style[] =
 		"* {\n"
