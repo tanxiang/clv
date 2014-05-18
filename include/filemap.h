@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 namespace clv{
 class Utf8CharRef{//utf-8 char ref & opts
@@ -194,6 +195,10 @@ class FileMap{
 protected:
 public:
 	FileMap(const char* FilePath=nullptr);
+	FileMap(const std::string &FilePath){
+		FileMap(FilePath.c_str());
+	}
+
 	~FileMap();
 
 	struct iterator_traits {

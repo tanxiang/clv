@@ -7,18 +7,23 @@
 #include <iostream>
 #include <iterator>
 #include "filemap.h"
+#include "dbg.h"
 
 namespace clv{
 
 template<typename LineRef>
 FileMap<LineRef>::FileMap(const char* FilePath){
 	FD = -1;
+	debug<<"file_name:"<<FilePath<<"\n";
 	if(FilePath){
 		//file_name=FilePath;
-		if ((FD = open(FilePath, O_RDWR, 0)) == -1)
+		if ((FD = open(FilePath, O_RDWR, 0)) < 0){
+			perror("open");
 			throw;
+		}
 		struct stat sb;
 		if(fstat(FD,&sb) == -1){
+			perror("fstat");
 			close(FD);
 			throw;
 		}
