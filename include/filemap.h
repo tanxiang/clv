@@ -1,6 +1,7 @@
-#ifndef _FILEMAP_H
-#define _FILEMAP_H
-class CharRef{//utf-8 char ref & opts
+#pragma once
+
+namespace clv{
+class Utf8CharRef{//utf-8 char ref & opts
 	void *P;
 	enum CodeType{
 		EXTN=0,		//10xxxxxx
@@ -91,7 +92,7 @@ public:
 		typedef SourceChar&		reference;
 	};
 	struct iterator:public iterator_traits{
-		CharRef Char;
+		SourceChar Char;
 		iterator operator ++ (){
 			Char.n();
 			return *this;
@@ -101,8 +102,8 @@ public:
 			return *this;
 		}
 		bool operator !=(iterator it){return Char.Get() != it->Get();}
-		CharRef& operator *(){return Char;}
-		CharRef* operator -> (){return &Char;}
+		SourceChar& operator *(){return Char;}
+		SourceChar* operator -> (){return &Char;}
 	};
 	MBLineRef():NumChar{0}{}
 	MBLineRef(void* P,int Plen):P{P},BitsToEnd{Plen},NumChar{0}{
@@ -233,4 +234,4 @@ private:
 	iterator start;
 	iterator finish;
 };
-#endif
+}//namespace clv

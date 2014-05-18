@@ -3,7 +3,6 @@
 #include <pangomm.h>
 #include "dbg.h"
 
-
 ClvFViewBox::ClvFViewBox(context<clv::line> &file_ref):
 	Glib::ObjectBase(typeid(ClvFViewBox)),
 	Gtk::Scrollable(),
@@ -70,8 +69,10 @@ void ClvFViewBox::on_size_allocate(Gtk::Allocation& allocation){
 	}
 #endif
 	if(edit_view.get_realized()){
-		Gtk::Allocation edit_view_allocation{-get_hadjustment()->get_value(),-get_vadjustment()->get_value(),
-			get_hadjustment()->get_upper(),get_vadjustment()->get_upper()};
+		Gtk::Allocation edit_view_allocation{static_cast<int>(-get_hadjustment()->get_value()),
+			static_cast<int>(-get_vadjustment()->get_value()),
+			static_cast<int>(get_hadjustment()->get_upper()),
+			static_cast<int>(get_vadjustment()->get_upper())};
 		edit_view.size_allocate(edit_view_allocation);
 	}
 }
@@ -103,7 +104,7 @@ bool ClvFViewBox::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	if(should_draw_window(cr,get_window())){//FIXME
 		Cairo::RectangleInt view_rect{0,0,get_window()->get_width(),get_window()->get_height()};
 		Cairo::RectangleInt canvas_rect{0,0,1200,2400};
-		Cairo::RectangleInt view_in_canvas_pos{-canvas_rect.x,-canvas_rect.y,view_rect.width,view_rect.height};
+		//Cairo::RectangleInt view_in_canvas_pos{-canvas_rect.x,-canvas_rect.y,view_rect.width,view_rect.height};
 		auto surface_w = view_rect.width;
 		auto surface_h = view_rect.height;
 		if(canvas_rect.width > surface_w)
@@ -278,7 +279,7 @@ bool ClvtkWindow::on_key_release_event(GdkEventKey* event){
 }
 
 ClvtkWindow::ClvtkWindow(std::vector<std::string> fn):flist_notebook(fn){
-	set_size_request(500,400);
+	set_size_request(700,500);
 	add(flist_notebook);
 	show_all_children();
 };

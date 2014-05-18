@@ -9,6 +9,8 @@
 #include <memory>
 #include <fstream>
 #include "clvview.h"
+#include "filemap.h"
+
 
 class ClvFViewBox :public Gtk::Container,virtual public Gtk::Scrollable {
 	context<clv::line> &file;
@@ -39,7 +41,7 @@ protected:
 		get_preferred_width_vfunc(minimum_width,natural_width);
 	}
 	GType child_type_vfunc() const override{
-		Gtk::Widget::get_type();
+		return Gtk::Widget::get_type();
 	}
 	void on_size_allocate(Gtk::Allocation& allocation) override;
 	void on_add(Gtk::Widget* widget) override{
@@ -77,6 +79,7 @@ public:
 class ClvPageBox : public Gtk::Box{
 	Glib::ustring file_name;
 	std::fstream file_stream;
+	clv::FileMap<clv::MBLineRef<clv::Utf8CharRef>> file_io_map;
 	context<clv::line> file_context;
 	Gtk::Box main_view;
 	//Gtk::DrawingArea head_view;

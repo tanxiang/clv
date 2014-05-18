@@ -5,8 +5,11 @@ pkg_check_modules(GTKMM gtkmm-3.0)
 find_package(LibClang REQUIRED)
 
 include_directories(
-	SYSTEM
 	${CMAKE_SOURCE_DIR}/include/
+)
+
+include_directories(
+	SYSTEM
 	${GTKMM_INCLUDE_DIRS}
 	${LibClang_INCLUDE_DIRS}
 )

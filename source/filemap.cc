@@ -8,6 +8,8 @@
 #include <iterator>
 #include "filemap.h"
 
+namespace clv{
+
 template<typename LineRef>
 FileMap<LineRef>::FileMap(const char* FilePath){
 	FD = -1;
@@ -74,5 +76,6 @@ FileMap<LineRef>::iterator FileMap<LineRef>::end(){
 }
 */
 //template class FileMap<char>;
-template class FileMap<MBLineRef<CharRef> >;
+template class FileMap<MBLineRef<Utf8CharRef> >;
 template class WCLineRef<wchar_t>;
+}//namespace clv
