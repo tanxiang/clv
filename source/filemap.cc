@@ -14,10 +14,9 @@ namespace clv{
 template<typename LineRef>
 FileMap<LineRef>::FileMap(const char* FilePath){
 	FD = -1;
-	debug<<"file_name:"<<FilePath<<"\n";
+	debug<<__PRETTY_FUNCTION__<<':'<<FilePath<<"\n";
 	if(FilePath){
-		//file_name=FilePath;
-		if ((FD = open(FilePath, O_RDWR, 0)) < 0){
+		if ((FD = open(FilePath, O_RDWR|O_CREAT)) < 0){
 			perror("open");
 			throw;
 		}
@@ -28,11 +27,10 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 			throw;
 		}
 		Len=sb.st_size;
-		P = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_FILE|MAP_SHARED,FD,0);
-		//static_cast<char*>(P)[Len]='\n';
-		start.Line.Set(P,Len);
+		FileMemMap = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_FILE|MAP_SHARED,FD,0);
+		start.Line.Set(FileMemMap,Len);
 		//auto l=Len;
-		finish=start;
+		finish.Line.Set(static_cast<char*>(FileMemMap)+Len,0);
 		//l-=finish->Length();
 		while(finish->AllLength()){
 			//std::cout<<finish->Length()<<':'<<l<<'-'<<std::endl;
@@ -43,21 +41,18 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 	else{
 		Len=getpagesize();
 		//P = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_ANON|MAP_SHARED,FD,0);
-		if ((FD = open("/dev/zero", O_RDWR, 0)) == -1)
-			throw;
-		P = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_FILE|MAP_SHARED,FD,0);
+		if ((FD = open("/dev/zero", O_RDWR, 0)) <0){
+			perror("open");
+		}
+		FileMemMap = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_FILE|MAP_SHARED,FD,0);
 	}
-	if(P == MAP_FAILED){
-		close(FD);
-		//perror("map alloc failed");
-		throw;
-	}
+	close(FD);
 }
 
 
 template<typename LineRef>
 FileMap<LineRef>::~FileMap(){
-	munmap(P,Len);
+	munmap(FileMemMap,Len);
 	close(FD);
 }
 
@@ -67,7 +62,7 @@ FileMap<LineRef>::~FileMap(){
 
 template<typename LineRef>
 int FileMap<LineRef>::Merge(){
-	return msync(P,Len,MS_SYNC);
+	return msync(FileMemMap,Len,MS_SYNC);
 }
 /*
 template<typename LineRef>

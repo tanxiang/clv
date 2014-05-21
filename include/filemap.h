@@ -68,7 +68,7 @@ public:
 	char GetChar(){return *static_cast<char*>(P);}
 };
 
-template<typename SourceChar>
+template<typename CharRef>
 class MBLineRef{
 	void *P;
 	int NumChar;
@@ -87,13 +87,13 @@ protected:
 public:
 	struct iterator_traits {
 		typedef std::bidirectional_iterator_tag iterator_category;
-		typedef SourceChar		value_type;
+		typedef CharRef		value_type;
 		typedef std::ptrdiff_t		difference_type;
-		typedef SourceChar*		pointer;
-		typedef SourceChar&		reference;
+		typedef CharRef*		pointer;
+		typedef CharRef&		reference;
 	};
 	struct iterator:public iterator_traits{
-		SourceChar Char;
+		CharRef Char;
 		iterator operator ++ (){
 			Char.n();
 			return *this;
@@ -103,8 +103,8 @@ public:
 			return *this;
 		}
 		bool operator !=(iterator it){return Char.Get() != it->Get();}
-		SourceChar& operator *(){return Char;}
-		SourceChar* operator -> (){return &Char;}
+		CharRef& operator *(){return Char;}
+		CharRef* operator -> (){return &Char;}
 	};
 	MBLineRef():NumChar{0}{}
 	MBLineRef(void* P,int Plen):P{P},BitsToEnd{Plen},NumChar{0}{
@@ -149,7 +149,7 @@ private:
 	iterator finish;
 };
 
-template<typename SourceChar>
+template<typename CharRef>
 class WCLineRef{
 	void *P;
 	int Len;
@@ -158,10 +158,10 @@ protected:
 public:
 	struct iterator_traits {
 		typedef std::random_access_iterator_tag iterator_category;
-		typedef SourceChar		value_type;
+		typedef CharRef		value_type;
 		typedef std::ptrdiff_t		difference_type;
-		typedef SourceChar*		pointer;
-		typedef SourceChar&		reference;
+		typedef CharRef*		pointer;
+		typedef CharRef&		reference;
 	};
 	struct iterator:public iterator_traits{
 
@@ -188,7 +188,7 @@ private:
 
 template<typename LineRef>
 class FileMap{
-	void *P;
+	void *FileMemMap;
 	//const char *file_name;
 	int Len;
 	int FD;
@@ -219,17 +219,12 @@ public:
 		bool operator !=(iterator it){return Line.Get() != it->Get();}
 		LineRef& operator *(){return Line;}
 		LineRef* operator -> (){return &Line;}
-		//iterator(void* P):Line{P}{}
-		//iterator(){}
 	};
-	//low level getdata
-	//const char* Name(){return file_name;}
-	void* Get(){return P;}
+	void* Get(){return FileMemMap;}
 	int Length(){return Len;}
 	int Merge();
 	//edit iface
 	iterator begin(){
-		//iterator itr{P};
 		return start;
 	}
 	iterator end(){
@@ -239,4 +234,5 @@ private:
 	iterator start;
 	iterator finish;
 };
+
 }//namespace clv
