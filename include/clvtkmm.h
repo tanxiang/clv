@@ -79,7 +79,7 @@ public:
 class ClvPageBox : public Gtk::Box{
 	Glib::ustring file_name;
 	std::fstream file_stream;
-	clv::FileMap<clv::MBLineRef<clv::Utf8CharRef>> file_io_map;
+	clv::FileMap<clv::RawLineRef<char>> file_io_map;
 	context<clv::line> file_context;
 	Gtk::Box main_view;
 	//Gtk::DrawingArea head_view;

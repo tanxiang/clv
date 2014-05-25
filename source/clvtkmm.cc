@@ -189,7 +189,8 @@ ClvToolBox::ClvToolBox():file_mode("c++",true),
 
 ClvPageBox::ClvPageBox(Glib::ustring fs):Gtk::Box(Gtk::ORIENTATION_VERTICAL,2),
 	file_name(fs),file_stream(file_name),file_io_map(file_name),
-	file_context(std::istream_iterator<clv::line>{file_stream},std::istream_iterator<clv::line>{}),
+	file_context(file_io_map.begin(),file_io_map.end()),
+//	file_context(std::istream_iterator<clv::line>{file_stream},std::istream_iterator<clv::line>{}),
 	content_view(file_context),tab_label(file_name){
 	static const gchar button_style[] =
 		"* {\n"

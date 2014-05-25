@@ -38,6 +38,10 @@ public:
 	//virtual ~line(){
 		//std::cerr<<"line free\n";
 	//}
+	template<typename T>
+	line(T& refline){
+		std::string{refline.begin(),refline.end()};
+	}
 
 	fill_t get_fill(){
 		return 18;

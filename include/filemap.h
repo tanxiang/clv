@@ -103,6 +103,8 @@ public:
 			return *this;
 		}
 		bool operator !=(iterator it){return Char.Get() != it->Get();}
+		bool operator ==(iterator it){return Char.Get() == it->Get();}
+
 		CharRef& operator *(){return Char;}
 		CharRef* operator -> (){return &Char;}
 	};
@@ -149,25 +151,40 @@ private:
 	iterator finish;
 };
 
-template<typename CharRef>
-class WCLineRef{
+template<typename Char_T>
+class RawLineRef{
 	void *P;
 	int Len;
 protected:
 	void CalLength(){}
 public:
+	/*
 	struct iterator_traits {
 		typedef std::random_access_iterator_tag iterator_category;
-		typedef CharRef		value_type;
+		typedef Char_T		value_type;
 		typedef std::ptrdiff_t		difference_type;
-		typedef CharRef*		pointer;
-		typedef CharRef&		reference;
-	};
-	struct iterator:public iterator_traits{
+		typedef Char_T*		pointer;
+		typedef Char_T&		reference;
+	};*/
+	struct iterator:public  std::iterator_traits<Char_T*>{
+		Char_T* p_char;
+		iterator operator ++ (){
+			++p_char;
+			return *this;
+		}
+		iterator operator -- (){
+			--p_char;
+			return *this;
+		}
 
+		bool operator !=(iterator it){return p_char != p_char;}
+		bool operator ==(iterator it){return p_char == p_char;}
+
+		Char_T& operator *(){return *p_char;}
+		Char_T* operator -> (){return p_char;}		
 	};
-	WCLineRef(){}
-	WCLineRef(void* P):P{P},Len{0}{}
+	RawLineRef(){}
+	RawLineRef(void* P):P{P},Len{0}{}
 
 
 	void* Get(){return P;}

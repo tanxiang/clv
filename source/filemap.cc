@@ -32,19 +32,17 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 		//auto l=Len;
 		finish.Line.Set(static_cast<char*>(FileMemMap)+Len,0);
 		//l-=finish->Length();
-		while(finish->AllLength()){
-			//std::cout<<finish->Length()<<':'<<l<<'-'<<std::endl;
-			//l-=finish->Length();
-			++finish;
-		}
+
 	}
 	else{
-		Len=getpagesize();
-		//P = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_ANON|MAP_SHARED,FD,0);
+		Len = getpagesize();
+		//FileMemMap = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_ANON|MAP_SHARED,FD,0);
 		if ((FD = open("/dev/zero", O_RDWR, 0)) <0){
 			perror("open");
 		}
 		FileMemMap = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_FILE|MAP_SHARED,FD,0);
+		start.Line.Set(FileMemMap,Len);
+		finish=start;
 	}
 	close(FD);
 }
@@ -77,5 +75,5 @@ FileMap<LineRef>::iterator FileMap<LineRef>::end(){
 */
 //template class FileMap<char>;
 template class FileMap<MBLineRef<Utf8CharRef> >;
-template class WCLineRef<wchar_t>;
+template class RawLineRef<char>;
 }//namespace clv
