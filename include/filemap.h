@@ -154,9 +154,9 @@ private:
 template<typename Char_T>
 class RawLineRef{
 	void *P;
-	int Len;
+	size_t LenToEnd;
 protected:
-	void CalLength(){}
+	size_t CalLength();
 public:
 	/*
 	struct iterator_traits {
@@ -165,7 +165,7 @@ public:
 		typedef std::ptrdiff_t		difference_type;
 		typedef Char_T*		pointer;
 		typedef Char_T&		reference;
-	};*/
+	};
 	struct iterator:public  std::iterator_traits<Char_T*>{
 		Char_T* p_char;
 		iterator operator ++ (){
@@ -183,16 +183,21 @@ public:
 		Char_T& operator *(){return *p_char;}
 		Char_T* operator -> (){return p_char;}		
 	};
+	*/
+	typedef Char_T* iterator;
 	RawLineRef(){}
-	RawLineRef(void* P):P{P},Len{0}{}
+	RawLineRef(void* P):P{P},LenToEnd{0}{}
 
 
 	void* Get(){return P;}
-	void Set(void* Pt){P=Pt;}
-	int Length(){return Len;}
+	void Set(void* Pt,size_t Len){
+		P=Pt;LenToEnd=Len;
+	}
+
+	size_t Length(){return CalLength();}
+	size_t AllLength(){return LenToEnd;}
 	//edit iface
 	iterator begin(){
-		//iterator itr{P};
 		return start;
 	}
 	iterator end(){
