@@ -122,7 +122,9 @@ public:
 		if(Plen)
 			CalLength(Plen);
 	}
-
+	void Set(iterator itr,int Plen){
+		Set(itr.operator->(),Plen);
+	}
 	int AllLength(){
 		//FIXME:bug!! CalLength init start finish when to call CalLength??
 		//CalLength();
@@ -153,10 +155,21 @@ private:
 
 template<typename Char_T>
 class RawLineRef{
-	void *P;
+	Char_T *Head;
 	size_t LenToEnd;
 protected:
-	size_t CalLength();
+	size_t CalLength(){
+		start=Head;
+		size_t LineLen;
+		for(LineLen=0;LineLen<LenToEnd;LineLen++){
+			if(Head[LineLen]=='\n'){//FIXME need wchar_t \r\n??
+				finish=Head+LineLen+1;
+				return LineLen;
+			}
+		}
+		finish=Head+LenToEnd;
+		return LineLen;
+	}
 public:
 	/*
 	struct iterator_traits {
@@ -186,12 +199,12 @@ public:
 	*/
 	typedef Char_T* iterator;
 	RawLineRef(){}
-	RawLineRef(void* P):P{P},LenToEnd{0}{}
+	RawLineRef(Char_T* P):Head{P},LenToEnd{0}{}
 
 
-	void* Get(){return P;}
-	void Set(void* Pt,size_t Len){
-		P=Pt;LenToEnd=Len;
+	Char_T* Get(){return Head;}
+	void Set(Char_T* Pt,size_t Len){
+		Head=Pt;LenToEnd=Len;
 	}
 
 	size_t Length(){return CalLength();}
@@ -210,7 +223,7 @@ private:
 
 template<typename LineRef>
 class FileMap{
-	void *FileMemMap;
+	char *FileMemMap;
 	//const char *file_name;
 	int Len;
 	int FD;
@@ -233,9 +246,8 @@ public:
 	struct iterator:public iterator_traits{
 		LineRef Line;
 		iterator operator ++ (){
-			char* Pc=static_cast<char*>(Line.Get());
-			Pc += Line.Length();
-			Line.Set(static_cast<void*>(Pc),Line.AllLength()-Line.Length());
+			auto NextHead=Line.end();
+			Line.Set(NextHead,Line.AllLength()-Line.Length());
 			return *this;
 		}
 		bool operator !=(iterator it){return Line.Get() != it->Get();}

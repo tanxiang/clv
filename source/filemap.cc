@@ -27,10 +27,10 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 			throw;
 		}
 		Len=sb.st_size;
-		FileMemMap = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_FILE|MAP_SHARED,FD,0);
+		FileMemMap = static_cast<char*>(mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_FILE|MAP_SHARED,FD,0));
 		start.Line.Set(FileMemMap,Len);
 		//auto l=Len;
-		finish.Line.Set(static_cast<char*>(FileMemMap)+Len,0);
+		finish.Line.Set(FileMemMap+Len,0);
 		//l-=finish->Length();
 
 	}
@@ -40,7 +40,7 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 		if ((FD = open("/dev/zero", O_RDWR, 0)) <0){
 			perror("open");
 		}
-		FileMemMap = mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_FILE|MAP_SHARED,FD,0);
+		FileMemMap = static_cast<char*>(mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_FILE|MAP_SHARED,FD,0));
 		start.Line.Set(FileMemMap,Len);
 		finish=start;
 	}
@@ -75,5 +75,5 @@ FileMap<LineRef>::iterator FileMap<LineRef>::end(){
 */
 //template class FileMap<char>;
 template class FileMap<MBLineRef<Utf8CharRef> >;
-template class RawLineRef<char>;
+template class FileMap<RawLineRef<char> >;
 }//namespace clv
