@@ -7,14 +7,12 @@
 #include <iostream>
 #include <iterator>
 #include "filemap.h"
-#include "dbg.h"
 
 namespace clv{
 
 template<typename LineRef>
 FileMap<LineRef>::FileMap(const char* FilePath){
 	FD = -1;
-	debug<<__PRETTY_FUNCTION__<<':'<<FilePath<<"\n";
 	if(FilePath){
 		if ((FD = open(FilePath, O_RDWR|O_CREAT)) < 0){
 			perror("open");
@@ -29,10 +27,7 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 		Len=sb.st_size;
 		FileMemMap = static_cast<char*>(mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_FILE|MAP_SHARED,FD,0));
 		start.Line.Set(FileMemMap,Len);
-		//auto l=Len;
 		finish.Line.Set(FileMemMap+Len,0);
-		//l-=finish->Length();
-
 	}
 	else{
 		Len = getpagesize();
@@ -74,6 +69,6 @@ FileMap<LineRef>::iterator FileMap<LineRef>::end(){
 }
 */
 //template class FileMap<char>;
-template class FileMap<MBLineRef<Utf8CharRef> >;
+//template class FileMap<MBLineRef<Utf8CharRef> >;
 template class FileMap<RawLineRef<char> >;
 }//namespace clv

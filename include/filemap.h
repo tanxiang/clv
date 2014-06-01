@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "dbg.h"
 
 namespace clv{
 class Utf8CharRef{//utf-8 char ref & opts
@@ -171,43 +172,19 @@ protected:
 		return LineLen;
 	}
 public:
-	/*
-	struct iterator_traits {
-		typedef std::random_access_iterator_tag iterator_category;
-		typedef Char_T		value_type;
-		typedef std::ptrdiff_t		difference_type;
-		typedef Char_T*		pointer;
-		typedef Char_T&		reference;
-	};
-	struct iterator:public  std::iterator_traits<Char_T*>{
-		Char_T* p_char;
-		iterator operator ++ (){
-			++p_char;
-			return *this;
-		}
-		iterator operator -- (){
-			--p_char;
-			return *this;
-		}
 
-		bool operator !=(iterator it){return p_char != p_char;}
-		bool operator ==(iterator it){return p_char == p_char;}
-
-		Char_T& operator *(){return *p_char;}
-		Char_T* operator -> (){return p_char;}		
-	};
-	*/
 	typedef Char_T* iterator;
-	RawLineRef(){}
-	RawLineRef(Char_T* P):Head{P},LenToEnd{0}{}
+	//RawLineRef(){}
+	//RawLineRef(Char_T* P):Head{P},LenToEnd{0}{}
 
 
 	Char_T* Get(){return Head;}
 	void Set(Char_T* Pt,size_t Len){
 		Head=Pt;LenToEnd=Len;
+		 CalLength();
 	}
 
-	size_t Length(){return CalLength();}
+	size_t Length(){return  finish-start;}
 	size_t AllLength(){return LenToEnd;}
 	//edit iface
 	iterator begin(){
@@ -230,8 +207,8 @@ class FileMap{
 protected:
 public:
 	FileMap(const char* FilePath=nullptr);
-	FileMap(const std::string &FilePath){
-		FileMap(FilePath.c_str());
+	FileMap(const std::string &FilePath):FileMap(FilePath.c_str()){
+
 	}
 
 	~FileMap();
@@ -246,6 +223,10 @@ public:
 	struct iterator:public iterator_traits{
 		LineRef Line;
 		iterator operator ++ (){
+			//debug<<"line:";
+			for(auto line_char:Line)
+				debug<<line_char;
+			//debug<<__PRETTY_FUNCTION__<<'\n';
 			auto NextHead=Line.end();
 			Line.Set(NextHead,Line.AllLength()-Line.Length());
 			return *this;
