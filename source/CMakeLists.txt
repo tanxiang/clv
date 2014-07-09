@@ -16,7 +16,8 @@ include_directories(
 	${LibClang_INCLUDE_DIRS}
 )
 
-add_executable(clvtk 
+add_executable(clvtk
+	clvhb.cc 
 	clvline.cc
 	gtk_window.cc
 	clvparser.cc
