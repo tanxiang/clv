@@ -10,9 +10,8 @@ class hbfont{
 	hb_blob_t *blob;
 	hb_font_t *font;
 public:
-	hbfont(){
-
-	}
+	hbfont();
+	~hbfont();
 };
 
 class hbbuffer{
