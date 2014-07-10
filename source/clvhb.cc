@@ -1,13 +1,12 @@
 #include "clvhb.hh"
-#include "config.hh"
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 
 namespace clv{
 
-hbfont::hbfont(){
-	int font_file_fd = open(DEF_FONT_FILE,O_RDONLY);
+hbfont::hbfont(const char* font_file_name){
+	int font_file_fd = open(font_file_name,O_RDONLY);
 	struct stat font_file_stat;
 	if(fstat(font_file_fd,&font_file_stat)==-1){
 		throw;

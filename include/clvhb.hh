@@ -3,15 +3,19 @@
 #include <hb-ot.h>
 #include <cairo-ft.h>
 #include <hb-ft.h>
+#include "config.hh"
 
 namespace clv{
 
 class hbfont{
 	hb_blob_t *blob;
 	hb_font_t *font;
-	void * font_data;
+	void* font_data;
 public:
-	hbfont();
+	hbfont():hbfont(DEF_FONT_FILE){}
+
+	hbfont(const char* font_file_name);
+
 	~hbfont();
 };
 
