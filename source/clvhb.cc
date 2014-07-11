@@ -2,21 +2,24 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <glib.h>
 
 namespace clv{
 
 hbfont::hbfont(const char* font_file_name){
-	int font_file_fd = open(font_file_name,O_RDONLY);
-	struct stat font_file_stat;
-	if(fstat(font_file_fd,&font_file_stat)==-1){
-		throw;
+	GError *error = NULL;
+	GMappedFile *mf = g_mapped_file_new (font_file_name, false, &error);
+	if (mf) {
+
 	}
-	font_data = mmap(NULL,font_file_stat.st_size,PROT_READ,MAP_PRIVATE,font_file_fd,0);
+	else {
+		//fail (false, "%s", error->message);
+		g_error_free (error);
+	}
 
-	close(font_file_fd);
-
-	blob = hb_blob_create((const char*)font_data,font_file_stat.st_size,HB_MEMORY_MODE_READONLY,font_data,(hb_destroy_func_t)munmap);
-	hb_face_t *face = hb_face_create (blob, 0);
+    blob = hb_blob_create (g_mapped_file_get_contents (mf),g_mapped_file_get_length (mf),
+    	HB_MEMORY_MODE_READONLY_MAY_MAKE_WRITABLE,(void *) mf, (hb_destroy_func_t) g_mapped_file_unref);
+    hb_face_t *face = hb_face_create (blob, 0);
 	font = hb_font_create (face);
 
 	unsigned int upem = hb_face_get_upem (face);

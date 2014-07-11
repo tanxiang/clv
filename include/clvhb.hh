@@ -10,7 +10,6 @@ namespace clv{
 class hbfont{
 	hb_blob_t *blob;
 	hb_font_t *font;
-	void* font_data;
 public:
 	hbfont():hbfont(DEF_FONT_FILE){}
 
