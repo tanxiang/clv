@@ -29,4 +29,11 @@ hbfont::~hbfont(){
 
 }
 
+
+int hbbuffer::draw_to_cairo(const Cairo::RefPtr<Cairo::Context>& cr){
+	
+	return 0;
+}
+
+
 }
