@@ -30,6 +30,7 @@ add_executable(clvtk
 	clvfont.cc
 	filemap.cc
 )
+
 target_link_libraries(clvtk
 	${GTKMM_LIBRARIES}
 	${HB_LIBRARIES}

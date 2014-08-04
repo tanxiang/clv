@@ -4,6 +4,7 @@
 #include <cairo-ft.h>
 #include <hb-ft.h>
 #include "config.hh"
+#include <cairomm/cairomm.h>
 
 namespace clv{
 
@@ -39,6 +40,11 @@ public:
 	int add_utf8 (){
 		return 0;
 	}
+	bool shape(){
+		//hb_shape();
+		return false;
+	} 
+	int draw_to_cairo(const Cairo::RefPtr<Cairo::Context>& cr);
 };
 
 }

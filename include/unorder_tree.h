@@ -1,5 +1,4 @@
-#ifndef _UNORDER_TREE_H
-#define _UNORDER_TREE_H
+#pragma once
 #include <memory>
 //#include <iostream>
 
@@ -18,7 +17,7 @@ class unorder_tree{
 		node_ptr left,right;
 		node* parent;
 		segment_ptr ptr;
-		int index_num;
+		unsigned int index_num;
 		typename T::fill_t filler;
 		void index(){
 			node* parent_point = parent;
@@ -222,4 +221,3 @@ private:
 	iterator finish;
 };
 
-#endif
