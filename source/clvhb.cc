@@ -10,7 +10,7 @@ hbfont::hbfont(const char* font_file_name){
 	GError *error = NULL;
 	GMappedFile *mf = g_mapped_file_new (font_file_name, false, &error);
 	if (!mf) {
-		debug<<error->message;
+		debug<<error->message<<"\n";
 		g_error_free (error);
 		return;
 	}
@@ -25,6 +25,9 @@ hbfont::hbfont(const char* font_file_name){
 	hb_font_set_scale (font, upem, upem);
 	hb_face_destroy (face);
 	hb_ot_font_set_funcs (font);
+	Cairo::RefPtr<Cairo::FontFace> cairo_font_face;
+	Cairo::RefPtr<Cairo::ScaledFont> cairo_sc_font;
+	Cairo::ScaledFont::create();
 }
 
 hbfont::~hbfont(){
@@ -33,7 +36,9 @@ hbfont::~hbfont(){
 
 
 int hbbuffer::draw_to_cairo(const Cairo::RefPtr<Cairo::Context>& cr){
-	
+	Cairo::FontExtents font_ext;
+	cr->get_font_extents(font_ext);
+
 	return 0;
 }
 
