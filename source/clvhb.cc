@@ -17,13 +17,13 @@ protected:
 						unsigned long glyph,
 						const Cairo::RefPtr<Cairo::Context>& cr,
 						Cairo::TextExtents& metrics) {
-     // render the glyph into cr here
+	// render the glyph into cr here
 		return CAIRO_STATUS_SUCCESS;
    }
 
-   HBCairoFace() : UserFontFace() {
-     // constructor implementation
-   }
+	HBCairoFace() : UserFontFace() {
+		// constructor implementation
+	}
 };
 
 hbfont::hbfont(const char* font_file_name){
@@ -44,10 +44,11 @@ hbfont::hbfont(const char* font_file_name){
 	unsigned int upem = hb_face_get_upem (face);
 	hb_font_set_scale (font, upem, upem);
 	hb_face_destroy (face);
-	hb_ot_font_set_funcs (font);
-	Cairo::RefPtr<Cairo::FontFace> cairo_font_face = HBCairoFace::create();
-	Cairo::RefPtr<Cairo::ScaledFont> cairo_sc_font;
+	hb_ft_font_set_funcs (font);
 
+	auto cr_font = Cairo::FtFontFace::create(hb_ft_font_get_face(font),0);
+	auto sc_font = Cairo::ScaledFont::create(cr_font,Cairo::scaling_matrix(12,12),Cairo::identity_matrix());
+	
 }
 
 hbfont::~hbfont(){
