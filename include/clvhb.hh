@@ -14,7 +14,7 @@ public:
 	hbfont():hbfont(DEF_FONT_FILE){}
 
 	hbfont(const char* font_file_name);
-
+	Cairo::RefPtr<Cairo::ScaledFont> ScaledFont();
 	~hbfont();
 };
 

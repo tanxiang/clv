@@ -45,16 +45,16 @@ hbfont::hbfont(const char* font_file_name){
 	hb_font_set_scale (font, upem, upem);
 	hb_face_destroy (face);
 	hb_ft_font_set_funcs (font);
-
-	auto cr_font = Cairo::FtFontFace::create(hb_ft_font_get_face(font),0);
-	auto sc_font = Cairo::ScaledFont::create(cr_font,Cairo::scaling_matrix(12,12),Cairo::identity_matrix());
-	
 }
 
 hbfont::~hbfont(){
 
 }
 
+Cairo::RefPtr<Cairo::ScaledFont> hbfont::ScaledFont(){
+	auto cr_font = Cairo::FtFontFace::create(hb_ft_font_get_face(font),0);
+	return Cairo::ScaledFont::create(cr_font,Cairo::scaling_matrix(12,12),Cairo::identity_matrix());
+}
 
 int hbbuffer::draw_to_cairo(const Cairo::RefPtr<Cairo::Context>& cr){
 	Cairo::FontExtents font_ext;
