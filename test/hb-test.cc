@@ -30,6 +30,7 @@ MyArea::MyArea()
 MyArea::~MyArea()
 {
 }
+#define DEFAULT_FONT_SIZE 256
 
 bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
@@ -55,12 +56,11 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 		std::cerr<<"font:"<<font<<'\n';
 		std::cerr<<"hb_ft_font_get_face(font):"<<hb_ft_font_get_face(font)<<'\n';
 	hb_blob_destroy(blob);
-
-	unsigned int upem = hb_face_get_upem (face);
-	hb_font_set_scale (font, upem, upem);
+	
+	std::cerr<<"xupem:"<<hb_face_get_upem (hb_font_get_face(font))<<'\n';
 	hb_ft_font_set_funcs (font);
 	auto cr_font = Cairo::FtFontFace::create(hb_ft_font_get_face(font),0);
-	auto sc_font = Cairo::ScaledFont::create(cr_font,Cairo::scaling_matrix(12,12),Cairo::identity_matrix());
+	auto sc_font = Cairo::ScaledFont::create(cr_font,Cairo::scaling_matrix(16,16),Cairo::identity_matrix());
 	if(sc_font)
 		std::cerr<<"cr-font\n";
 	else
@@ -69,7 +69,7 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	cr->set_scaled_font(sc_font);
 	auto buffer = hb_buffer_create ();
 	hb_buffer_add_utf8 (buffer, "tacde", 6, 0, 6);
-	    hb_buffer_set_direction (buffer, HB_DIRECTION_LTR);
+	hb_buffer_set_direction (buffer, HB_DIRECTION_LTR);
 	    
 	hb_shape (font, buffer, NULL, 0);
 	auto hb_glyph = hb_buffer_get_glyph_infos (buffer, NULL);
@@ -84,6 +84,7 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 		y += -hb_position->y_advance;
 		hb_position++;
 		std::cerr<<"position++\n";
+		std::cerr<<"hb_position->x_advance:"<<hb_position->x_advance<<"\n";
 	}
 	glyphs.push_back(Cairo::Glyph{0xFFFFFFFF,x,y});
 	
