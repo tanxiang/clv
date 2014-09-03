@@ -57,7 +57,7 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 		std::cerr<<"hb_ft_font_get_face(font):"<<hb_ft_font_get_face(font)<<'\n';
 	hb_blob_destroy(blob);
 	
-	std::cerr<<"xupem:"<<hb_face_get_upem (hb_font_get_face(font))<<'\n';
+	unsigned long upem = hb_face_get_upem (hb_font_get_face(font));
 	hb_ft_font_set_funcs (font);
 	auto cr_font = Cairo::FtFontFace::create(hb_ft_font_get_face(font),0);
 	auto sc_font = Cairo::ScaledFont::create(cr_font,Cairo::scaling_matrix(16,16),Cairo::identity_matrix());
@@ -75,16 +75,15 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	auto hb_glyph = hb_buffer_get_glyph_infos (buffer, NULL);
 	auto hb_position = hb_buffer_get_glyph_positions (buffer, NULL);
 	std::vector< Cairo::Glyph > glyphs{hb_buffer_get_length (buffer)};
-	int i=0,x=20,y=30;
+	int x=20,y=2430;
 	for(auto& gl:glyphs){
 		gl.index=hb_glyph++->codepoint;
-		gl.x =( hb_position->x_offset + x);
-		gl.y =(-hb_position->y_offset + y);
+		gl.x =( hb_position->x_offset + x)*16/upem;
+		gl.y =(-hb_position->y_offset + y)*16/upem;
 		x +=  hb_position->x_advance;
 		y += -hb_position->y_advance;
 		hb_position++;
-		std::cerr<<"position++\n";
-		std::cerr<<"hb_position->x_advance:"<<hb_position->x_advance<<"\n";
+		std::cerr<<"gl.x:"<<gl.x<<"\n";
 	}
 	glyphs.push_back(Cairo::Glyph{0xFFFFFFFF,x,y});
 	
