@@ -16,7 +16,7 @@ public:
 
 	hbfont(const char* font_file_name);
 	Cairo::RefPtr<Cairo::ScaledFont> ScaledFont(Cairo::Matrix scale_mat = Cairo::scaling_matrix(16,16));
-	int shape(hbbuffer,std::vector<Cairo::Glyph> glyphs);
+	int shape(std::vector<Cairo::Glyph> &glyphs,hbbuffer,Cairo::RefPtr<Cairo::ScaledFont> scaled_font);
 	~hbfont();
 };
 
