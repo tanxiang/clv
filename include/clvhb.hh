@@ -5,16 +5,18 @@
 #include <hb-ft.h>
 #include "config.hh"
 #include <cairomm/cairomm.h>
+#include <vector>
 
 namespace clv{
-
+class hbbuffer;
 class hbfont{
 	hb_font_t *font;
 public:
 	hbfont():hbfont(DEF_FONT_FILE){}
 
 	hbfont(const char* font_file_name);
-	Cairo::RefPtr<Cairo::ScaledFont> ScaledFont();
+	Cairo::RefPtr<Cairo::ScaledFont> ScaledFont(Cairo::Matrix scale_mat = Cairo::scaling_matrix(16,16));
+	int shape(hbbuffer,std::vector<Cairo::Glyph> glyphs);
 	~hbfont();
 };
 
@@ -30,9 +32,8 @@ public:
 	void set_language(hb_language_t language){
 		hb_buffer_set_language(buffer,language);
 	}
-	int add_glyph(unsigned int glyph,unsigned int cluster){
-		hb_buffer_add(buffer,glyph,cluster);
-		return 0;
+	size_t length(){
+		return hb_buffer_get_length (buffer);
 	}
 	int add_utf16 (){
 		return 0;
@@ -40,11 +41,7 @@ public:
 	int add_utf8 (){
 		return 0;
 	}
-	bool shape(){
-		//hb_shape();
-		return false;
-	} 
-	int draw_to_cairo(const Cairo::RefPtr<Cairo::Context>& cr);
+
 };
 
 }

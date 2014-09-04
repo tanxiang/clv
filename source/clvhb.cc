@@ -39,11 +39,11 @@ hbfont::hbfont(const char* font_file_name){
 		HB_MEMORY_MODE_READONLY_MAY_MAKE_WRITABLE,(void *) mf, (hb_destroy_func_t) g_mapped_file_unref);
 	hb_face_t *face = hb_face_create (blob, 0);
 	font = hb_font_create (face);
+	hb_face_destroy (face);
 	hb_blob_destroy(blob);
 
-	unsigned int upem = hb_face_get_upem (face);
-	hb_font_set_scale (font, upem, upem);
-	hb_face_destroy (face);
+	unsigned long upem = hb_face_get_upem (hb_font_get_face(font));
+
 	hb_ft_font_set_funcs (font);
 }
 
@@ -51,17 +51,15 @@ hbfont::~hbfont(){
 
 }
 
-Cairo::RefPtr<Cairo::ScaledFont> hbfont::ScaledFont(){
+Cairo::RefPtr<Cairo::ScaledFont> hbfont::ScaledFont(Cairo::Matrix scale_mat){
 	auto cr_font = Cairo::FtFontFace::create(hb_ft_font_get_face(font),0);
-	return Cairo::ScaledFont::create(cr_font,Cairo::scaling_matrix(12,12),Cairo::identity_matrix());
+	return Cairo::ScaledFont::create(cr_font,scale_mat,Cairo::identity_matrix());
 }
 
-int hbbuffer::draw_to_cairo(const Cairo::RefPtr<Cairo::Context>& cr){
-	Cairo::FontExtents font_ext;
-	cr->get_font_extents(font_ext);
+int hbfont::shape(std::vector<Cairo::Glyph> &glyphs,hbbuffer,Cairo::RefPtr<Cairo::ScaledFont> scaled_font){
 
 	return 0;
 }
 
 
-}
+}//namespace
