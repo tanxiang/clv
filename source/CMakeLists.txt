@@ -1,4 +1,4 @@
-set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -g")
+set(CMAKE_CXX_FLAGS "-Wall -std=c++1y -g")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTKMM gtkmm-3.0)

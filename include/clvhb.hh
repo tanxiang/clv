@@ -16,7 +16,7 @@ public:
 
 	hbfont(const char* font_file_name);
 	Cairo::RefPtr<Cairo::ScaledFont> ScaledFont(Cairo::Matrix scale_mat = Cairo::scaling_matrix(16,16));
-	int shape(std::vector<Cairo::Glyph> &glyphs,hbbuffer,Cairo::RefPtr<Cairo::ScaledFont> scaled_font);
+	int shape(std::vector<Cairo::Glyph> &glyphs,hbbuffer buffer,Cairo::RefPtr<Cairo::ScaledFont> scaled_font);
 	~hbfont();
 };
 
@@ -42,6 +42,12 @@ public:
 		return 0;
 	}
 
+	auto get_glyph_infos(){
+		return hb_buffer_get_glyph_infos (buffer, NULL);
+	}
+	auto get_glyph_positions(){
+		return hb_buffer_get_glyph_positions (buffer, NULL);
+	}
 };
 
 }

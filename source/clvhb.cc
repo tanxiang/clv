@@ -41,9 +41,6 @@ hbfont::hbfont(const char* font_file_name){
 	font = hb_font_create (face);
 	hb_face_destroy (face);
 	hb_blob_destroy(blob);
-
-	unsigned long upem = hb_face_get_upem (hb_font_get_face(font));
-
 	hb_ft_font_set_funcs (font);
 }
 
@@ -56,8 +53,15 @@ Cairo::RefPtr<Cairo::ScaledFont> hbfont::ScaledFont(Cairo::Matrix scale_mat){
 	return Cairo::ScaledFont::create(cr_font,scale_mat,Cairo::identity_matrix());
 }
 
-int hbfont::shape(std::vector<Cairo::Glyph> &glyphs,hbbuffer,Cairo::RefPtr<Cairo::ScaledFont> scaled_font){
+int hbfont::shape(std::vector<Cairo::Glyph> &glyphs,hbbuffer buffer,Cairo::RefPtr<Cairo::ScaledFont> scaled_font){
+	Cairo::Matrix scale_mat;
+	scaled_font->get_font_matrix(scale_mat);
+	unsigned long upem = hb_face_get_upem (hb_font_get_face(font));
+	debug<<scale_mat.x0<<':'<<scale_mat.y0<<':'<<scale_mat.xx<<':'<<scale_mat.yy<<std::endl;
 
+	auto hb_glyph = buffer.get_glyph_infos ();
+	auto hb_position = buffer.get_glyph_positions ();
+	
 	return 0;
 }
 
