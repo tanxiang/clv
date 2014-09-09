@@ -3,7 +3,7 @@
 #include <pangomm.h>
 #include "dbg.h"
 
-ClvFViewBox::ClvFViewBox(context<clv::line> &file_ref):
+ClvFViewBox::ClvFViewBox(clv::context<clv::line> &file_ref):
 	Glib::ObjectBase(typeid(ClvFViewBox)),
 	Gtk::Scrollable(),
 	file(file_ref),edit_view(file),

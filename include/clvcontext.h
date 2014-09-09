@@ -1,7 +1,8 @@
-#ifndef _CLVCONTEXT_H
-#define _CLVCONTEXT_H
+#pragma once
 #include "unorder_tree.h"
 #include <vector>
+namespace clv{
+
 template<typename T>
 class context :public unorder_tree<T>{
 	struct cursor:public unorder_tree<T>::iterator{
@@ -17,4 +18,5 @@ public:
 
 protected:
 };
-#endif //_CLVCONTEXT_H
+
+}//namespace clv

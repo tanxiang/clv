@@ -7,7 +7,7 @@
 
 namespace clv{
 
-class glyphs_group :public std::pair<std::vector<Cairo::Glyph>,std::vector<int> >
+class glyphs_group :public std::pair<std::vector<Cairo::Glyph>,std::vector<size_t> >
 {
 	Cairo::RefPtr<Cairo::ScaledFont> font_ptr;
 public:
@@ -18,6 +18,7 @@ public:
 		font_ptr->get_extents(extents);
 	}
 };
+//#include <unistd.h>
 
 class line :public std::string 
 {
