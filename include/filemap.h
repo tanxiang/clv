@@ -224,8 +224,8 @@ public:
 		LineRef Line;
 		iterator operator ++ (){
 			//debug<<"line:";
-			for(auto line_char:Line)
-				debug<<line_char;
+			//for(auto line_char:Line)
+			//	debug<<line_char;
 			//debug<<__PRETTY_FUNCTION__<<'\n';
 			auto NextHead=Line.end();
 			Line.Set(NextHead,Line.AllLength()-Line.Length());
