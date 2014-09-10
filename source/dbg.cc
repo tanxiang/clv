@@ -1,3 +1,3 @@
 #include "dbg.h"
 
-std::ostream &debug=std::cout;
+//std::ostream &debug=std::cout;
