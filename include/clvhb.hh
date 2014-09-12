@@ -46,11 +46,13 @@ class hbfont{
 	hb_font_t *font;
 public:
 	hbfont():hbfont(DEF_FONT_FILE){}
+	~hbfont();
 
 	hbfont(const char* font_file_name);
 	Cairo::RefPtr<Cairo::ScaledFont> ScaledFont(Cairo::Matrix scale_mat = Cairo::scaling_matrix(16,16));
-	int shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0,hbbuffer buffer=hbbuffer{});
-	~hbfont();
+	int shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0,hbbuffer buffer);
+	int shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0,const char* utf8,size_t len);
+	int shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0,const long* utf32,size_t len);
 };
 
 }
