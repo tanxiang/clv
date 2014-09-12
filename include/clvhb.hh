@@ -30,8 +30,9 @@ public:
 	int add_utf16 (){
 		return 0;
 	}
-	int add_utf8 (){
-		return 0;
+	int add_utf8 (const char* utf8,size_t len){
+		hb_buffer_add_utf8(buffer,utf8,len,0,len);
+		return len;
 	}
 
 	auto get_glyph_infos(){
@@ -50,8 +51,12 @@ public:
 
 	hbfont(const char* font_file_name);
 	Cairo::RefPtr<Cairo::ScaledFont> ScaledFont(Cairo::Matrix scale_mat = Cairo::scaling_matrix(16,16));
-	int shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0,hbbuffer buffer);
-	int shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0,const char* utf8,size_t len);
+	int shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0,hbbuffer &buffer);
+	int shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0,const char* utf8,size_t len){
+		hbbuffer buffer;
+		buffer.add_utf8(utf8,len);
+		return shape(glyphs,scaled_font,x0,y0,buffer);
+	}
 	int shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0,const long* utf32,size_t len);
 };
 

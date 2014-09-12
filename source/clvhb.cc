@@ -53,7 +53,7 @@ Cairo::RefPtr<Cairo::ScaledFont> hbfont::ScaledFont(Cairo::Matrix scale_mat){
 	return Cairo::ScaledFont::create(cr_font,scale_mat,Cairo::identity_matrix());
 }
 
-int hbfont::shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0,hbbuffer buffer){
+int hbfont::shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0,hbbuffer &buffer){
 	Cairo::Matrix scale_mat;
 	scaled_font->get_font_matrix(scale_mat);
 	unsigned long upem = hb_face_get_upem (hb_font_get_face(font));
