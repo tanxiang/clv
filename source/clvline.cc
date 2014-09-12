@@ -61,8 +61,8 @@ int line::x_to_index(int x){
 }
 */
 
-static hbfont def_font("fonts/SourceCodePro-Regular.otf");
-
+static hbfont def_font{"fonts/SourceCodePro-Regular.otf"};
+static hbbuffer shape_buffer;
 bool line::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr,int y, const Cairo::Rectangle &rect){
 	for(auto& glyphs:line_glyphs)
 		glyphs.draw_to_context(cr);

@@ -8,18 +8,6 @@
 #include <vector>
 
 namespace clv{
-class hbbuffer;
-class hbfont{
-	hb_font_t *font;
-public:
-	hbfont():hbfont(DEF_FONT_FILE){}
-
-	hbfont(const char* font_file_name);
-	Cairo::RefPtr<Cairo::ScaledFont> ScaledFont(Cairo::Matrix scale_mat = Cairo::scaling_matrix(16,16));
-	int shape(std::vector<Cairo::Glyph> &glyphs,hbbuffer buffer,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0);
-	~hbfont();
-};
-
 class hbbuffer{
 	hb_buffer_t *buffer = hb_buffer_create ();
 public:
@@ -52,6 +40,17 @@ public:
 	auto get_glyph_positions(){
 		return hb_buffer_get_glyph_positions (buffer, NULL);
 	}
+};
+
+class hbfont{
+	hb_font_t *font;
+public:
+	hbfont():hbfont(DEF_FONT_FILE){}
+
+	hbfont(const char* font_file_name);
+	Cairo::RefPtr<Cairo::ScaledFont> ScaledFont(Cairo::Matrix scale_mat = Cairo::scaling_matrix(16,16));
+	int shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0,hbbuffer buffer=hbbuffer{});
+	~hbfont();
 };
 
 }
