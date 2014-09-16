@@ -1,5 +1,6 @@
 #include "clvline.h"
 #include "dbg.h"
+#include "clvhb.hh"
 
 namespace clv{
 
@@ -61,6 +62,10 @@ int line::x_to_index(int x){
 */
 
 static hbfont def_font{"fonts/SourceCodePro-Regular.otf"};
+
+void line::shape(){
+	
+}
 
 bool line::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr,int y, const Cairo::Rectangle &rect){
 	for(auto& glyphs:line_glyphs)

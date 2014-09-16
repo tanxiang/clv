@@ -4,7 +4,6 @@
 #include <string>
 #include <istream>
 #include <cairomm/cairomm.h>
-#include "clvhb.hh"
 
 namespace clv{
 
@@ -26,7 +25,8 @@ class line :public std::string
 	bool synced=false;
 	std::vector<glyphs_group> line_glyphs;
 protected:
-	//void sync_glyphs(const Cairo::RefPtr<Cairo::Context>& cr,int y,unsigned int s=0);
+	void shape();
+
 public:
 	typedef unsigned fill_t;
 	
@@ -40,9 +40,10 @@ public:
 	//virtual ~line(){
 		//std::cerr<<"line free\n";
 	//}
+
 	template<typename T>
 	line(T& refline):std::string{refline.begin(),refline.end()}{
-		;
+		shape();
 	}
 
 	fill_t get_fill(){
