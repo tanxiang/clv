@@ -64,7 +64,8 @@ int line::x_to_index(int x){
 static hbfont def_font{"fonts/SourceCodePro-Regular.otf"};
 
 void line::shape(){
-	
+	line_glyphs.push_back(glyphs_group{def_font.ScaledFont()});
+	def_font.shape(line_glyphs[0].first,def_font.ScaledFont(),0,0,c_str(),length());
 }
 
 bool line::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr,int y, const Cairo::Rectangle &rect){
