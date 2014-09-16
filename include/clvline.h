@@ -40,7 +40,7 @@ public:
 		//std::cerr<<"line free\n";
 	//}
 	template<typename T>
-	line(T& refline):std::string{refline.begin(),refline.end()};
+	line(T& refline);
 
 	fill_t get_fill(){
 		return 18;
