@@ -4,6 +4,7 @@
 #include <string>
 #include <istream>
 #include <cairomm/cairomm.h>
+#include "clvhb.hh"
 
 namespace clv{
 
@@ -40,7 +41,9 @@ public:
 		//std::cerr<<"line free\n";
 	//}
 	template<typename T>
-	line(T& refline);
+	line(T& refline):std::string{refline.begin(),refline.end()}{
+		;
+	}
 
 	fill_t get_fill(){
 		return 18;
