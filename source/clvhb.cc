@@ -57,9 +57,9 @@ int hbfont::shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledF
 	Cairo::Matrix scale_mat;
 	scaled_font->get_font_matrix(scale_mat);
 	unsigned long upem = hb_face_get_upem (hb_font_get_face(font));
-	debug<<scale_mat.x0<<':'<<scale_mat.y0<<':'<<scale_mat.xx<<':'<<scale_mat.yy<<std::endl;
-	(x0*=upem)/=16;//FIXME 
-	(y0*=upem)/=16;
+	//debug<<scale_mat.x0<<':'<<scale_mat.y0<<':'<<scale_mat.xx<<':'<<scale_mat.yy<<std::endl;
+	(x0*=upem)/=scale_mat.xx;
+	(y0*=upem)/=scale_mat.yy;
 	hb_shape (font, buffer.get(), NULL, 0);
 	auto hb_glyph = buffer.get_glyph_infos ();
 	auto hb_position = buffer.get_glyph_positions ();
