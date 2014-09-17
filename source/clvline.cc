@@ -69,8 +69,10 @@ void line::shape(){
 }
 
 bool line::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr,int y, const Cairo::Rectangle &rect){
-	for(auto& glyphs:line_glyphs)
+	for(auto& glyphs:line_glyphs){
+		glyphs.move_y_to(y);
 		glyphs.draw_to_context(cr);
+	}
 	return true;
 }
 
