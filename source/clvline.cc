@@ -79,12 +79,12 @@ bool line::draw_to_context(const Cairo::RefPtr<Cairo::Context> &cr,int y, const 
 std::vector<glyphs_group>::iterator line::x_to_glyph_itr(int x){
 	auto lower_group = std::lower_bound(line_glyphs.begin(),line_glyphs.end(),x,
 			[](glyphs_group &group,int x){return group.first.empty() ? true : group.first.rbegin()->x < x;});
-	//if(lower_group==line_glyphs.end()){
-	//	return --(--lower_group)->end();//FIXME bug
-	//}
+	if(lower_group==line_glyphs.end()){
+		return --lower_group;//FIXME bug
+	}
 	auto lower_gl = std::lower_bound(lower_group->first.begin(),lower_group->first.end(),x,
 			[](Cairo::Glyph &gl ,int x){return gl.x < x;});
-	std::cerr<<"x:"<<lower_gl->x<<"\n";
+	//std::cerr<<"x:"<<lower_gl->x<<"\n";
 	return lower_group;
 }
 
