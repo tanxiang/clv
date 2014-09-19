@@ -14,7 +14,7 @@ namespace clv{
 struct MsgBox{
 	std::mutex Mut;
 	std::string Key;
-	int nLine,nChar;
+	size_t nLine,nChar;
 	std::vector<std::string> Context;	
 };
 
