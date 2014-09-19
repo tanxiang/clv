@@ -8,11 +8,19 @@
 #include <clang/Tooling/Tooling.h>
 #include <clang/Driver/Compilation.h>
 #include <llvm/Support/Host.h>
+
+#include <clang/Parse/ParseAST.h>
+//#include "clang/Parse/ParseDiagnostic.h"
+#include <clang/Sema/Sema.h>
+#include <clang/Parse/Parser.h>
+#include <llvm/Support/CrashRecoveryContext.h>
+
 #include <iostream>
 
 using namespace std;
 using namespace clang::tooling;
 
+namespace clp{
 struct AllocatedCXCodeCompleteResults : public CXCodeCompleteResults {
 	IntrusiveRefCntPtr<clang::GlobalCodeCompletionAllocator> CodeCompletionAllocator;
 };
@@ -96,7 +104,7 @@ void ClvCodeCompleteConsumer::ProcessCodeCompleteResults(Sema &S,
 /*
 #define DISPATCH(NAME, CLASS, VAR) \
   return getDerived().Traverse##NAME(static_cast<CLASS*>(VAR))
-bool ClpConsumer::TraverseDecl(Decl *D) {
+bool Consumer::TraverseDecl(Decl *D) {
 cout<<"1search:"<<SearchMsg.Key<<endl;
   if (!D)
     return true;
@@ -116,9 +124,9 @@ cout<<"3search:"<<SearchMsg.Key<<endl;
   return true;
 }
 */
-void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
+void Consumer::HandleTranslationUnit(ASTContext &Context){
 	//sleep & wait sreach opt
-	//cout<<"ClpConsumer"<<(int)&CondReady<<endl;
+	//cout<<"Consumer"<<(int)&CondReady<<endl;
 	pContext = &Context;
 	unique_lock<mutex> lock{MutSearch};
 	CondSearch.wait(lock);
@@ -129,14 +137,14 @@ void ClpConsumer::HandleTranslationUnit(ASTContext &Context){
 	}
 }
 /*
-bool ClpConsumer::VisitNamedDecl(NamedDecl *Declaration) {
+bool Consumer::VisitNamedDecl(NamedDecl *Declaration) {
 	cout<<"Name:"<<Declaration->getNameAsString()<<'\n';
 	//Declaration->getQualifiedNameAsString();
 	//cout << Declaration->getName() << '\n';
 	return true;
 }
 */
-bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
+bool Consumer::VisitFunctionDecl(FunctionDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	//if (Declaration->isInlineSpecified())  llvm::outs() << "inline ";
 	//if (Declaration->isVirtualAsWritten()) llvm::outs() << "virtual ";
@@ -161,14 +169,14 @@ bool ClpConsumer::VisitFunctionDecl(FunctionDecl *Declaration){
 	return true;
 }
 
-bool ClpConsumer::VisitFieldDecl(FieldDecl *Declaration){
+bool Consumer::VisitFieldDecl(FieldDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	cout << Declaration->getNameAsString() << '\t'
 		<< Declaration->getType().getAsString() <<'\n';
 	return true;
 }
 
-bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
+bool Consumer::VisitVarDecl(VarDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	llvm::outs() << Declaration->getName() << '\t'
 		<< Declaration->getType().getAsString() <<'\n';
@@ -183,7 +191,7 @@ bool ClpConsumer::VisitVarDecl(VarDecl *Declaration){
 	return true;
 }
 
-bool ClpConsumer::VisitNamespaceDecl(NamespaceDecl *Declaration){
+bool Consumer::VisitNamespaceDecl(NamespaceDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	llvm::outs() << Declaration->getName() << '\t';
 	//	<< Declaration->getType().getAsString() <<'\n';
@@ -197,7 +205,7 @@ bool ClpConsumer::VisitNamespaceDecl(NamespaceDecl *Declaration){
 	return true;
 }
 
-bool ClpConsumer::VisitUsingDirectiveDecl(UsingDirectiveDecl *Declaration){ //using 
+bool Consumer::VisitUsingDirectiveDecl(UsingDirectiveDecl *Declaration){ //using 
 	cout<<__PRETTY_FUNCTION__<<endl;
 	//llvm::outs() << Declaration->getName() << "\t";
 	if(IsInDecl(Declaration)){
@@ -210,7 +218,7 @@ bool ClpConsumer::VisitUsingDirectiveDecl(UsingDirectiveDecl *Declaration){ //us
 	return true;
 }
 
-bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
+bool Consumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	llvm::outs() << Declaration->getKindName();
 	if (Declaration->getIdentifier())
@@ -241,7 +249,7 @@ bool ClpConsumer::VisitCXXRecordDecl(CXXRecordDecl *Declaration){
 	return true;
 }
 
-bool ClpConsumer::VisitLinkageSpecDecl(LinkageSpecDecl *Declaration){
+bool Consumer::VisitLinkageSpecDecl(LinkageSpecDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	//llvm::outs() << Declaration->getName() << "\t"
 	//	<< Declaration->getType().getAsString() <<'\n';
@@ -255,13 +263,13 @@ bool ClpConsumer::VisitLinkageSpecDecl(LinkageSpecDecl *Declaration){
 	return true;
 }
 
-bool ClpConsumer::VisitTemplateDecl(TemplateDecl *Declaration){
+bool Consumer::VisitTemplateDecl(TemplateDecl *Declaration){
 	//cout<<__PRETTY_FUNCTION__<<endl;
 	//IsInDecl(Declaration);
 	return true;
 }
 
-bool ClpConsumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *Declaration){
+bool Consumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	cout << Declaration->getTemplatedDecl()->getNameInfo().getAsString() << "()\t"
 		<< Declaration->getTemplatedDecl()->getType().getAsString() << '\n';
@@ -275,9 +283,9 @@ bool ClpConsumer::VisitFunctionTemplateDecl(FunctionTemplateDecl *Declaration){
 	return true;
 }
 
-bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *Declaration){
+bool Consumer::VisitClassTemplateDecl(ClassTemplateDecl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<endl;
-	cout << Declaration->getTemplatedDecl()->getKindName();
+	//cout << Declaration->getTemplatedDecl()->getKindName();
 	if(IsInDecl(Declaration)){
 		auto Location = pContext->getFullLoc(Declaration->getLocStart());
 		if (Location.isValid())
@@ -288,14 +296,14 @@ bool ClpConsumer::VisitClassTemplateDecl(ClassTemplateDecl *Declaration){
 	return true;
 }
 
-bool ClpConsumer::VisitCallExpr(CallExpr *expr){
+bool Consumer::VisitCallExpr(CallExpr *expr){
 	//cout<<__PRETTY_FUNCTION__<<endl;
 	//IsInDecl(expr);
 	return true;
 }
 
 template <typename AstNode>
-bool ClpConsumer::IsInDecl(AstNode *Node){
+bool Consumer::IsInDecl(AstNode *Node){
 	auto LocationStart = pContext->getFullLoc(Node->getLocStart());
 	auto LocationEnd = pContext->getFullLoc(Node->getLocEnd());
 	if(LocationStart.isValid()&&LocationEnd.isValid()){
@@ -317,34 +325,34 @@ bool ClpConsumer::IsInDecl(AstNode *Node){
 	return false;
 }
 
-bool ClpConsumer::VisitDecl(Decl *Declaration){
+bool Consumer::VisitDecl(Decl *Declaration){
 	cout<<__PRETTY_FUNCTION__<<Declaration->getDeclKindName()<<':'<<getName(Declaration)<<endl;
 	return true;
 }
 
-bool ClpConsumer::VisitStmt(Stmt *Statement){
+bool Consumer::VisitStmt(Stmt *Statement){
 	cout<<__PRETTY_FUNCTION__<<Statement->getStmtClassName()<<endl;
 	return true;
 }
-bool ClpConsumer::VisitDeclStmt(DeclStmt *Statement){
+bool Consumer::VisitDeclStmt(DeclStmt *Statement){
 
 	return true;
 }
 
-bool ClpConsumer::VisitMemberExpr(MemberExpr *Expression){
+bool Consumer::VisitMemberExpr(MemberExpr *Expression){
 	//cout<<__PRETTY_FUNCTION__<<Expression->getMemberDecl()->getNameAsString()<<endl;
 	
 	return true;
 }
 
-bool ClpConsumer::VisitType(Type *Typeinfo){
+bool Consumer::VisitType(Type *Typeinfo){
 	cout<<__PRETTY_FUNCTION__<<Typeinfo->getTypeClassName()<<endl;
 	//string s;
 	//getAsStringInternal(Typeinfo,s);
 	return true;
 }
 
-bool ClpConsumer::VisitTypeLoc(TypeLoc TL){
+bool Consumer::VisitTypeLoc(TypeLoc TL){
 	cout<<__PRETTY_FUNCTION__<<endl;
 	return true;
 }
@@ -382,12 +390,12 @@ static bool EnableCodeCompletion(CompilerInvocation &Invocation,
 }
 
 void CodeToCompilerInstance(const char* Name,char* Code,int Length,CompilerInstance &Compiler){
-	const llvm::MemoryBuffer *Input = llvm::MemoryBuffer::getMemBuffer(Code);
-	const FileEntry *FromFile = Compiler.getFileManager().getVirtualFile(Name,Length, 0);
+	auto *Input = llvm::MemoryBuffer::getMemBuffer(Code);
+	auto *FromFile = Compiler.getFileManager().getVirtualFile(Name,Length, 0);
 	Compiler.getSourceManager().overrideFileContents(FromFile,Input);
 }
 
-bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine){
+bool Invocation::RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine){
 	vector<string> Commands;
 	vector<const char*> Argv;
 	Commands.push_back("clang-tool");
@@ -405,7 +413,7 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 		&*DiagOpts,nullptr,false};
 	//FIXME  clang::ProcessWarningOptions & use Diagnostics
 
-	driver::Driver Driver{"clang-tool",llvm::sys::getDefaultTargetTriple(),"a.out",*Diagnostics};
+	driver::Driver Driver{"clang-tool","a.out",*Diagnostics};
 	Driver.setCheckInputsExist(false);
 
 	driver::Compilation Compilation{*Driver.BuildCompilation(llvm::makeArrayRef(Argv))};
@@ -423,7 +431,7 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 		*Diagnostics);
 	Invocation->getFrontendOpts().DisableFree = false;
 	auto LangOpts = Invocation->getLangOpts();
-	Compiler->setInvocation(Invocation.getPtr());
+	Compiler->setInvocation(Invocation.get());
 	
 	Compiler->createDiagnostics();
 	if (!Compiler->hasDiagnostics())
@@ -444,12 +452,6 @@ bool ClpInvocation::RunCode(const char* Name,char* Code,int Length,std::vector<s
 }
 
 
-#include "clang/Parse/ParseAST.h"
-#include "clang/Parse/ParseDiagnostic.h"
-#include "clang/Sema/Sema.h"
-#include "clang/Parse/Parser.h"
-#include "llvm/ADT/OwningPtr.h"
-#include "llvm/Support/CrashRecoveryContext.h"
 void MyParseAST(Sema &S, bool PrintStats, bool SkipFunctionBodies) {
 cout<<__FUNCTION__<<" start"<<endl;
   // Collect global stats on Decls/Stmts (until we have a module streamer).
@@ -521,7 +523,7 @@ cout<<__FUNCTION__<<"HandleTranslationUnit"<<" end"<<endl;
   }
 }
 
-void ClpAction::ExecuteAction() {
+void Action::ExecuteAction() {
 	cout<<__PRETTY_FUNCTION__<<" start"<<endl;
 	CompilerInstance &CI = getCompilerInstance();
 
@@ -554,3 +556,5 @@ void ClpAction::ExecuteAction() {
 	//ParseAST(CI.getSema(), true,CI.getFrontendOpts().SkipFunctionBodies);
 	cout<<__PRETTY_FUNCTION__<<" done"<<endl;
 }
+
+}//namespace

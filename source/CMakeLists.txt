@@ -40,6 +40,7 @@ target_link_libraries(clvtk
 add_library(clvclang SHARED
 	clvparser.cc
 	clthread.cc
+	clangparse.cc
 )
 target_compile_options(clvclang PRIVATE -fno-rtti -fno-exceptions -fpic)
 target_link_libraries(clvclang

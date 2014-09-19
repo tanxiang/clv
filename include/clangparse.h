@@ -1,5 +1,4 @@
-#ifndef _CLANGPARSE_H
-#define _CLANGPARSE_H
+#pragma once
 #include <clang/Frontend/FrontendActions.h>
 #include <clang/Frontend/CompilerInstance.h>
 #include <clang/Frontend/CompilerInvocation.h>
@@ -14,11 +13,12 @@
 
 using namespace clang;
 
-class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
-	typedef RecursiveASTVisitor<ClpConsumer> base;
+namespace clp{
+class Consumer:public ASTConsumer,public RecursiveASTVisitor<Consumer>{
+	typedef RecursiveASTVisitor<Consumer> base;
 	std::condition_variable& CondReady;
 	std::condition_variable& CondSearch;
-	MsgBox& SearchMsg;
+	clv::MsgBox& SearchMsg;
 	//std::mutex& MutReady;
 	std::mutex MutSearch;
 	ASTContext *pContext;
@@ -35,7 +35,7 @@ class ClpConsumer:public ASTConsumer,public RecursiveASTVisitor<ClpConsumer>{
 	}
 
 public:
-	ClpConsumer(std::condition_variable& CondReady,std::condition_variable& CondSearch,MsgBox& SearchMsg)
+	Consumer(std::condition_variable& CondReady,std::condition_variable& CondSearch,clv::MsgBox& SearchMsg)
 	:CondReady(CondReady),CondSearch(CondSearch),SearchMsg(SearchMsg){}
 
 	virtual void HandleTranslationUnit(ASTContext &Context) override;
@@ -96,21 +96,21 @@ private:
 	bool IsInDecl(AstNode *Node);
 };
 
-class ClpAction:public ASTFrontendAction{
+class Action:public ASTFrontendAction{
 	std::condition_variable& CondReady;
 	std::condition_variable& CondSearch;
-	MsgBox& SearchMsg;
+	clv::MsgBox& SearchMsg;
 	//std::mutex& MutReady;
 	//std::mutex& MutSearch;
 protected:
 	virtual ASTConsumer *CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile){
 		//std::cout<<"cASTConsumer"<<std::endl;
-		return new ClpConsumer{CondReady,CondSearch,SearchMsg};
+		return new Consumer{CondReady,CondSearch,SearchMsg};
 		//return nullptr;
 	}
 	void ExecuteAction();
 public:
-	ClpAction(std::condition_variable& CondReady,std::condition_variable& CondSearch,MsgBox& SearchMsg)
+	Action(std::condition_variable& CondReady,std::condition_variable& CondSearch,clv::MsgBox& SearchMsg)
 	:CondReady(CondReady),CondSearch(CondSearch),SearchMsg(SearchMsg){}
 	virtual bool hasCodeCompletionSupport() const {return true;}
 	virtual bool hasPCHSupport() const { return false; }
@@ -118,7 +118,7 @@ public:
 	virtual bool hasIRSupport() const { return false; }
 };
 
-class ClpInvocation{
+class Invocation{
 	//std::vector<std::string> CommandLine;
 	std::unique_ptr<FrontendAction> Action;
 	//FIXME: dconstruct call a purge virtual func when unique_ptr delete the CompilerInstance??
@@ -127,10 +127,10 @@ class ClpInvocation{
 protected:
 	//bool RunInvocation(const char* Name,char* Code,int Length);
 public:
-	ClpInvocation(FrontendAction *Action):Action{Action},Compiler{new CompilerInstance{}}{}
+	Invocation(FrontendAction *Action):Action{Action},Compiler{new CompilerInstance{}}{}
 
 	bool RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine);
 };
-
 //void CodeToCompilerInstance(const char* Name,char* Code,int Length,CompilerInstance &Compiler);
-#endif
+}//namespace
+

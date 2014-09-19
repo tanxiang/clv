@@ -1,11 +1,15 @@
-#ifndef _CLVTHREAD_H
-#define _CLVTHREAD_H
+#pragma once
 #include <vector>
 #include <string>
 #include <condition_variable>
 #include <thread>
 #include <memory>
-class ClpInvocation;
+
+namespace clp{
+class Invocation;
+}
+
+namespace clv{
 
 struct MsgBox{
 	std::mutex Mut;
@@ -14,15 +18,15 @@ struct MsgBox{
 	std::vector<std::string> Context;	
 };
 
-class ClvCompile{
+class Compile{
 	std::thread CompileThread;
 	std::mutex MutReady;
 	std::condition_variable CondReady;
 	std::condition_variable CondSearch;
 	MsgBox SearchMsg;
-	std::unique_ptr<ClpInvocation> Invocation;
+	std::unique_ptr<clp::Invocation> Invocation;
 public:
-	ClvCompile();
+	Compile();
 	void* PchCode(const char* CodeName,void* P,int Len);
 	bool ParseCode(const char* CodeName,void* P,int Len,void* Pch=nullptr);
 	bool ParseCodeError(){
@@ -36,9 +40,9 @@ public:
 	bool SearchAST(int nOffset);
 };
 
-extern ClvCompile clast;
+extern Compile clast;
 inline void parse_thread(const char* CodeName,void* P,int Len)
 {
 	clast.ParseCode(CodeName,P,Len);
 }
-#endif
+}//namespace

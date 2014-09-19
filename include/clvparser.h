@@ -1,12 +1,11 @@
-#ifndef _CLVPARSER_H
-#define _CLVPARSER_H
+#pragma once
 #include <vector>
 #include <tuple>
 #include <string>
 #include <thread>
 #include <memory>
-
-class ClvParser{
+namespace clv{
+class Parser{
 	std::thread parse_thread;
 protected:
 	std::shared_ptr<std::vector<std::string> > cmd;
@@ -18,4 +17,5 @@ public:
 	void complete_at_async();
 	void analyze_syntax_async();
 };
-#endif
+}//namespace
+

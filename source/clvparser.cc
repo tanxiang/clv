@@ -1,13 +1,16 @@
+#include <iostream>
 #include "clvparser.h"
-void ClvParser::setup_code(){
+
+namespace clv{
+void Parser::setup_code(){
 
 }
 
-ClvParser::complete_table* ClvParser::complete_at(){
+Parser::complete_table* Parser::complete_at(){
 	return nullptr;
 }
-#include <iostream>
-void ClvParser::complete_at_async(){
+
+void Parser::complete_at_async(){
 	parse_thread=std::thread{
 		[=]{
 			std::shared_ptr<complete_table> complete_info{complete_at()};
@@ -20,6 +23,8 @@ void ClvParser::complete_at_async(){
 	parse_thread.detach();
 }
 
-void ClvParser::analyze_syntax_async(){
+void Parser::analyze_syntax_async(){
 
 }
+
+}//namespace

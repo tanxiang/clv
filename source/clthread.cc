@@ -3,24 +3,26 @@
 #include "clangparse.h"
 
 using namespace std;
-ClvCompile::ClvCompile():Invocation(new ClpInvocation{new ClpAction{CondReady,CondSearch,SearchMsg}}){}
+namespace clv{
 
-void* ClvCompile::PchCode(const char* CodeName,void* P,int Len){
+Compile::Compile():Invocation(new clp::Invocation{new clp::Action{CondReady,CondSearch,SearchMsg}}){}
+
+void* Compile::PchCode(const char* CodeName,void* P,int Len){
 	return nullptr;
 }
 
-bool ClvCompile::ParseCode(const char* CodeName,void* P,int Len,void* Pch){
-	//cout<<"ClvCompile"<<(int)&CondReady<<endl;
+bool Compile::ParseCode(const char* CodeName,void* P,int Len,void* Pch){
+	//cout<<"Compile"<<(int)&CondReady<<endl;
 	CompileThread = thread{
 		[=]{
-			Invocation->RunCode(CodeName,static_cast<char*>(P),Len,vector<string>{"-std=c++11","-c"});
+			Invocation->RunCode(CodeName,static_cast<char*>(P),Len,vector<string>{"-std=c++1y","-c"});
 		}
 	};
 	CompileThread.detach();
 	return true;
 }
 
-bool ClvCompile::SearchAST(const string& Name){
+bool Compile::SearchAST(const string& Name){
 	//unique_lock<mutex> lock{MutReady};
 	SearchMsg.nLine=32;
 	SearchMsg.nChar=2;
@@ -28,4 +30,5 @@ bool ClvCompile::SearchAST(const string& Name){
 	CondSearch.notify_all();
 	return true;
 }
-ClvCompile clast;
+Compile clast;
+}//namespace
