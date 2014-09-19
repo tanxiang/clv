@@ -14,7 +14,7 @@
 #include <clang/Sema/Sema.h>
 #include <clang/Parse/Parser.h>
 #include <llvm/Support/CrashRecoveryContext.h>
-
+#include <memory>
 #include <iostream>
 
 using namespace std;
@@ -466,7 +466,7 @@ cout<<__FUNCTION__<<" start"<<endl;
 
   ASTConsumer *Consumer = &S.getASTConsumer();
 
-  OwningPtr<Parser> ParseOP(new Parser(S.getPreprocessor(), S,
+  std::unique_ptr<Parser> ParseOP(new Parser(S.getPreprocessor(), S,
                                        SkipFunctionBodies));
   Parser &P = *ParseOP.get();
 
