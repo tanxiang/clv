@@ -1,5 +1,4 @@
-#ifndef _CLVTKMM_H
-#define _CLVTKMM_H
+#pragma once
 #include <gtkmm.h>
 #include <gtkmm/button.h>
 #include <gtkmm/window.h>
@@ -135,4 +134,3 @@ protected:
 	//void build_main_menu();
 };
 
-#endif // _CLVTKMM_H

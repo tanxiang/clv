@@ -1,5 +1,4 @@
-#ifndef _CLVVIEW_H
-#define _CLVVIEW_H
+#pragma once
 #include <gtkmm.h>
 #include "clvcontext.h"
 #include "clvline.h"
@@ -83,4 +82,3 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
-#endif
