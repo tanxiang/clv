@@ -6,8 +6,8 @@ void Parser::setup_code(){
 
 }
 
-Parser::complete_table* Parser::complete_at(){
-	return nullptr;
+std::unique_ptr<Parser::complete_table> Parser::complete_at(){
+	return std::unique_ptr<complete_table>{};
 }
 
 void Parser::complete_at_async(){
