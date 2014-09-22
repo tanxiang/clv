@@ -11,34 +11,33 @@
 #include <condition_variable>
 #include <thread>
 
-using namespace clang;
 
 namespace clp{
-class Consumer:public ASTConsumer,public RecursiveASTVisitor<Consumer>{
-	typedef RecursiveASTVisitor<Consumer> base;
+class Consumer:public clang::ASTConsumer,public clang::RecursiveASTVisitor<Consumer>{
+	typedef clang::RecursiveASTVisitor<Consumer> base;
 	std::condition_variable& CondReady;
 	std::condition_variable& CondSearch;
-	clv::MsgBox& SearchMsg;
+	//clv::MsgBox& SearchMsg;
 	//std::mutex& MutReady;
 	std::mutex MutSearch;
-	ASTContext *pContext;
+	clang::ASTContext *pContext;
 	std::string FilterString;
 
-	std::string getName(Decl *D) {
-		if (isa<NamedDecl>(D))
-			return cast<NamedDecl>(D)->getQualifiedNameAsString();
+	std::string getName(clang::Decl *D) {
+		if (clang::isa<clang::NamedDecl>(D))
+			return clang::cast<clang::NamedDecl>(D)->getQualifiedNameAsString();
 		return "";
 	}
 
-	bool filterMatches(Decl *D) {
+	bool filterMatches(clang::Decl *D) {
 		return getName(D).find(FilterString) != std::string::npos;
 	}
 
 public:
-	Consumer(std::condition_variable& CondReady,std::condition_variable& CondSearch,clv::MsgBox& SearchMsg)
-	:CondReady(CondReady),CondSearch(CondSearch),SearchMsg(SearchMsg){}
+	Consumer(std::condition_variable& CondReady,std::condition_variable& CondSearch)
+	:CondReady(CondReady),CondSearch(CondSearch){}
 
-	virtual void HandleTranslationUnit(ASTContext &Context) override;
+	virtual void HandleTranslationUnit(clang::ASTContext &Context) override;
 
 // ----------------- Decl traversal -----------------
 //
@@ -49,7 +48,7 @@ public:
 //bool TraverseDeclContextHelper(DeclContext *DC);
 	//bool TraverseDecl(Decl *D);
 	//AST中各种声明Node访问者方法
-	bool VisitDecl(Decl *Declaration);
+	bool VisitDecl(clang::Decl *Declaration);
 
 	//bool VisitNamedDecl(NamedDecl *Declaration);
 	/*
@@ -58,60 +57,60 @@ public:
 	void VisitTypeAliasDecl(TypeAliasDecl *D) //using ?? as ??
 	void VisitEnumDecl(EnumDecl *D) //
 	*/
-	bool VisitFunctionDecl(FunctionDecl *Declaration); 
-	bool VisitFieldDecl(FieldDecl *Declaration);
+	bool VisitFunctionDecl(clang::FunctionDecl *Declaration); 
+	bool VisitFieldDecl(clang::FieldDecl *Declaration);
 	/*
 	void VisitLabelDecl(LabelDecl *D) // goto lable
 	*/
-	bool VisitVarDecl(VarDecl *Declaration); //var
+	bool VisitVarDecl(clang::VarDecl *Declaration); //var
 
 	/*
 	void VisitFileScopeAsmDecl(FileScopeAsmDecl *D) // inline asm
 	*/
 
-	bool VisitNamespaceDecl(NamespaceDecl *Declaration); //namespace ??
-	bool VisitUsingDirectiveDecl(UsingDirectiveDecl *Declaration); //using namespace ??
-	bool VisitCXXRecordDecl(CXXRecordDecl *Declaration); //class
+	bool VisitNamespaceDecl(clang::NamespaceDecl *Declaration); //namespace ??
+	bool VisitUsingDirectiveDecl(clang::UsingDirectiveDecl *Declaration); //using namespace ??
+	bool VisitCXXRecordDecl(clang::CXXRecordDecl *Declaration); //class
 
 	
-	bool VisitLinkageSpecDecl(LinkageSpecDecl *Declaration); //cpp link symb
-	bool VisitTemplateDecl(TemplateDecl *Declaration);
+	bool VisitLinkageSpecDecl(clang::LinkageSpecDecl *Declaration); //cpp link symb
+	bool VisitTemplateDecl(clang::TemplateDecl *Declaration);
 	
-	bool VisitFunctionTemplateDecl(FunctionTemplateDecl *Declaration);
-	bool VisitClassTemplateDecl(ClassTemplateDecl *Declaration);
+	bool VisitFunctionTemplateDecl(clang::FunctionTemplateDecl *Declaration);
+	bool VisitClassTemplateDecl(clang::ClassTemplateDecl *Declaration);
 
 	//暂无objc特性支持计划
 	
 	//语义node访问方法
-	bool VisitStmt(Stmt *Statement);
-	bool VisitDeclStmt(DeclStmt *Statement);
+	bool VisitStmt(clang::Stmt *Statement);
+	bool VisitDeclStmt(clang::DeclStmt *Statement);
 	//表达式node访问
-	bool VisitMemberExpr(MemberExpr *Expr);
-	bool VisitCallExpr(CallExpr *expr);//
+	bool VisitMemberExpr(clang::MemberExpr *Expr);
+	bool VisitCallExpr(clang::CallExpr *expr);//
 	//type node访问
-	bool VisitType(Type *Typeinfo);
-	bool VisitTypeLoc(TypeLoc TL);
+	bool VisitType(clang::Type *Typeinfo);
+	bool VisitTypeLoc(clang::TypeLoc TL);
 private:
 	template <typename AstNode>
 	bool IsInDecl(AstNode *Node);
 };
 
-class Action:public ASTFrontendAction{
+class Action:public clang::ASTFrontendAction{
 	std::condition_variable& CondReady;
 	std::condition_variable& CondSearch;
-	clv::MsgBox& SearchMsg;
+	//clv::MsgBox& SearchMsg;
 	//std::mutex& MutReady;
 	//std::mutex& MutSearch;
 protected:
-	virtual ASTConsumer *CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile){
+	virtual clang::ASTConsumer *CreateASTConsumer(clang::CompilerInstance &CI, llvm::StringRef InFile){
 		//std::cout<<"cASTConsumer"<<std::endl;
-		return new Consumer{CondReady,CondSearch,SearchMsg};
+		return new Consumer{CondReady,CondSearch};
 		//return nullptr;
 	}
 	void ExecuteAction();
 public:
-	Action(std::condition_variable& CondReady,std::condition_variable& CondSearch,clv::MsgBox& SearchMsg)
-	:CondReady(CondReady),CondSearch(CondSearch),SearchMsg(SearchMsg){}
+	Action(std::condition_variable& CondReady,std::condition_variable& CondSearch)
+	:CondReady(CondReady),CondSearch(CondSearch){}
 	virtual bool hasCodeCompletionSupport() const {return true;}
 	virtual bool hasPCHSupport() const { return false; }
 	virtual bool hasASTFileSupport() const { return true; }
@@ -120,14 +119,14 @@ public:
 
 class Invocation{
 	//std::vector<std::string> CommandLine;
-	std::unique_ptr<FrontendAction> Action;
+	std::unique_ptr<clang::FrontendAction> Action;
 	//FIXME: dconstruct call a purge virtual func when unique_ptr delete the CompilerInstance??
-	CompilerInstance* Compiler;
+	std::unique_ptr<clang::CompilerInstance> Compiler{new clang::CompilerInstance{}};
 	//std::unique_ptr<CompilerInstance> Compiler;
 protected:
 	//bool RunInvocation(const char* Name,char* Code,int Length);
 public:
-	Invocation(FrontendAction *Action):Action{Action},Compiler{new CompilerInstance{}}{}
+	Invocation(clang::FrontendAction *Action):Action{Action}{}
 
 	bool RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine);
 };

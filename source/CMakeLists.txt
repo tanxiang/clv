@@ -20,7 +20,6 @@ add_executable(clvtk
 	clvhb.cc 
 	clvline.cc
 	gtk_window.cc
-	clvparser.cc
 	clvbuffer.cc
 	clvtkmm.cc
 	clvcontext.cc
@@ -39,7 +38,6 @@ target_link_libraries(clvtk
 
 add_library(clvclang SHARED
 	clvparser.cc
-	clthread.cc
 	clangparse.cc
 )
 target_compile_options(clvclang PRIVATE -fno-rtti -fno-exceptions -fpic)

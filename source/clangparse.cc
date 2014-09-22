@@ -18,6 +18,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace clang;
 using namespace clang::tooling;
 
 namespace clp{
@@ -130,11 +131,13 @@ void Consumer::HandleTranslationUnit(ASTContext &Context){
 	pContext = &Context;
 	unique_lock<mutex> lock{MutSearch};
 	CondSearch.wait(lock);
+	/*
 	while(SearchMsg.Key!="$"){//search cond
 		//Context.getTranslationUnitDecl()->dump(llvm::outs());
 		TraverseDecl(Context.getTranslationUnitDecl());//search ast
 		CondSearch.wait(lock);
 	}
+	*/
 }
 /*
 bool Consumer::VisitNamedDecl(NamedDecl *Declaration) {
@@ -309,6 +312,7 @@ bool Consumer::IsInDecl(AstNode *Node){
 	if(LocationStart.isValid()&&LocationEnd.isValid()){
 		if(LocationStart.getFileID().getHashValue()==1 && 
 			LocationEnd.getFileID().getHashValue()==1){
+			/*
 			if(SearchMsg.nLine<LocationStart.getSpellingLineNumber() ||
 				SearchMsg.nLine>LocationEnd.getSpellingLineNumber())
 				return false;
@@ -319,6 +323,7 @@ bool Consumer::IsInDecl(AstNode *Node){
 				SearchMsg.nChar>LocationEnd.getSpellingColumnNumber())
 				return false;
 			cout<<"RAGEin\n";
+			*/
 			return true;
 		}
 	}
