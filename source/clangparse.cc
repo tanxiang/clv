@@ -2,7 +2,6 @@
 #include "clangparse.h"
 #include <clang/Frontend/FrontendDiagnostic.h>
 #include <clang/Lex/Preprocessor.h>
-#include <clang/Sema/CodeCompleteConsumer.h>
 //#include <clang/Frontend/TextDiagnosticPrinter.h>
 #include <clang/Tooling/CommonOptionsParser.h>
 #include <clang/Tooling/Tooling.h>
@@ -18,63 +17,12 @@
 #include <iostream>
 
 using namespace std;
+using namespace clang;
 using namespace clang::tooling;
 
 namespace clp{
-struct AllocatedCXCodeCompleteResults : public CXCodeCompleteResults {
-	IntrusiveRefCntPtr<clang::GlobalCodeCompletionAllocator> CodeCompletionAllocator;
-};
 
-class ClvCodeCompleteConsumer : public CodeCompleteConsumer {
-	uint64_t NormalContexts;
-	AllocatedCXCodeCompleteResults AllocatedResults;
-	CodeCompletionTUInfo CCTUInfo;
-public:
-	ClvCodeCompleteConsumer(const CodeCompleteOptions &CodeCompleteOpts):
-		CodeCompleteConsumer{CodeCompleteOpts,true},
-		CCTUInfo{new clang::GlobalCodeCompletionAllocator}{
-		NormalContexts = (1LL << CodeCompletionContext::CCC_TopLevel) | 
-			(1LL << CodeCompletionContext::CCC_ObjCInterface) |
-			(1LL << CodeCompletionContext::CCC_ObjCImplementation) |
-			(1LL << CodeCompletionContext::CCC_ObjCIvarList) |
-			(1LL << CodeCompletionContext::CCC_Statement) |
-			(1LL << CodeCompletionContext::CCC_Expression) |
-			(1LL << CodeCompletionContext::CCC_ObjCMessageReceiver) |
-			(1LL << CodeCompletionContext::CCC_DotMemberAccess) |
-			(1LL << CodeCompletionContext::CCC_ArrowMemberAccess) |
-			(1LL << CodeCompletionContext::CCC_ObjCPropertyAccess) |
-			(1LL << CodeCompletionContext::CCC_ObjCProtocolName) |
-			(1LL << CodeCompletionContext::CCC_ParenthesizedExpression) |
-			(1LL << CodeCompletionContext::CCC_Recovery);
-		NormalContexts|= (1LL << CodeCompletionContext::CCC_EnumTag) |
-			(1LL << CodeCompletionContext::CCC_UnionTag) |
-			(1LL << CodeCompletionContext::CCC_ClassOrStructTag);
-	}
-
-	virtual void ProcessCodeCompleteResults(Sema &S, 
-		CodeCompletionContext Context,
-		CodeCompletionResult *Results,
-		unsigned NumResults);
-/*
-	virtual void ProcessOverloadCandidates(Sema &S, unsigned CurrentArg,
-		OverloadCandidate *Candidates,
-		unsigned NumCandidates) { 
-		Next.ProcessOverloadCandidates(S, CurrentArg, Candidates, NumCandidates);
-	}
-*/
-	virtual CodeCompletionAllocator &getAllocator() {
-		cout<<__PRETTY_FUNCTION__<<endl;
-		return *AllocatedResults.CodeCompletionAllocator;
-	}
- 
-	virtual CodeCompletionTUInfo &getCodeCompletionTUInfo() {
-		cout<<__PRETTY_FUNCTION__<<endl;
-		return CCTUInfo;
-	}
-
-};
-
-void ClvCodeCompleteConsumer::ProcessCodeCompleteResults(Sema &S,
+void CodeCompleteConsumer::ProcessCodeCompleteResults(Sema &S,
 					CodeCompletionContext Context,
 					CodeCompletionResult *Results,
 					unsigned NumResults) {
@@ -101,40 +49,21 @@ void ClvCodeCompleteConsumer::ProcessCodeCompleteResults(Sema &S,
 	}
 	return;
 }
-/*
-#define DISPATCH(NAME, CLASS, VAR) \
-  return getDerived().Traverse##NAME(static_cast<CLASS*>(VAR))
-bool Consumer::TraverseDecl(Decl *D) {
-cout<<"1search:"<<SearchMsg.Key<<endl;
-  if (!D)
-    return true;
 
-  // As a syntax visitor, by default we want to ignore declarations for
-  // implicit declarations (ones not typed explicitly by the user).
-  if (!getDerived().shouldVisitImplicitCode() && D->isImplicit())
-    return true;
-cout<<"2search:"<<SearchMsg.Key<<endl;
-  switch (D->getKind()) {
-#define ABSTRACT_DECL(DECL)
-#define DECL(CLASS, BASE) \
-  case Decl::CLASS: DISPATCH(CLASS##Decl, CLASS##Decl, D);
-#include "clang/AST/DeclNodes.inc"
- }
-cout<<"3search:"<<SearchMsg.Key<<endl;
-  return true;
-}
-*/
+
 void Consumer::HandleTranslationUnit(ASTContext &Context){
 	//sleep & wait sreach opt
-	//cout<<"Consumer"<<(int)&CondReady<<endl;
+	//cout<<"Consumer"<<(int)&cond_ready<<endl;
 	pContext = &Context;
 	unique_lock<mutex> lock{MutSearch};
-	CondSearch.wait(lock);
+	cond_search.wait(lock);
+	/*
 	while(SearchMsg.Key!="$"){//search cond
 		//Context.getTranslationUnitDecl()->dump(llvm::outs());
 		TraverseDecl(Context.getTranslationUnitDecl());//search ast
-		CondSearch.wait(lock);
+		cond_search.wait(lock);
 	}
+	*/
 }
 /*
 bool Consumer::VisitNamedDecl(NamedDecl *Declaration) {
@@ -309,6 +238,7 @@ bool Consumer::IsInDecl(AstNode *Node){
 	if(LocationStart.isValid()&&LocationEnd.isValid()){
 		if(LocationStart.getFileID().getHashValue()==1 && 
 			LocationEnd.getFileID().getHashValue()==1){
+			/*
 			if(SearchMsg.nLine<LocationStart.getSpellingLineNumber() ||
 				SearchMsg.nLine>LocationEnd.getSpellingLineNumber())
 				return false;
@@ -319,6 +249,7 @@ bool Consumer::IsInDecl(AstNode *Node){
 				SearchMsg.nChar>LocationEnd.getSpellingColumnNumber())
 				return false;
 			cout<<"RAGEin\n";
+			*/
 			return true;
 		}
 	}
@@ -381,7 +312,7 @@ static bool EnableCodeCompletion(CompilerInvocation &Invocation,
 	FrontendOpts.CodeCompletionAt.Line = Line;
 	FrontendOpts.CodeCompletionAt.Column = Column;
 
-	ClvCodeCompleteConsumer *ClvCompleteConsumer = new ClvCodeCompleteConsumer(CodeCompleteOpts);
+	CodeCompleteConsumer *ClvCompleteConsumer = new clp::CodeCompleteConsumer{CodeCompleteOpts};
 
 	Compiler.setCodeCompletionConsumer(ClvCompleteConsumer);
 
@@ -542,13 +473,12 @@ void Action::ExecuteAction() {
 	}
 
 	// Use a code completion consumer?
-	CodeCompleteConsumer *CompletionConsumer = 0;
-	if (CI.hasCodeCompletionConsumer())
-		CompletionConsumer = &CI.getCodeCompletionConsumer();
-
-	if (!CI.hasSema()){
-		CI.createSema(getTranslationUnitKind(), CompletionConsumer);
-		cout<<"CI.createSema"<<endl;
+	if (CI.hasCodeCompletionConsumer()){
+		auto CompletionConsumer = &CI.getCodeCompletionConsumer();
+		if (!CI.hasSema()){
+			CI.createSema(getTranslationUnitKind(), CompletionConsumer);
+			cout<<"CI.createSema"<<endl;
+		}
 	}
 	//Decl::PrintStats();
 	//Stmt::PrintStats();

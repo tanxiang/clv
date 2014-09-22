@@ -20,7 +20,6 @@ add_executable(clvtk
 	clvhb.cc 
 	clvline.cc
 	gtk_window.cc
-	clvparser.cc
 	clvbuffer.cc
 	clvtkmm.cc
 	clvcontext.cc

@@ -1,7 +1,12 @@
 #include <iostream>
 #include "clvparser.h"
+#include "clangparse.h"
 
 namespace clv{
+Parser::Parser():invocation(new clp::Invocation{new clp::Action{cond_ready,cond_search}}){}
+
+
+
 void Parser::setup_code(){
 
 }
