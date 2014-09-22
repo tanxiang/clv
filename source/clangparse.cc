@@ -49,40 +49,19 @@ void CodeCompleteConsumer::ProcessCodeCompleteResults(Sema &S,
 	}
 	return;
 }
-/*
-#define DISPATCH(NAME, CLASS, VAR) \
-  return getDerived().Traverse##NAME(static_cast<CLASS*>(VAR))
-bool Consumer::TraverseDecl(Decl *D) {
-cout<<"1search:"<<SearchMsg.Key<<endl;
-  if (!D)
-    return true;
 
-  // As a syntax visitor, by default we want to ignore declarations for
-  // implicit declarations (ones not typed explicitly by the user).
-  if (!getDerived().shouldVisitImplicitCode() && D->isImplicit())
-    return true;
-cout<<"2search:"<<SearchMsg.Key<<endl;
-  switch (D->getKind()) {
-#define ABSTRACT_DECL(DECL)
-#define DECL(CLASS, BASE) \
-  case Decl::CLASS: DISPATCH(CLASS##Decl, CLASS##Decl, D);
-#include "clang/AST/DeclNodes.inc"
- }
-cout<<"3search:"<<SearchMsg.Key<<endl;
-  return true;
-}
-*/
+
 void Consumer::HandleTranslationUnit(ASTContext &Context){
 	//sleep & wait sreach opt
-	//cout<<"Consumer"<<(int)&CondReady<<endl;
+	//cout<<"Consumer"<<(int)&cond_ready<<endl;
 	pContext = &Context;
 	unique_lock<mutex> lock{MutSearch};
-	CondSearch.wait(lock);
+	cond_search.wait(lock);
 	/*
 	while(SearchMsg.Key!="$"){//search cond
 		//Context.getTranslationUnitDecl()->dump(llvm::outs());
 		TraverseDecl(Context.getTranslationUnitDecl());//search ast
-		CondSearch.wait(lock);
+		cond_search.wait(lock);
 	}
 	*/
 }

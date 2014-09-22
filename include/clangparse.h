@@ -74,8 +74,8 @@ public:
 
 class Consumer:public clang::ASTConsumer,public clang::RecursiveASTVisitor<Consumer>{
 	typedef clang::RecursiveASTVisitor<Consumer> base;
-	std::condition_variable& CondReady;
-	std::condition_variable& CondSearch;
+	std::condition_variable& cond_ready;
+	std::condition_variable& cond_search;
 	//clv::MsgBox& SearchMsg;
 	//std::mutex& MutReady;
 	std::mutex MutSearch;
@@ -93,8 +93,8 @@ class Consumer:public clang::ASTConsumer,public clang::RecursiveASTVisitor<Consu
 	}
 
 public:
-	Consumer(std::condition_variable& CondReady,std::condition_variable& CondSearch)
-	:CondReady(CondReady),CondSearch(CondSearch){}
+	Consumer(std::condition_variable& cond_ready,std::condition_variable& cond_search)
+	:cond_ready(cond_ready),cond_search(cond_search){}
 
 	virtual void HandleTranslationUnit(clang::ASTContext &Context) override;
 
@@ -155,21 +155,21 @@ private:
 };
 
 class Action:public clang::ASTFrontendAction{
-	std::condition_variable& CondReady;
-	std::condition_variable& CondSearch;
+	std::condition_variable& cond_ready;
+	std::condition_variable& cond_search;
 	//clv::MsgBox& SearchMsg;
 	//std::mutex& MutReady;
 	//std::mutex& MutSearch;
 protected:
 	virtual clang::ASTConsumer *CreateASTConsumer(clang::CompilerInstance &CI, llvm::StringRef InFile){
 		//std::cout<<"cASTConsumer"<<std::endl;
-		return new Consumer{CondReady,CondSearch};
+		return new Consumer{cond_ready,cond_search};
 		//return nullptr;
 	}
 	void ExecuteAction();
 public:
-	Action(std::condition_variable& CondReady,std::condition_variable& CondSearch)
-	:CondReady(CondReady),CondSearch(CondSearch){}
+	Action(std::condition_variable& cond_ready,std::condition_variable& cond_search)
+	:cond_ready(cond_ready),cond_search(cond_search){}
 	virtual bool hasCodeCompletionSupport() const {return true;}
 	virtual bool hasPCHSupport() const { return false; }
 	virtual bool hasASTFileSupport() const { return true; }
@@ -179,13 +179,15 @@ public:
 class Invocation{
 	//std::vector<std::string> CommandLine;
 	std::unique_ptr<clang::FrontendAction> Action;
+	std::unique_ptr<clang::CodeCompleteConsumer> CodeComplete;
 	//FIXME: dconstruct call a purge virtual func when unique_ptr delete the CompilerInstance??
 	std::unique_ptr<clang::CompilerInstance> Compiler{new clang::CompilerInstance{}};
 	//std::unique_ptr<CompilerInstance> Compiler;
 protected:
 	//bool RunInvocation(const char* Name,char* Code,int Length);
 public:
-	Invocation(clang::FrontendAction *Action):Action{Action}{}
+	explicit Invocation(clang::FrontendAction *Action,clang::CodeCompleteConsumer* CompleteConsumer=nullptr):
+		Action{Action},CodeComplete{CompleteConsumer}{}
 
 	bool RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine);
 };

@@ -21,6 +21,7 @@ protected:
 public:
 	typedef std::vector<std::tuple<std::string> > complete_table;
 	Parser();
+	
 	void setup_code();
 	void setup_cmd();
 	std::unique_ptr<complete_table> complete_at();
