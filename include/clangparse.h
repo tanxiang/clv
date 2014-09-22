@@ -6,6 +6,8 @@
 #include <clang/AST/ASTContext.h>
 #include <clang/AST/RecursiveASTVisitor.h>
 #include <clang/Driver/Driver.h>
+#include <clang/Sema/CodeCompleteConsumer.h>
+
 #include <string>
 #include <memory>
 #include <condition_variable>
@@ -13,6 +15,63 @@
 
 
 namespace clp{
+
+/*
+struct AllocatedCXCodeCompleteResults : public clang::CXCodeCompleteResults {
+	clang::IntrusiveRefCntPtr<clang::GlobalCodeCompletionAllocator> CodeCompletionAllocator;
+};
+*/
+
+class CodeCompleteConsumer : public clang::CodeCompleteConsumer {
+	uint64_t NormalContexts;
+	//AllocatedCXCodeCompleteResults AllocatedResults;
+	clang::CodeCompletionTUInfo CCTUInfo;
+public:
+	CodeCompleteConsumer(const CodeCompleteOptions &CodeCompleteOpts):
+		clang::CodeCompleteConsumer{CodeCompleteOpts,true},
+		CCTUInfo{new clang::GlobalCodeCompletionAllocator}{
+		NormalContexts = (1LL << clang::CodeCompletionContext::CCC_TopLevel) | 
+			(1LL << clang::CodeCompletionContext::CCC_ObjCInterface) |
+			(1LL << clang::CodeCompletionContext::CCC_ObjCImplementation) |
+			(1LL << clang::CodeCompletionContext::CCC_ObjCIvarList) |
+			(1LL << clang::CodeCompletionContext::CCC_Statement) |
+			(1LL << clang::CodeCompletionContext::CCC_Expression) |
+			(1LL << clang::CodeCompletionContext::CCC_ObjCMessageReceiver) |
+			(1LL << clang::CodeCompletionContext::CCC_DotMemberAccess) |
+			(1LL << clang::CodeCompletionContext::CCC_ArrowMemberAccess) |
+			(1LL << clang::CodeCompletionContext::CCC_ObjCPropertyAccess) |
+			(1LL << clang::CodeCompletionContext::CCC_ObjCProtocolName) |
+			(1LL << clang::CodeCompletionContext::CCC_ParenthesizedExpression) |
+			(1LL << clang::CodeCompletionContext::CCC_Recovery);
+		NormalContexts|= (1LL << clang::CodeCompletionContext::CCC_EnumTag) |
+			(1LL << clang::CodeCompletionContext::CCC_UnionTag) |
+			(1LL << clang::CodeCompletionContext::CCC_ClassOrStructTag);
+	}
+
+	virtual void ProcessCodeCompleteResults(clang::Sema &S, 
+		clang::CodeCompletionContext Context,
+		clang::CodeCompletionResult *Results,
+		unsigned NumResults) override;
+/*
+	virtual void ProcessOverloadCandidates(Sema &S, unsigned CurrentArg,
+		OverloadCandidate *Candidates,
+		unsigned NumCandidates) { 
+		Next.ProcessOverloadCandidates(S, CurrentArg, Candidates, NumCandidates);
+	}
+*/
+	virtual clang::CodeCompletionAllocator &getAllocator() override {
+		//cout<<__PRETTY_FUNCTION__<<endl;
+		return CCTUInfo.getAllocator();
+	}
+
+	virtual clang::CodeCompletionTUInfo &getCodeCompletionTUInfo() override {
+		//cout<<__PRETTY_FUNCTION__<<endl;
+		return CCTUInfo;
+	}
+
+};
+
+
 class Consumer:public clang::ASTConsumer,public clang::RecursiveASTVisitor<Consumer>{
 	typedef clang::RecursiveASTVisitor<Consumer> base;
 	std::condition_variable& CondReady;
