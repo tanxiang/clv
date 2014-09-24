@@ -1,4 +1,5 @@
 set(CMAKE_CXX_FLAGS "-Wall -std=c++1y -g")
+#-D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTKMM gtkmm-3.0)

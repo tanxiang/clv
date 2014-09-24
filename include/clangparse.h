@@ -177,11 +177,12 @@ public:
 };
 
 class Invocation{
-	//std::vector<std::string> CommandLine;
 	std::unique_ptr<clang::FrontendAction> Action;
 	std::unique_ptr<clang::CodeCompleteConsumer> CodeComplete;
 	//FIXME: dconstruct call a purge virtual func when unique_ptr delete the CompilerInstance??
 	std::unique_ptr<clang::CompilerInstance> Compiler{new clang::CompilerInstance{}};
+	//clang::IntrusiveRefCntPtr<clang::CompilerInvocation> cp_invocation{new CompilerInvocation{}};
+
 	//std::unique_ptr<CompilerInstance> Compiler;
 protected:
 	//bool RunInvocation(const char* Name,char* Code,int Length);
@@ -190,6 +191,11 @@ public:
 		Action{Action},CodeComplete{CompleteConsumer}{}
 
 	bool RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine);
+
+	bool runToolOnCode(const clang::Twine &Code,const clang::Twine &FileName){
+		  return runToolOnCodeWithArgs(Code, FileName, std::vector<std::string>{});
+	}
+	bool runToolOnCodeWithArgs(const clang::Twine &Code,const clang::Twine &FileName,const std::vector<std::string> &Args);
 };
 //void CodeToCompilerInstance(const char* Name,char* Code,int Length,CompilerInstance &Compiler);
 }//namespace

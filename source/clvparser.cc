@@ -3,7 +3,9 @@
 #include "clangparse.h"
 
 namespace clv{
-Parser::Parser():invocation(new clp::Invocation{new clp::Action{cond_ready,cond_search}}){}
+Parser::Parser():invocation{
+	new clp::Invocation{new clp::Action{cond_ready,cond_search}}
+}{}
 
 
 
