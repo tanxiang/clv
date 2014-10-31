@@ -183,7 +183,6 @@ class Invocation{
 	std::unique_ptr<clang::CompilerInstance> Compiler{new clang::CompilerInstance{}};
 	//clang::IntrusiveRefCntPtr<clang::CompilerInvocation> cp_invocation{new CompilerInvocation{}};
 
-	//std::unique_ptr<CompilerInstance> Compiler;
 protected:
 	//bool RunInvocation(const char* Name,char* Code,int Length);
 public:

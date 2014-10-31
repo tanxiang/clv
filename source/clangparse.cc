@@ -313,7 +313,7 @@ static bool EnableCodeCompletion(CompilerInvocation &Invocation,
 	FrontendOpts.CodeCompletionAt.Column = Column;
 
 	CodeCompleteConsumer *ClvCompleteConsumer = new clp::CodeCompleteConsumer{CodeCompleteOpts};
-
+	//FIXME leak memory??
 	Compiler.setCodeCompletionConsumer(ClvCompleteConsumer);
 
 	//cout<<"done"<<__PRETTY_FUNCTION__<<endl;
@@ -361,7 +361,7 @@ bool Invocation::RunCode(const char* Name,char* Code,int Length,std::vector<std:
 		*Invocation, CC1Args.data() + 1, CC1Args.data() + CC1Args.size(),
 		*Diagnostics);
 	Invocation->getFrontendOpts().DisableFree = false;
-	auto LangOpts = Invocation->getLangOpts();
+	//auto LangOpts = Invocation->getLangOpts();
 	Compiler->setInvocation(Invocation.get());
 	
 	Compiler->createDiagnostics();
