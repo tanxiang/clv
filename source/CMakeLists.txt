@@ -11,7 +11,6 @@ include_directories(
 )
 
 include_directories(
-	SYSTEM
 	${GTKMM_INCLUDE_DIRS}
 	${HB_INCLUDE_DIRS}
 	${LibClang_INCLUDE_DIRS}

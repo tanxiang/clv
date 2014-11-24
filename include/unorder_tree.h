@@ -4,7 +4,6 @@
 
 template<typename T>
 class unorder_tree{
-
 	typedef size_t size_type;
 	struct node;
 	typedef std::unique_ptr<node> node_ptr;
@@ -219,5 +218,6 @@ public:
 private:
 	//iterator start;
 	iterator finish;
+	std::unique_ptr<typename T::value_type> buffer_ptr;
 };
 
