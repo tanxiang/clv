@@ -237,7 +237,7 @@ public:
 	};
 	void* Get(){return FileMemMap;}
 	int Length(){return Len;}
-	int Merge();
+	int Commit();
 	//edit iface
 	iterator begin(){
 		return start;

@@ -12,7 +12,7 @@ namespace clv{
 
 template<typename LineRef>
 FileMap<LineRef>::FileMap(const char* FilePath){
-	FD = -1;
+	int FD = -1;
 	if(FilePath){
 		if ((FD = open(FilePath, O_RDWR|O_CREAT)) < 0){
 			perror("open");
@@ -36,6 +36,7 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 			perror("open");
 		}
 		FileMemMap = static_cast<char*>(mmap(NULL,Len,PROT_READ|PROT_WRITE,MAP_FILE|MAP_SHARED,FD,0));
+		
 		start.Line.Set(FileMemMap,Len);
 		finish=start;
 	}
@@ -46,7 +47,6 @@ FileMap<LineRef>::FileMap(const char* FilePath){
 template<typename LineRef>
 FileMap<LineRef>::~FileMap(){
 	munmap(FileMemMap,Len);
-	close(FD);
 }
 
 
@@ -54,7 +54,7 @@ FileMap<LineRef>::~FileMap(){
 //template FileMap<char>::~FileMap();
 
 template<typename LineRef>
-int FileMap<LineRef>::Merge(){
+int FileMap<LineRef>::Commit(){
 	return msync(FileMemMap,Len,MS_SYNC);
 }
 /*
