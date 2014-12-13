@@ -26,7 +26,6 @@ add_executable(clvtk
 	clvview.cc
 	dbg.cc
 	unorder_tree.cc
-	clvfont.cc
 	filemap.cc
 )
 
