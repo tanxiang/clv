@@ -1,5 +1,6 @@
 #include "unorder_tree.h"
 #include "dbg.h"
+namespace clv{
 template<typename T>
 void unorder_tree<T>::node::dump(int level){
 	if(left) left->dump(level+1);
@@ -230,5 +231,7 @@ void unorder_tree<T>::drb(node_ptr* child_ptr_point,node* parent_point){
 			break;
 	}while(true);
 }
+};//namespace
 #include "clvline.h"
-template class unorder_tree<clv::line>;
+template class clv::unorder_tree<clv::line>;
+

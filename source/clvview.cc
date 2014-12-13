@@ -1,9 +1,9 @@
 #include "clvview.h"
 #include "dbg.h"
 
-using namespace clv;
+namespace clv{
 
-bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
+bool LineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	if(should_draw_window(cr,get_window())){
 		cr->set_source_rgb(0.0, 0.0, 0.0);
 		cr->paint();
@@ -11,14 +11,14 @@ bool ClvLineArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	return true;
 }
 
-ClvFileArea::ClvFileArea(context<line> &file):
+FileArea::FileArea(context<line> &file):
 	file_context(file) {
 	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	add_events(Gdk::BUTTON_PRESS_MASK|Gdk::BUTTON_RELEASE_MASK|Gdk::SCROLL_MASK|Gdk::TOUCH_MASK|Gdk::SMOOTH_SCROLL_MASK|Gdk::EXPOSURE_MASK);
-	g_signal_connect (im_context, "commit",G_CALLBACK (&ClvFileArea::im_commit_proxy), this);
-	g_signal_connect (im_context, "preedit-changed",G_CALLBACK (&ClvFileArea::preedit_changed_proxy), this);
-	g_signal_connect (im_context, "retrieve-surrounding",G_CALLBACK (&ClvFileArea::retrieve_surrounding_proxy), this);
-	g_signal_connect (im_context, "delete-surrounding",G_CALLBACK (&ClvFileArea::delete_surrounding_proxy), this);
+	g_signal_connect (im_context, "commit",G_CALLBACK (&FileArea::im_commit_proxy), this);
+	g_signal_connect (im_context, "preedit-changed",G_CALLBACK (&FileArea::preedit_changed_proxy), this);
+	g_signal_connect (im_context, "retrieve-surrounding",G_CALLBACK (&FileArea::retrieve_surrounding_proxy), this);
+	g_signal_connect (im_context, "delete-surrounding",G_CALLBACK (&FileArea::delete_surrounding_proxy), this);
 	property_can_focus() = true;
 	auto style = get_style_context();
 	style->context_save();
@@ -26,18 +26,18 @@ ClvFileArea::ClvFileArea(context<line> &file):
 	style->context_restore();
 	//set_size_request( 0, file_context.end().get_fill_offset());
 #ifndef GLIBMM_DEFAULT_SIGNAL_HANDLERS_ENABLED
-	this->signal_draw().connect(sigc::mem_fun(*this,&ClvFileArea::on_draw));
+	this->signal_draw().connect(sigc::mem_fun(*this,&FileArea::on_draw));
 #endif
 	input_status=STATUS_NONE;
 }
 
-ClvFileArea::~ClvFileArea(){
+FileArea::~FileArea(){
 	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	//FIXME im_context?
 	g_object_unref (im_context);
 }
 
-void ClvFileArea::on_realize(){
+void FileArea::on_realize(){
 	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	GdkWindowAttr attributes;
 	auto allocation = get_allocation();
@@ -68,19 +68,19 @@ void ClvFileArea::on_realize(){
 	//get_window()->set_user_data(gobj());
 }
 
-void ClvFileArea::on_unrealize(){
+void FileArea::on_unrealize(){
 	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	Gtk::DrawingArea::on_unrealize();
 	//FIXME:need unregister client_window for im??
 }
 
-bool ClvFileArea::on_configure_event(GdkEventConfigure* event){
+bool FileArea::on_configure_event(GdkEventConfigure* event){
 	//debug<<__PRETTY_FUNCTION__<<std::endl;
 	//glyphs_surface_ptr = get_window()->create_similar_surface(Cairo::CONTENT_COLOR_ALPHA, get_allocation().get_width(), get_allocation().get_width());
 	return false;
 }
 
-void ClvFileArea::on_size_allocate(Gtk::Allocation& allocation){
+void FileArea::on_size_allocate(Gtk::Allocation& allocation){
 	Gtk::DrawingArea::on_size_allocate(allocation);
 	if(get_realized()){
 		debug <<__PRETTY_FUNCTION__<<allocation.get_height()<<std::endl;
@@ -88,16 +88,16 @@ void ClvFileArea::on_size_allocate(Gtk::Allocation& allocation){
 	}
 }
 
-void ClvFileArea::set_activates(bool setting){
+void FileArea::set_activates(bool setting){
 	if(setting){
-		blink_time_out = Glib::signal_timeout().connect(sigc::mem_fun(*this,&ClvFileArea::on_timer),100);
+		blink_time_out = Glib::signal_timeout().connect(sigc::mem_fun(*this,&FileArea::on_timer),100);
 	}
 	else if(blink_time_out)
 		blink_time_out.disconnect();
 	//debug<<"activates"<<this<<':'<<setting<<'\n';
 }
 
-bool ClvFileArea::on_timer(){
+bool FileArea::on_timer(){
 	auto draw_object_cr = get_window()->create_cairo_context();
 	auto dms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-refresh_time).count(); 
 	dms%=1000;
@@ -115,12 +115,12 @@ bool ClvFileArea::on_timer(){
 	return true;
 }
 
-//void ClvFileArea::on_hide(){
+//void FileArea::on_hide(){
 //}
 
 
 
-void ClvFileArea::draw_rect(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
+void FileArea::draw_rect(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
 	cr->save();//need RAII mode restore
 	cr->set_source_rgb(1,1,1);
 
@@ -139,7 +139,7 @@ void ClvFileArea::draw_rect(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo:
 }
 
 
-bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
+bool FileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	debug<<__PRETTY_FUNCTION__<<std::endl;
 	glyphs_surface_ptr = cr->get_target();
 	debug<<get_window()->get_width()<<'x'<<get_window()->get_height()<<std::endl;
@@ -157,18 +157,18 @@ bool ClvFileArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 }
 
 
-bool ClvFileArea::on_focus_in_event(GdkEventFocus* event){
+bool FileArea::on_focus_in_event(GdkEventFocus* event){
 	gtk_im_context_focus_in(im_context);
 	input_status=STATUS_NORMAL;
 	return false;
 }
 
-bool ClvFileArea::on_focus_out_event(GdkEventFocus* event){
+bool FileArea::on_focus_out_event(GdkEventFocus* event){
 	debug<<__FUNCTION__<<std::endl;
 	return false;
 }
 
-bool ClvFileArea::on_key_press_event(GdkEventKey *event){
+bool FileArea::on_key_press_event(GdkEventKey *event){
 	//debug<<__FUNCTION__<<event->string<<std::endl;
 	switch(input_status){
 		case STATUS_INPUT:
@@ -195,7 +195,7 @@ bool ClvFileArea::on_key_press_event(GdkEventKey *event){
 }
 
 #ifdef CLV_RKET_EVENT
-bool ClvFileArea::on_key_release_event(GdkEventKey *event){
+bool FileArea::on_key_release_event(GdkEventKey *event){
 	//debug<<__FUNCTION__<<event->string<<std::endl;
 	switch(input_status){
 		case STATUS_KEY_PRESS:
@@ -213,33 +213,33 @@ bool ClvFileArea::on_key_release_event(GdkEventKey *event){
 }
 #endif
 
-void ClvFileArea::im_commit_proxy(GtkIMContext *context,const gchar  *str,ClvFileArea* pobj){
+void FileArea::im_commit_proxy(GtkIMContext *context,const gchar  *str,FileArea* pobj){
 	pobj->im_commit(context,str);
 }
 
-void ClvFileArea::im_commit(GtkIMContext *context,const gchar *str){
+void FileArea::im_commit(GtkIMContext *context,const gchar *str){
 	debug<<"commit"<<str<<'\n';
 	if(input_status!=STATUS_INPUT)
 		input_status=STATUS_INPUT;//commit change
 }
 
-void ClvFileArea::preedit_changed_proxy(GtkIMContext *context,ClvFileArea *pobj){
+void FileArea::preedit_changed_proxy(GtkIMContext *context,FileArea *pobj){
 	pobj->preedit_changed(context);
 }
 
-void ClvFileArea::preedit_changed(GtkIMContext *context){
+void FileArea::preedit_changed(GtkIMContext *context){
 	debug<<"preedit_changed"<<'\n';
 }
 
-void ClvFileArea::retrieve_surrounding_proxy(GtkIMContext *context,ClvFileArea *pobj){
+void FileArea::retrieve_surrounding_proxy(GtkIMContext *context,FileArea *pobj){
 	debug<<"retrieve_surrounding_proxy"<<'\n'; 
 }
 
-void ClvFileArea::delete_surrounding_proxy(GtkIMContext *context,gint offset,gint n_chars,ClvFileArea *pobj){
+void FileArea::delete_surrounding_proxy(GtkIMContext *context,gint offset,gint n_chars,FileArea *pobj){
 	debug<<"delete_surrounding_proxy"<<'\n'; 
 }
 
-bool ClvFileArea::on_button_press_event(GdkEventButton* event){
+bool FileArea::on_button_press_event(GdkEventButton* event){
 //	debug<<this<<':'<<get_vadjustment()->get_upper()<<std::endl;
 	if(!gtk_widget_has_focus(Widget::gobj())){
 		grab_focus();
@@ -265,7 +265,7 @@ bool ClvFileArea::on_button_press_event(GdkEventButton* event){
 	return true;
 }
 
-bool ClvFileArea::on_button_release_event(GdkEventButton* event){
+bool FileArea::on_button_release_event(GdkEventButton* event){
 	////debug<<"bt release"<<std::endl;
 	if(event->button == GDK_BUTTON_PRIMARY){
 		switch(input_status){
@@ -311,15 +311,16 @@ bool ClvFileArea::on_button_release_event(GdkEventButton* event){
 	return true;
 }
 
-ClvThumArea::ClvThumArea(){
+ThumArea::ThumArea(){
 
 }
 
-ClvThumArea::~ClvThumArea(){
+ThumArea::~ThumArea(){
 
 }
 
-bool ClvThumArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
+bool ThumArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr){
 	return true;
 }
 
+};//namespace

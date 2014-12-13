@@ -10,11 +10,11 @@
 #include "clvview.h"
 #include "filemap.h"
 
-
-class ClvFViewBox :public Gtk::Container,virtual public Gtk::Scrollable {
+namespace clv{
+class FViewBox :public Gtk::Container,virtual public Gtk::Scrollable {
 	clv::context<clv::line> &file;
-	ClvLineArea line_view;
-	ClvFileArea edit_view;
+	LineArea line_view;
+	FileArea edit_view;
 	//Glib::RefPtr<Gdk::Window> window;
 
 	Cairo::RefPtr<Cairo::Surface> backing_surface_ptr;
@@ -56,8 +56,8 @@ protected:
 	void on_hadjustment();
 	void on_vadjustment();
 public:
-	ClvFViewBox(clv::context<clv::line> &file_ref);
-	virtual ~ClvFViewBox(){};
+	FViewBox(clv::context<clv::line> &file_ref);
+	virtual ~FViewBox(){};
 	void save();
 	void close();
 	void set_activates(bool setting=false){
@@ -65,17 +65,17 @@ public:
 	}
 };
 
-class ClvToolBox : public Gtk::Box{
+class ToolBox : public Gtk::Box{
 	Gtk::ComboBoxText tab_size;
 	Gtk::Button file_mode;
 	Gtk::Button search;
 	Gtk::Button options;
 public:
-	ClvToolBox();
-	virtual ~ClvToolBox(){};
+	ToolBox();
+	virtual ~ToolBox(){};
 };
 
-class ClvPageBox : public Gtk::Box{
+class PageBox : public Gtk::Box{
 	Glib::ustring file_name;
 	std::fstream file_stream;
 	clv::FileMap<clv::RawLineRef<char>> file_io_map;
@@ -83,10 +83,10 @@ class ClvPageBox : public Gtk::Box{
 	Gtk::Box main_view;
 	//Gtk::DrawingArea head_view;
 	Gtk::ScrolledWindow scrolled_content_view;
-	ClvFViewBox content_view;
-	ClvThumArea thumb_view;
+	FViewBox content_view;
+	ThumArea thumb_view;
 
-	ClvToolBox tool_bar;
+	ToolBox tool_bar;
 	Gtk::Image save_icon;
 	Gtk::Button bt_save;
 	Gtk::Image close_icon;
@@ -99,8 +99,8 @@ protected:
 	void on_unrealize() override;
 	//bool on_event(GdkEvent *event) override;
 public:
-	ClvPageBox(Glib::ustring fs="");
-	virtual ~ClvPageBox(){};
+	PageBox(Glib::ustring fs="");
+	virtual ~PageBox(){};
 	Gtk::Widget& get_tab_box(){
 		return tab_box;
 	}
@@ -110,12 +110,12 @@ public:
 	//static void setup_icons();
 };
 
-class ClvNotebook : public Gtk::Notebook{
-	std::vector<std::unique_ptr<ClvPageBox> > f_boxs;
-	ClvPageBox *current_page;
+class Notebook : public Gtk::Notebook{
+	std::vector<std::unique_ptr<PageBox> > f_boxs;
+	PageBox *current_page;
 public:
-	ClvNotebook(std::vector<std::string> &fn);
-	virtual ~ClvNotebook(){
+	Notebook(std::vector<std::string> &fn);
+	virtual ~Notebook(){
 		while(get_n_pages()){
 			remove_page();
 		}
@@ -124,13 +124,13 @@ protected:
 	void on_page_switch ( Gtk::Widget *page, int page_num );
 };
 
-class ClvtkWindow : public Gtk::Window{
-	ClvNotebook flist_notebook;
+class tkWindow : public Gtk::Window{
+	Notebook flist_notebook;
 	bool on_key_release_event(GdkEventKey* event) override;
 public:
-	ClvtkWindow(std::vector<std::string> fn = std::vector<std::string>{});
-	virtual ~ClvtkWindow(){}
+	tkWindow(std::vector<std::string> fn = std::vector<std::string>{});
+	virtual ~tkWindow(){}
 protected:
 	//void build_main_menu();
 };
-
+};//namespace

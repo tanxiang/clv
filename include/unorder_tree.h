@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 //#include <iostream>
-
+namespace clv{
 template<typename T>
 class unorder_tree{
 	typedef size_t size_type;
@@ -220,4 +220,5 @@ private:
 	iterator finish;
 	std::unique_ptr<typename T::value_type> buffer_ptr;
 };
+};//namespace
 

@@ -4,14 +4,16 @@
 #include "clvline.h"
 #include <chrono>
 
-class ClvLineArea : public Gtk::DrawingArea{
+namespace clv{
+
+class LineArea : public Gtk::DrawingArea{
 public:
 protected:
 	//Override default signal handler:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
 
-class ClvFileArea: public Gtk::DrawingArea{
+class FileArea: public Gtk::DrawingArea{
 	enum{
 		STATUS_NONE=0,
 		STATUS_NORMAL,
@@ -42,20 +44,20 @@ class ClvFileArea: public Gtk::DrawingArea{
 public:
 
 	void set_activates(bool setting=false);
-	ClvFileArea(clv::context<clv::line> &file);
-	virtual ~ClvFileArea();
+	FileArea(clv::context<clv::line> &file);
+	virtual ~FileArea();
 	
 protected:
 
-	static void im_commit_proxy(GtkIMContext *context,const gchar *str,ClvFileArea* pobj);
+	static void im_commit_proxy(GtkIMContext *context,const gchar *str,FileArea* pobj);
 	void im_commit(GtkIMContext *context,const gchar *str);
 
-	static void preedit_changed_proxy(GtkIMContext *context,ClvFileArea* pobj);
+	static void preedit_changed_proxy(GtkIMContext *context,FileArea* pobj);
 	void preedit_changed(GtkIMContext *context);
 	
-	static void retrieve_surrounding_proxy(GtkIMContext *context,ClvFileArea* pobj);
+	static void retrieve_surrounding_proxy(GtkIMContext *context,FileArea* pobj);
 	
-	static void delete_surrounding_proxy(GtkIMContext *context,gint offset,gint n_chars,ClvFileArea* pobj);
+	static void delete_surrounding_proxy(GtkIMContext *context,gint offset,gint n_chars,FileArea* pobj);
 
 	bool on_timer();
 	bool on_configure_event(GdkEventConfigure* event) override;
@@ -73,12 +75,12 @@ protected:
 	void on_unrealize() override;
 };
 
-class ClvThumArea : public Gtk::DrawingArea{
+class ThumArea : public Gtk::DrawingArea{
 public:
-	ClvThumArea();
-	virtual ~ClvThumArea();
+	ThumArea();
+	virtual ~ThumArea();
 protected:
 	//Override default signal handler:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
-
+};//namespace
