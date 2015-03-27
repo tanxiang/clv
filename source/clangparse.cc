@@ -321,9 +321,9 @@ static bool EnableCodeCompletion(CompilerInvocation &Invocation,
 }
 
 void CodeToCompilerInstance(const char* Name,char* Code,int Length,CompilerInstance &Compiler){
-	auto *Input = llvm::MemoryBuffer::getMemBuffer(Code);
-	auto *FromFile = Compiler.getFileManager().getVirtualFile(Name,Length, 0);
-	Compiler.getSourceManager().overrideFileContents(FromFile,Input);
+	auto Input = llvm::MemoryBuffer::getMemBuffer(Code);
+	auto FromFile = Compiler.getFileManager().getVirtualFile(Name,Length, 0);
+	//Compiler.getSourceManager().overrideFileContents(FromFile,Input);
 }
 
 bool Invocation::RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine){
@@ -349,11 +349,11 @@ bool Invocation::RunCode(const char* Name,char* Code,int Length,std::vector<std:
 
 	driver::Compilation Compilation{*Driver.BuildCompilation(llvm::makeArrayRef(Argv))};
 
-	const auto &Jobs = Compilation.getJobs();
+	//const auto& Jobs = Compilation.getJobs();
 	//need check job 
-	const auto *Cmd = cast<clang::driver::Command>(*Jobs.begin());
+	const auto Cmd = cast<clang::driver::Command>(Compilation.getJobs().begin());
 	//need check cmd
-	auto CC1Args = Cmd->getArguments();
+	auto CC1Args = Cmd.getArguments();
 	//need check cc1args
 
 	IntrusiveRefCntPtr<CompilerInvocation> Invocation{new CompilerInvocation{}};

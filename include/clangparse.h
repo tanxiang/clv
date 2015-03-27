@@ -161,9 +161,9 @@ class Action:public clang::ASTFrontendAction{
 	//std::mutex& MutReady;
 	//std::mutex& MutSearch;
 protected:
-	virtual clang::ASTConsumer *CreateASTConsumer(clang::CompilerInstance &CI, llvm::StringRef InFile){
+	virtual std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(clang::CompilerInstance &CI, llvm::StringRef InFile){
 		//std::cout<<"cASTConsumer"<<std::endl;
-		return new Consumer{cond_ready,cond_search};
+		return std::unique_ptr<clang::ASTConsumer>{new Consumer{cond_ready,cond_search}};
 		//return nullptr;
 	}
 	void ExecuteAction();
