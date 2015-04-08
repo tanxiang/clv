@@ -1,11 +1,15 @@
 #include "clthread.h"
 #include "clangparse.h"
+
+#include "clang/Tooling/Tooling.h"
+#include "clang/AST/ASTConsumer.h"
+#include "clang/Driver/Compilation.h"
+#include "clang/Driver/Driver.h"
+#include "clang/Driver/Tool.h"
+
 #include <clang/Frontend/FrontendDiagnostic.h>
 #include <clang/Lex/Preprocessor.h>
 //#include <clang/Frontend/TextDiagnosticPrinter.h>
-#include <clang/Tooling/CommonOptionsParser.h>
-#include <clang/Tooling/Tooling.h>
-#include <clang/Driver/Compilation.h>
 #include <llvm/Support/Host.h>
 
 #include <clang/Parse/ParseAST.h>
@@ -326,6 +330,54 @@ void CodeToCompilerInstance(const char* Name,char* Code,int Length,CompilerInsta
 	//Compiler.getSourceManager().overrideFileContents(FromFile,Input);
 }
 
+static const llvm::opt::ArgStringList *getCC1Arguments(
+    clang::DiagnosticsEngine *Diagnostics,
+    clang::driver::Compilation *Compilation) {
+  // We expect to get back exactly one Command job, if we didn't something
+  // failed. Extract that job from the Compilation.
+  const clang::driver::JobList &Jobs = Compilation->getJobs();
+  if (Jobs.size() != 1 || !isa<clang::driver::Command>(*Jobs.begin())) {
+    SmallString<256> error_msg;
+    llvm::raw_svector_ostream error_stream(error_msg);
+    Jobs.Print(error_stream, "; ", true);
+    Diagnostics->Report(clang::diag::err_fe_expected_compiler_job)
+        << error_stream.str();
+    return nullptr;
+  }
+
+  // The one job we find should be to invoke clang again.
+  const clang::driver::Command &Cmd =
+      cast<clang::driver::Command>(*Jobs.begin());
+  if (StringRef(Cmd.getCreator().getName()) != "clang") {
+    Diagnostics->Report(clang::diag::err_fe_expected_clang_command);
+    return nullptr;
+  }
+
+  return &Cmd.getArguments();
+}
+
+static clang::driver::Driver *newDriver(clang::DiagnosticsEngine *Diagnostics,
+                                        const char *BinaryName) {
+  clang::driver::Driver *CompilerDriver = new clang::driver::Driver(
+      BinaryName, llvm::sys::getDefaultTargetTriple(), *Diagnostics);
+  CompilerDriver->setTitle("clang_based_tool");
+  return CompilerDriver;
+}
+
+clang::CompilerInvocation *newInvocation(
+    clang::DiagnosticsEngine *Diagnostics,
+    const llvm::opt::ArgStringList &CC1Args) {
+  assert(!CC1Args.empty() && "Must at least contain the program name!");
+  clang::CompilerInvocation *Invocation = new clang::CompilerInvocation;
+  clang::CompilerInvocation::CreateFromArgs(
+      *Invocation, CC1Args.data() + 1, CC1Args.data() + CC1Args.size(),
+      *Diagnostics);
+  Invocation->getFrontendOpts().DisableFree = false;
+  Invocation->getCodeGenOpts().DisableFree = false;
+  Invocation->getDependencyOutputOpts() = DependencyOutputOptions();
+  return Invocation;
+}
+
 bool Invocation::RunCode(const char* Name,char* Code,int Length,std::vector<std::string> CommandLine){
 	vector<string> Commands;
 	vector<const char*> Argv;
@@ -339,27 +391,27 @@ bool Invocation::RunCode(const char* Name,char* Code,int Length,std::vector<std:
 	//llvm::CrashRecoveryContextCleanupRegistrar<CompilerInstance> CICleanup(Compiler->get());
 	IntrusiveRefCntPtr<DiagnosticOptions> DiagOpts = new DiagnosticOptions();
 	//TextDiagnosticPrinter DiagnosticPrinter(llvm::errs(), &*DiagOpts);
-	IntrusiveRefCntPtr<DiagnosticsEngine> Diagnostics = new DiagnosticsEngine{
+	DiagnosticsEngine Diagnostics {
 		IntrusiveRefCntPtr<clang::DiagnosticIDs>{new DiagnosticIDs{}},
 		&*DiagOpts,nullptr,false};
-	//FIXME  clang::ProcessWarningOptions & use Diagnostics
-
-	driver::Driver Driver{"clang-tool","a.out",*Diagnostics};
-	Driver.setCheckInputsExist(false);
-
-	driver::Compilation Compilation{*Driver.BuildCompilation(llvm::makeArrayRef(Argv))};
-
-	//const auto& Jobs = Compilation.getJobs();
-	//need check job 
-	const auto Cmd = cast<clang::driver::Command>(Compilation.getJobs().begin());
-	//need check cmd
-	auto CC1Args = Cmd.getArguments();
-	//need check cc1args
-
-	IntrusiveRefCntPtr<CompilerInvocation> Invocation{new CompilerInvocation{}};
-	clang::CompilerInvocation::CreateFromArgs(
+	//FIXME  clang::ProcessWarningOptions & use Diagnostics 
+	const std::unique_ptr<clang::driver::Driver> Driver(
+      		newDriver(&Diagnostics, "a.out"));
+	// Since the input might only be virtual, don't check whether it exists.
+	Driver->setCheckInputsExist(false);
+	const std::unique_ptr<clang::driver::Compilation> Compilation(
+		Driver->BuildCompilation(llvm::makeArrayRef(Argv)));
+	const llvm::opt::ArgStringList *const CC1Args = getCC1Arguments(
+		&Diagnostics, Compilation.get());
+	if (!CC1Args) {
+		return false;
+	}
+	std::unique_ptr<clang::CompilerInvocation> Invocation{
+		newInvocation(&Diagnostics, *CC1Args)};
+	/*clang::CompilerInvocation::CreateFromArgs(
 		*Invocation, CC1Args.data() + 1, CC1Args.data() + CC1Args.size(),
-		*Diagnostics);
+		*Diagnostics);*/
+	
 	Invocation->getFrontendOpts().DisableFree = false;
 	//auto LangOpts = Invocation->getLangOpts();
 	Compiler->setInvocation(Invocation.get());
