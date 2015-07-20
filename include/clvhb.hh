@@ -27,9 +27,17 @@ public:
 	auto get(){
 		return buffer;
 	}
-	int add_utf16 (){
-		return 0;
+	
+	auto add_utf32 (const uint32_t* utf32,size_t len){
+		hb_buffer_add_utf32(buffer,utf32,len,0,len);
+		return len;
 	}
+	
+	auto add_utf16 (const uint16_t* utf16,size_t len){
+		hb_buffer_add_utf16(buffer,utf16,len,0,len);
+		return len;
+	}
+	
 	auto add_utf8 (const char* utf8,size_t len){
 		hb_buffer_add_utf8(buffer,utf8,len,0,len);
 		return len;

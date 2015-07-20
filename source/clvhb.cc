@@ -19,7 +19,7 @@ protected:
 						Cairo::TextExtents& metrics) {
 	// render the glyph into cr here
 		return CAIRO_STATUS_SUCCESS;
-   }
+	}
 
 	HBCairoFace() : UserFontFace() {
 		// constructor implementation
@@ -56,7 +56,7 @@ Cairo::RefPtr<Cairo::ScaledFont> hbfont::ScaledFont(Cairo::Matrix scale_mat){
 int hbfont::shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledFont> scaled_font,int x0,int y0,hbbuffer &buffer){
 	Cairo::Matrix scale_mat;
 	scaled_font->get_font_matrix(scale_mat);
-	unsigned long upem = hb_face_get_upem (hb_font_get_face(font));
+	auto upem = hb_face_get_upem (hb_font_get_face(font));
 	//debug<<scale_mat.x0<<':'<<scale_mat.y0<<':'<<scale_mat.xx<<':'<<scale_mat.yy<<std::endl;
 	(x0*=upem)/=scale_mat.xx;
 	(y0*=upem)/=scale_mat.yy;
@@ -66,8 +66,8 @@ int hbfont::shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledF
 	for(size_t i=hb_buffer_get_length (buffer.get());i>0;i--){
 		glyphs.push_back(
 			Cairo::Glyph{hb_glyph->codepoint,
-				(x0+hb_position->x_offset)*16/upem,
-				(y0-hb_position->y_offset)*16/upem}
+				(double)(x0+hb_position->x_offset)*16/upem,
+				(double)(y0-hb_position->y_offset)*16/upem}
 		);
 		x0 += hb_position->x_advance;
 		y0 -= hb_position->y_advance;
