@@ -66,8 +66,8 @@ int hbfont::shape(std::vector<Cairo::Glyph> &glyphs,Cairo::RefPtr<Cairo::ScaledF
 	for(size_t i=hb_buffer_get_length (buffer.get());i>0;i--){
 		glyphs.push_back(
 			Cairo::Glyph{hb_glyph->codepoint,
-				(double)(x0+hb_position->x_offset)*16/upem,
-				(double)(y0-hb_position->y_offset)*16/upem}
+				static_cast<double>((x0+hb_position->x_offset)*16/upem),
+				static_cast<double>((y0-hb_position->y_offset)*16/upem)}
 		);
 		x0 += hb_position->x_advance;
 		y0 -= hb_position->y_advance;
