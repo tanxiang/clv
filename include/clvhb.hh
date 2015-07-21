@@ -6,48 +6,50 @@
 #include "config.hh"
 #include <cairomm/cairomm.h>
 #include <vector>
+#include <memory>
 
 namespace clv{
 class hbbuffer{
-	hb_buffer_t *buffer = hb_buffer_create ();
+	std::unique_ptr<hb_buffer_t,decltype(&hb_buffer_destroy)> buffer {hb_buffer_create(),hb_buffer_destroy};
 public:
-
+	
+	auto get(){
+		return buffer.get();
+	}
+	
 	hbbuffer(){
-		hb_buffer_set_direction(buffer, HB_DIRECTION_LTR);
+		hb_buffer_set_direction(get(), HB_DIRECTION_LTR);
 	}
-	~hbbuffer(){
-		hb_buffer_destroy(buffer);
-	}
+	//~hbbuffer(){
+		//hb_buffer_destroy(buffer);
+	//}
 	void set_language(hb_language_t language){
-		hb_buffer_set_language(buffer,language);
+		hb_buffer_set_language(get(),language);
 	}
 	size_t length(){
-		return hb_buffer_get_length (buffer);
-	}
-	auto get(){
-		return buffer;
+		return hb_buffer_get_length (get());
 	}
 	
 	auto add_utf32 (const uint32_t* utf32,size_t len){
-		hb_buffer_add_utf32(buffer,utf32,len,0,len);
+		hb_buffer_add_utf32(get(),utf32,len,0,len);
 		return len;
 	}
 	
 	auto add_utf16 (const uint16_t* utf16,size_t len){
-		hb_buffer_add_utf16(buffer,utf16,len,0,len);
+		hb_buffer_add_utf16(get(),utf16,len,0,len);
 		return len;
 	}
 	
 	auto add_utf8 (const char* utf8,size_t len){
-		hb_buffer_add_utf8(buffer,utf8,len,0,len);
+		hb_buffer_add_utf8(get(),utf8,len,0,len);
 		return len;
 	}
 
 	auto get_glyph_infos(){
-		return hb_buffer_get_glyph_infos (buffer, NULL);
+		return hb_buffer_get_glyph_infos (get(), NULL);
 	}
 	auto get_glyph_positions(){
-		return hb_buffer_get_glyph_positions (buffer, NULL);
+		return hb_buffer_get_glyph_positions (get(), NULL);
 	}
 };
 

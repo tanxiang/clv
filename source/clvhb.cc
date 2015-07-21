@@ -6,25 +6,6 @@
 #include "dbg.h"
 namespace clv{
 
-class HBCairoFace:public Cairo::UserFontFace{
-public:
-	static Cairo::RefPtr<HBCairoFace> create() {
-		return Cairo::RefPtr<HBCairoFace>{new HBCairoFace};
-	}
-protected:
-	// implement render_glyph() and any other virtual functions you want to override
-	Cairo::ErrorStatus render_glyph(const Cairo::RefPtr<Cairo::ScaledFont>& scaled_font,
-						unsigned long glyph,
-						const Cairo::RefPtr<Cairo::Context>& cr,
-						Cairo::TextExtents& metrics) {
-	// render the glyph into cr here
-		return CAIRO_STATUS_SUCCESS;
-	}
-
-	HBCairoFace() : UserFontFace() {
-		// constructor implementation
-	}
-};
 
 hbfont::hbfont(const char* font_file_name){
 	GError *error = NULL;
