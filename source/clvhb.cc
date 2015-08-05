@@ -11,7 +11,7 @@ hbfont::hbfont(const char* font_file_name){
 	GError *error = NULL;
 	GMappedFile *mf = g_mapped_file_new (font_file_name, false, &error);
 	if (!mf) {
-		debug<<error->message<<"\n";
+		debug<<error->message<<'\n';
 		g_error_free (error);
 		return;
 	}

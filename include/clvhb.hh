@@ -20,9 +20,7 @@ public:
 	hbbuffer(){
 		hb_buffer_set_direction(get(), HB_DIRECTION_LTR);
 	}
-	//~hbbuffer(){
-		//hb_buffer_destroy(buffer);
-	//}
+
 	void set_language(hb_language_t language){
 		hb_buffer_set_language(get(),language);
 	}
@@ -48,12 +46,14 @@ public:
 	auto get_glyph_infos(){
 		return hb_buffer_get_glyph_infos (get(), NULL);
 	}
+
 	auto get_glyph_positions(){
 		return hb_buffer_get_glyph_positions (get(), NULL);
 	}
 };
 
 class hbfont{
+	//std::unique_ptr<hb_font_t,void (*)(hb_font_t*)> fontt{nullptr,hb_font_destroy};
 	hb_font_t *font;
 public:
 	hbfont():hbfont(DEF_FONT_FILE){}
