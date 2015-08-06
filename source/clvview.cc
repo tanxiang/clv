@@ -118,11 +118,23 @@ bool FileArea::on_timer(){
 //void FileArea::on_hide(){
 //}
 
-
+struct draw_level_store{
+	draw_level_store(const Cairo::RefPtr<Cairo::Context>& context):cr(context){
+		cr->save();
+	}
+	~draw_level_store(){
+		cr->restore();
+	}
+	auto operator->(){
+		return cr.operator->();
+	}
+private:
+	const Cairo::RefPtr<Cairo::Context>& cr;
+};
 
 void FileArea::draw_rect(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Rectangle &rect){
-	cr->save();//need RAII mode restore
-	cr->set_source_rgb(1,1,1);
+	draw_level_store store{cr};
+	store->set_source_rgb(1,1,1);
 
 	auto itr = file_context.get_form_fill(rect.y);
 	int height = 0;
@@ -134,8 +146,7 @@ void FileArea::draw_rect(const Cairo::RefPtr<Cairo::Context>& cr,const Cairo::Re
 		height += itr->get_fill();
 		++itr;
 	}	
-	cr->clip();
-	cr->restore();
+	store->clip();
 }
 
 
